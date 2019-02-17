@@ -6,3 +6,8 @@
 /hydraServerGui/
 /model/
 /repository/
+/entry_point/
+/gui_utils/
+/client/
+/server/
+/hydra/
