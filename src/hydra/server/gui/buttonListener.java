@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 
 public class buttonListener implements ActionListener {
 
-	HydraServerGui form;
+	ZolaServerGui form;
 
-	public buttonListener(HydraServerGui form) {
+	public buttonListener(ZolaServerGui form) {
 		this.form = form;
 	}
 

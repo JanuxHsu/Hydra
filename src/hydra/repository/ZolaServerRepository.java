@@ -6,13 +6,13 @@ import java.util.concurrent.Executors;
 
 import hydra.server.model.HydraConnectionClient;
 
-public class HydraServerRepository {
+public class ZolaServerRepository {
 
 	public static Boolean isRunSocketServer = true;
 	ConcurrentHashMap<String, HydraConnectionClient> HydraClients = new ConcurrentHashMap<>();
 	ExecutorService threadPool = Executors.newCachedThreadPool();
 
-	public HydraServerRepository() {
+	public ZolaServerRepository() {
 		// TODO Auto-generated constructor stub
 	}
 

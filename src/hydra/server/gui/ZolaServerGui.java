@@ -2,7 +2,7 @@ package hydra.server.gui;
 
 import java.util.List;
 
-public interface HydraServerGui {
+public interface ZolaServerGui {
 
 	public void show();
 

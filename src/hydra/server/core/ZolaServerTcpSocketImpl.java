@@ -6,16 +6,16 @@ import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
-import hydra.repository.HydraServerRepository;
-import hydra.server.gui.HydraServerGui;
+import hydra.repository.ZolaServerRepository;
+import hydra.server.gui.ZolaServerGui;
 import hydra.server.model.HydraConnectionClient;
 
-public class HydraServerTcpSocketImpl extends HydraServer {
+public class ZolaServerTcpSocketImpl extends ZolaServer {
 
 	public static final int LISTEN_PORT = 5987;
 	ExecutorService threadPool = this.getRepository().getThreadPool();
 
-	public HydraServerTcpSocketImpl(String serverName, HydraServerGui gui) {
+	public ZolaServerTcpSocketImpl(String serverName, ZolaServerGui gui) {
 		super(serverName, gui);
 	}
 
@@ -27,7 +27,7 @@ public class HydraServerTcpSocketImpl extends HydraServer {
 
 		this.mainForm.writeLog("Server listening requests...");
 
-		while (HydraServerRepository.isRunSocketServer) {
+		while (ZolaServerRepository.isRunSocketServer) {
 			Socket socket = serverSocket.accept();
 			// String client_id = this.addClient(socket);
 
@@ -54,7 +54,7 @@ public class HydraServerTcpSocketImpl extends HydraServer {
 
 	@Override
 	public void close() {
-		HydraServerRepository.isRunSocketServer = false;
+		ZolaServerRepository.isRunSocketServer = false;
 
 	}
 

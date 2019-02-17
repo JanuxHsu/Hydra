@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import hydra.repository.HydraServerRepository;
-import hydra.server.gui.HydraServerGui;
+import hydra.repository.ZolaServerRepository;
+import hydra.server.gui.ZolaServerGui;
 import hydra.server.model.HydraConnectionClient;
 
-public abstract class HydraServer{
+public abstract class ZolaServer{
 	public String serverName;
-	HydraServerGui mainForm;
-	HydraServerRepository hydraRepository = new HydraServerRepository();
+	ZolaServerGui mainForm;
+	ZolaServerRepository hydraRepository = new ZolaServerRepository();
 
-	public HydraServer(String serverName, HydraServerGui gui) {
+	public ZolaServer(String serverName, ZolaServerGui gui) {
 		this.serverName = serverName;
 		this.mainForm = gui;
 		this.mainForm.setTitle(serverName);
@@ -41,7 +41,7 @@ public abstract class HydraServer{
 		return hydraClient;
 	}
 
-	public HydraServerRepository getRepository() {
+	public ZolaServerRepository getRepository() {
 		return this.hydraRepository;
 	}
 

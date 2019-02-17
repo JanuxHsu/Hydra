@@ -10,11 +10,11 @@ public class RequestThread implements Runnable {
 
 	final String clientId;
 
-	HydraServer hydraServer;
+	ZolaServer hydraServer;
 	DataInputStream input = null;
 	DataOutputStream output = null;
 
-	public RequestThread(HydraServer hydraServer, String clientId, Socket clientSocket) {
+	public RequestThread(ZolaServer hydraServer, String clientId, Socket clientSocket) {
 		this.clientId = clientId;
 		this.clientSocket = clientSocket;
 		this.hydraServer = hydraServer;

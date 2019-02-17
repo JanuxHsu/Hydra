@@ -1,10 +1,10 @@
 package hydra;
 
 
-import hydra.server.core.HydraServer;
-import hydra.server.core.HydraServerTcpSocketImpl;
-import hydra.server.gui.HydraServerGui;
-import hydra.server.gui.HydraServerSwingGui;
+import hydra.server.core.ZolaServer;
+import hydra.server.core.ZolaServerTcpSocketImpl;
+import hydra.server.gui.ZolaServerGui;
+import hydra.server.gui.ZolaServerSwingGui;
 
 public class Main {
 
@@ -14,8 +14,8 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		HydraServerGui gui = new HydraServerSwingGui();
-		HydraServer hydraServer = new HydraServerTcpSocketImpl("Hydra Server", gui);
+		ZolaServerGui gui = new ZolaServerSwingGui();
+		ZolaServer hydraServer = new ZolaServerTcpSocketImpl("Hydra Server", gui);
 		hydraServer.open();
 
 	}

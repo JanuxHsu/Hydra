@@ -20,10 +20,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
-import hydra.server.core.HydraServer;
+import hydra.server.core.ZolaServer;
 import hydra.server.model.HydraConnectionClient;
 
-public class HydraServerSwingGui implements HydraServerGui {
+public class ZolaServerSwingGui implements ZolaServerGui {
 
 	protected JFrame mainWindow;
 
@@ -33,7 +33,7 @@ public class HydraServerSwingGui implements HydraServerGui {
 
 	JTable clientListTable;
 	
-	public HydraServerSwingGui() {
+	public ZolaServerSwingGui() {
 		JFrame window = new JFrame();
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
