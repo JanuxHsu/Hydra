@@ -1,4 +1,4 @@
-package hydra.client.core;
+package hydra.hydra.core;
 
 public interface HydraClientAction {
 	public void open();

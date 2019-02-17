@@ -1,4 +1,4 @@
-package hydra.server.core;
+package hydra.zola.core;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -8,10 +8,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import hydra.repository.ZolaServerRepository;
-import hydra.server.gui.ZolaServerGui;
-import hydra.server.model.HydraConnectionClient;
+import hydra.zola.gui.ZolaServerGui;
+import hydra.zola.model.HydraConnectionClient;
 
-public abstract class ZolaServer{
+public abstract class ZolaServer {
 	public String serverName;
 	ZolaServerGui mainForm;
 	ZolaServerRepository hydraRepository = new ZolaServerRepository();
@@ -21,15 +21,15 @@ public abstract class ZolaServer{
 		this.mainForm = gui;
 		this.mainForm.setTitle(serverName);
 		this.mainForm.show();
-		
+
 	}
-	
+
 	public abstract void open();
 
 	public abstract void close();
 
 	public abstract void broadcast(String message);
-	
+
 	public HydraConnectionClient addClient(Socket socket) {
 		String clientId = UUID.randomUUID().toString();
 		RequestThread clientThread = new RequestThread(this, clientId, socket);
@@ -56,7 +56,7 @@ public abstract class ZolaServer{
 
 		refreshPanel();
 	}
-	
+
 	public void refreshPanel() {
 		ConcurrentHashMap<String, HydraConnectionClient> clients = hydraRepository.getClients();
 		List<Object[]> rowList = new ArrayList<>();
@@ -64,8 +64,7 @@ public abstract class ZolaServer{
 		for (String clientId : clients.keySet()) {
 			count++;
 			HydraConnectionClient client = clients.get(clientId);
-			rowList.add(new Object[] { count, clientId,
-					client.getFormattedAcceptTime(), client.getMessage() });
+			rowList.add(new Object[] { count, clientId, client.getFormattedAcceptTime(), client.getMessage() });
 		}
 		this.mainForm.refreshTable(rowList);
 	}

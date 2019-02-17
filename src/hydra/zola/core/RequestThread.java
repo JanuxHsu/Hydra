@@ -1,4 +1,4 @@
-package hydra.server.core;
+package hydra.zola.core;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

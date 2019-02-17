@@ -1,10 +1,10 @@
 package hydra;
 
 
-import hydra.server.core.ZolaServer;
-import hydra.server.core.ZolaServerTcpSocketImpl;
-import hydra.server.gui.ZolaServerGui;
-import hydra.server.gui.ZolaServerSwingGui;
+import hydra.zola.core.ZolaServer;
+import hydra.zola.core.ZolaServerTcpSocketImpl;
+import hydra.zola.gui.ZolaServerGui;
+import hydra.zola.gui.ZolaServerSwingGui;
 
 public class Main {
 

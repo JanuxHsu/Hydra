@@ -1,4 +1,4 @@
-package hydra.server.gui;
+package hydra.zola.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -20,8 +20,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
-import hydra.server.core.ZolaServer;
-import hydra.server.model.HydraConnectionClient;
+import hydra.zola.core.ZolaServer;
+import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaServerSwingGui implements ZolaServerGui {
 

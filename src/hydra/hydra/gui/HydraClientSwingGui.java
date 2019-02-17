@@ -1,4 +1,4 @@
-package hydra.client.gui;
+package hydra.hydra.gui;
 
 public class HydraClientSwingGui extends HydraClientGui {
 
@@ -20,18 +20,6 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void writeLog(String logText) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void refreshClientPanel() {
 		// TODO Auto-generated method stub
 
 	}

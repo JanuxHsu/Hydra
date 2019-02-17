@@ -1,4 +1,4 @@
-package hydra.server.core;
+package hydra.zola.core;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 import hydra.repository.ZolaServerRepository;
-import hydra.server.gui.ZolaServerGui;
-import hydra.server.model.HydraConnectionClient;
+import hydra.zola.gui.ZolaServerGui;
+import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaServerTcpSocketImpl extends ZolaServer {
 

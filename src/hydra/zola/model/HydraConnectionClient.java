@@ -1,9 +1,9 @@
-package hydra.server.model;
+package hydra.zola.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import hydra.server.core.RequestThread;
+import hydra.zola.core.RequestThread;
 
 public class HydraConnectionClient {
 
@@ -12,7 +12,6 @@ public class HydraConnectionClient {
 	public final Date acceptedTime;
 
 	String message = "Connected";
-	private String test = "test";
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 

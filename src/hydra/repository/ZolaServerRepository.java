@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import hydra.server.model.HydraConnectionClient;
+import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaServerRepository {
 
