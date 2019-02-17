@@ -12,6 +12,7 @@ public class HydraConnectionClient {
 	public final Date acceptedTime;
 
 	String message = "Connected";
+	private String test = "test";
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
