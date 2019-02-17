@@ -13,4 +13,7 @@ public abstract class ViperClientGui {
 	public abstract void hide();
 
 	public abstract void close();
+
+	public abstract void displayMessage(String messages);
+
 }
