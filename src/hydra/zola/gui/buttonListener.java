@@ -1,4 +1,4 @@
-package hydra.server.gui;
+package hydra.zola.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

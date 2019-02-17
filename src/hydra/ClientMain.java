@@ -1,8 +1,9 @@
 package hydra;
 
-import hydra.hydra.core.HydraClient;
-import hydra.hydra.core.HydraClientTcpSocketImpl;
 import hydra.viper.core.ViperClient;
+import hydra.viper.core.ViperClientTcpSocketImpl;
+import hydra.viper.gui.ViperClientGui;
+import hydra.viper.gui.ViperClientSwingGui;
 
 public class ClientMain {
 
@@ -11,7 +12,10 @@ public class ClientMain {
 	}
 
 	public static void main(String[] args) {
-//		ViperClient viperClient = new ViperClient();
+
+		ViperClientGui viperClientGui = new ViperClientSwingGui();
+		ViperClient viperClient = new ViperClientTcpSocketImpl("Viper", viperClientGui);
+		viperClient.open();
 
 	}
 

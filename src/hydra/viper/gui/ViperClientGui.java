@@ -3,8 +3,10 @@ package hydra.viper.gui;
 public abstract class ViperClientGui {
 
 	public ViperClientGui() {
-		// TODO Auto-generated constructor stub
+
 	}
+
+	public abstract void setTitle(String title);
 
 	public abstract void show();
 
