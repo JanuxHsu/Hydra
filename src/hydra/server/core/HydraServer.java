@@ -67,6 +67,7 @@ public abstract class HydraServer{
 			rowList.add(new Object[] { count, clientId,
 					client.getFormattedAcceptTime(), client.getMessage() });
 		}
+		this.mainForm.refreshTable(rowList);
 	}
 
 }
