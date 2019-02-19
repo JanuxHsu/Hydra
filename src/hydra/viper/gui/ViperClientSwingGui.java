@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -15,6 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.text.DefaultCaret;
 
 public class ViperClientSwingGui extends ViperClientGui {
 
@@ -26,10 +28,14 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 	JTextField commandInputBox;
 
+	JLabel currDir;
+	JTextArea remoteConsoleTextArea;
+
 	public ViperClientSwingGui() {
 		JFrame window = new JFrame();
-		
+
 		this.controller = new ViperGuiController(this);
+
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 
@@ -50,6 +56,8 @@ public class ViperClientSwingGui extends ViperClientGui {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		this.mainWindow = window;
+
+		getDefaultPath();
 
 	}
 
@@ -85,6 +93,9 @@ public class ViperClientSwingGui extends ViperClientGui {
 		logArea.setBackground(new Color(44, 58, 71));
 		logArea.setCaretColor(Color.white);
 		logArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		DefaultCaret caret = (DefaultCaret) logArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		this.remoteConsoleTextArea = logArea;
 
 		JPanel titlePanel = new JPanel(new GridLayout(1, 3));
 
@@ -95,12 +106,24 @@ public class ViperClientSwingGui extends ViperClientGui {
 		titlebar.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 		titlePanel.add(titlebar);
 
-		JPanel inputPanel = new JPanel(new GridLayout(1, 1));
+		JPanel inputPanel = new JPanel(new BorderLayout());
+
+		File file = new File(System.getProperty("user.dir"));
+
+		JLabel currentDir = new JLabel(file.getName() + " > ");
+
+		currentDir.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+		this.currDir = currentDir;
 		JTextField inputBox = new JTextField();
 
+		inputBox.setFocusTraversalKeysEnabled(false);
 		inputBox.addActionListener(new SendCmdListener(this.controller));
+		inputBox.addKeyListener(new UserActionListener(this.controller));
+
 		this.commandInputBox = inputBox;
-		inputPanel.add(inputBox);
+
+		inputPanel.add(currentDir, BorderLayout.WEST);
+		inputPanel.add(inputBox, BorderLayout.CENTER);
 		inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		mainPanel.add(titlePanel, BorderLayout.NORTH);
@@ -163,8 +186,47 @@ public class ViperClientSwingGui extends ViperClientGui {
 	}
 
 	public void displayMessage(String message) {
-		this.debugMessageBox.append(String.format("%s%n", message));
+
+		this.remoteConsoleTextArea.append(String.format("%s%n", message));
+		this.remoteConsoleTextArea.update(this.remoteConsoleTextArea.getGraphics());
+
+		// this.remoteConsoleTextArea.paintImmediately(this.remoteConsoleTextArea.getBounds());
+
+	}
+
+	public void changeDir(File newPath) {
+		this.currDir.setText(newPath.getName() + " > ");
+	}
+
+	public void resetInputState() {
+		this.remoteConsoleTextArea.setText("");
 		this.commandInputBox.setText("");
 	}
 
+	public void getDefaultPath() {
+		this.remoteConsoleTextArea.setText("");
+		this.remoteConsoleTextArea.append(System.getProperty("user.dir"));
+	}
+
+	public String getAutoCompleteKeyword() {
+		String[] words = this.commandInputBox.getText().split(" ");
+
+		String keyword = words[words.length - 1];
+		if (keyword.equals(this.commandInputBox.getText())) {
+			return "";
+		} else if (keyword.toLowerCase().equals("cd")) {
+			return "";
+		}
+
+		return words[words.length - 1];
+	}
+
+	public void autoComplete(String autoCompleteText) {
+
+		String[] origin = this.commandInputBox.getText().split(" ");
+
+		origin[origin.length - 1] = autoCompleteText;
+
+		this.commandInputBox.setText(String.join(" ", origin));
+	}
 }

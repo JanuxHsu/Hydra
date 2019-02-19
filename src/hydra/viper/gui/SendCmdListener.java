@@ -9,7 +9,7 @@ public class SendCmdListener implements ActionListener {
 
 	public SendCmdListener(ViperGuiController controller) {
 
-		System.out.println(controller);
+		// System.out.println(controller);
 		this.controller = controller;
 	}
 
