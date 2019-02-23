@@ -1,10 +1,13 @@
 package hydra.viper.core;
 
 import hydra.viper.gui.ViperClientGui;
+import hydra.viper.gui.ViperGuiController;
 
 public abstract class ViperClient {
 
 	protected ViperClientGui mainForm;
+
+	ViperGuiController viperGuiController;
 
 	public ViperClient(String clientName, ViperClientGui gui) {
 
@@ -13,10 +16,10 @@ public abstract class ViperClient {
 		this.mainForm.show();
 	}
 
-	public abstract void open();
+	public abstract void open() throws Exception;
 
 	public abstract void close();
 
-	public abstract void broadcast(String message);
+	public abstract void sendMessage(String messageText);
 
 }
