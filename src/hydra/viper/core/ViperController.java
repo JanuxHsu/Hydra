@@ -20,6 +20,8 @@ public class ViperController {
 
 	public void sendCommand(String text) {
 		System.out.println("Controller :" + text);
+		this.clientCore.sendMessage(text);
+		this.resetCommandInputState();
 
 	}
 

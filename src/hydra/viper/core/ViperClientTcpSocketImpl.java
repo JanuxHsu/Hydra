@@ -34,12 +34,15 @@ public class ViperClientTcpSocketImpl extends ViperClient {
 	public void close() {
 
 		this.viperConnector.shutDown();
-
+		this.viperConnector = null;
 	}
 
 	@Override
 	public void sendMessage(String messageText) {
-		System.out.println("Message: " + messageText);
+		if (this.viperConnector != null) {
+			viperConnector.sendMessage(messageText);
+			System.out.println("Message: " + messageText);
+		}
 
 	}
 

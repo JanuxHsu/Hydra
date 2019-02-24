@@ -11,6 +11,9 @@ public class ViperConnector implements Runnable {
 
 	Socket socket;
 
+	DataInputStream serverInputStream;
+	DataOutputStream serverOutputStream;
+
 	public ViperConnector(ViperController viperController) {
 		this.viperController = viperController;
 	}
@@ -26,12 +29,12 @@ public class ViperConnector implements Runnable {
 		try {
 			this.socket = new Socket(host, port);
 
-			input = new DataInputStream(this.socket.getInputStream());
-			output = new DataOutputStream(this.socket.getOutputStream());
+			this.serverInputStream = new DataInputStream(this.socket.getInputStream());
+			this.serverOutputStream = new DataOutputStream(this.socket.getOutputStream());
 
 			System.out.println("loop start");
 			String line;
-			while (running && (line = input.readUTF()) != null) {
+			while (running && (line = this.serverInputStream.readUTF()) != null) {
 
 				System.out.println(line);
 				this.viperController.systemLog(line);
@@ -61,6 +64,19 @@ public class ViperConnector implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+	}
+
+	public void sendMessage(String messageText) {
+		if (socket != null && !socket.isClosed()) {
+			try {
+				this.serverOutputStream.writeUTF(messageText);
+				this.serverOutputStream.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
