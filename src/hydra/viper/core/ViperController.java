@@ -63,17 +63,41 @@ public class ViperController {
 
 	}
 
-	public boolean connectToTarget() throws Exception {
+	public void connectToTarget() {
 
-		return this.clientCore.open();
+		this.systemLog("Trying to connect to Zola Server...");
+		boolean isConnected = false;
+		try {
+			isConnected = this.clientCore.open();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		if (isConnected) {
+			this.setConnectionBtnState(connectionBtnState.Disconnect);
+			this.systemLog("Zola Server Connected!");
+
+		} else {
+			this.setConnectionBtnState(connectionBtnState.Connect);
+			this.systemLog("Zola Server not responding, please try again!");
+		}
 
 	}
 
 	public void disconnectToTarget() {
 		this.clientCore.close();
+		this.setConnectionBtnState(connectionBtnState.Connect);
+		this.systemLog("Connection to Zola Server closed!");
 	}
 
 	public void setConnectionBtnState(connectionBtnState connectState) {
 		this.clientGui.setConnectionBtnState(connectState);
 	}
+
+	public void systemLog(String line) {
+		this.clientGui.displaySystemLog(line);
+
+	}
+
 }

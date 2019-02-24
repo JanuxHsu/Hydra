@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import hydra.viper.core.ViperController;
+import hydra.viper.gui.ViperClientGui.connectionBtnState;
 
 public class ViperConnectionListener implements ActionListener {
 
@@ -19,23 +20,13 @@ public class ViperConnectionListener implements ActionListener {
 		ViperClientGui.connectionBtnState state = ViperClientGui.connectionBtnState.valueOf(e.getActionCommand());
 		switch (state) {
 		case Connect:
-
-			try {
-				if (this.viperController.connectToTarget()) {
-					this.viperController.setConnectionBtnState(ViperClientGui.connectionBtnState.Disconnect);
-
-				}
-
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			this.viperController.connectToTarget();
 
 			break;
 
 		case Disconnect:
 			this.viperController.disconnectToTarget();
-			this.viperController.setConnectionBtnState(ViperClientGui.connectionBtnState.Connect);
+
 			break;
 
 		default:

@@ -29,4 +29,6 @@ public abstract class ViperClientGui {
 	public abstract String getAutoCompleteKeyword();
 
 	public abstract void setConnectionBtnState(connectionBtnState connectState);
+
+	public abstract void displaySystemLog(String line);
 }

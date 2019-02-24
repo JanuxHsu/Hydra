@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.SplashScreen;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -95,6 +94,8 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 		JButton connectBtn = new JButton("Connect");
 		connectBtn.addActionListener(new ViperConnectionListener(this.viperController));
+		connectBtn.setBackground(new Color(39, 174, 96));
+		connectBtn.setForeground(Color.WHITE);
 		this.connectionBtn = connectBtn;
 
 		connectionButtonPanel.add(new JButton("Get Hydras"));
@@ -265,6 +266,20 @@ public class ViperClientSwingGui extends ViperClientGui {
 	@Override
 	public void setConnectionBtnState(connectionBtnState connectState) {
 		this.connectionBtn.setText(connectState.toString());
+		if (connectState == connectionBtnState.Disconnect) {
+			this.connectionBtn.setBackground(Color.RED);
+		} else {
+			this.connectionBtn.setBackground(new Color(39, 174, 96));
+		}
+		this.connectionBtn.revalidate();
+		this.connectionBtn.repaint();
+	}
+
+	@Override
+	public void displaySystemLog(String line) {
+
+		line = String.format("%s%n", line);
+		this.debugMessageBox.append(line);
 
 	}
 

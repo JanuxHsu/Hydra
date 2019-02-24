@@ -7,11 +7,12 @@ import java.net.Socket;
 
 public class ViperConnector implements Runnable {
 	volatile boolean running = true;
+	ViperController viperController;
 
 	Socket socket;
 
-	public ViperConnector(boolean isRun) {
-		this.running = isRun;
+	public ViperConnector(ViperController viperController) {
+		this.viperController = viperController;
 	}
 
 	@Override
@@ -20,13 +21,8 @@ public class ViperConnector implements Runnable {
 		int port = 5987;
 		Socket socket = null;
 
-		System.out.println(running);
-
-		System.out.println("請輸入Server端位址: " + host);
-
 		DataInputStream input = null;
 		DataOutputStream output = null;
-
 		try {
 			this.socket = new Socket(host, port);
 
@@ -35,17 +31,10 @@ public class ViperConnector implements Runnable {
 
 			System.out.println("loop start");
 			String line;
-			while (running) {
-				line = input.readUTF();
+			while (running && (line = input.readUTF()) != null) {
+
 				System.out.println(line);
-				//
-//				System.out.println("Input message: ");
-//				Scanner consoleInput = new Scanner(System.in);
-//				String tt = consoleInput.nextLine();
-//				System.out.println("Sending " + tt);
-				//
-//				output.writeUTF(tt);
-//				output.flush();
+				this.viperController.systemLog(line);
 
 			}
 			System.out.println("loop end");
@@ -67,7 +56,21 @@ public class ViperConnector implements Runnable {
 
 	public void shutDown() {
 		this.running = false;
+		try {
+			this.socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 }
+//
+//System.out.println("Input message: ");
+//Scanner consoleInput = new Scanner(System.in);
+//String tt = consoleInput.nextLine();
+//System.out.println("Sending " + tt);
+//
+//output.writeUTF(tt);
+//output.flush();

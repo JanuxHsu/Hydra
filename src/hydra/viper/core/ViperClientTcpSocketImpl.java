@@ -1,18 +1,14 @@
 package hydra.viper.core;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class ViperClientTcpSocketImpl extends ViperClient {
 
-	boolean isRun = true;
 	ExecutorService executorService = Executors.newCachedThreadPool();
 
 	ViperConnector viperConnector;
-
-	ArrayList<Future<?>> jobHist = new ArrayList<>();
 
 	public ViperClientTcpSocketImpl(ViperController viperController) {
 		super(viperController);
@@ -20,19 +16,17 @@ public class ViperClientTcpSocketImpl extends ViperClient {
 
 	@Override
 	public boolean open() {
-		this.viperConnector = new ViperConnector(isRun);
-		Future<?> jobResult = executorService.submit(viperConnector);
 
-		jobHist.add(jobResult);
-		int count = 0;
-		for (Future<?> jobRes : jobHist) {
-			// System.out.println(count + " | " + jobRes.isDone());
-			count++;
+		this.viperConnector = new ViperConnector(this.viperController);
+		Future<?> jobResult = executorService.submit(viperConnector);
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
 		}
 
-		System.out.println("Connection Job: " + jobResult.isDone());
-
-		return jobResult.isCancelled();
+		return !jobResult.isDone();
 
 	}
 
