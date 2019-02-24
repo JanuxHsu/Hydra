@@ -3,8 +3,6 @@ package hydra.viper.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.tree.DefaultTreeCellEditor.EditorContainer;
-
 import hydra.viper.core.ViperController;
 
 public class ViperConnectionListener implements ActionListener {
@@ -17,12 +15,22 @@ public class ViperConnectionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println(e.getActionCommand());
+
 		ViperClientGui.connectionBtnState state = ViperClientGui.connectionBtnState.valueOf(e.getActionCommand());
 		switch (state) {
 		case Connect:
-			this.viperController.connectToTarget();
-			this.viperController.setConnectionBtnState(ViperClientGui.connectionBtnState.Disconnect);
+
+			try {
+				if (this.viperController.connectToTarget()) {
+					this.viperController.setConnectionBtnState(ViperClientGui.connectionBtnState.Disconnect);
+
+				}
+
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 			break;
 
 		case Disconnect:

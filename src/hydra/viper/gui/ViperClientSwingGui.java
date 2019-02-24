@@ -41,12 +41,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 	public ViperClientSwingGui(ViperController viperController) {
 		super(viperController);
 
-		
-
 		JFrame window = new JFrame();
-		
-		SplashScreen splashScreen = SplashScreen.getSplashScreen();
-		splashScreen.createGraphics();
 
 		// this.controller = new ViperGuiController(this);
 
@@ -199,7 +194,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 	@Override
 	public void show() {
-		
+
 		this.mainWindow.setVisible(true);
 
 	}

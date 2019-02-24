@@ -13,7 +13,7 @@ public abstract class ViperClient {
 
 	}
 
-	public abstract void open() throws Exception;
+	public abstract boolean open() throws Exception;
 
 	public abstract void close();
 

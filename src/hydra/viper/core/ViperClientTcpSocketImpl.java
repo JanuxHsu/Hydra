@@ -19,23 +19,26 @@ public class ViperClientTcpSocketImpl extends ViperClient {
 	}
 
 	@Override
-	public void open() {
+	public boolean open() {
 		this.viperConnector = new ViperConnector(isRun);
 		Future<?> jobResult = executorService.submit(viperConnector);
 
 		jobHist.add(jobResult);
 		int count = 0;
 		for (Future<?> jobRes : jobHist) {
-			//System.out.println(count + " | " + jobRes.isDone());
+			// System.out.println(count + " | " + jobRes.isDone());
 			count++;
 		}
+
+		System.out.println("Connection Job: " + jobResult.isDone());
+
+		return jobResult.isCancelled();
 
 	}
 
 	@Override
 	public void close() {
 
-		System.out.println("Closing");
 		this.viperConnector.shutDown();
 
 	}

@@ -63,13 +63,9 @@ public class ViperController {
 
 	}
 
-	public void connectToTarget() {
-		try {
-			this.clientCore.open();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public boolean connectToTarget() throws Exception {
+
+		return this.clientCore.open();
 
 	}
 

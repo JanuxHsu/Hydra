@@ -18,7 +18,7 @@ public class ClientMain {
 
 		ViperController viperController = new ViperController(viperConfig);
 		ViperClient viperClient = new ViperClientTcpSocketImpl(viperController);
-		//viperClient.open();
+		// viperClient.open();
 
 	}
 
