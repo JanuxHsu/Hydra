@@ -1,19 +1,16 @@
 package hydra.viper.core;
 
-import hydra.viper.gui.ViperClientGui;
-import hydra.viper.gui.ViperGuiController;
-
 public abstract class ViperClient {
 
-	protected ViperClientGui mainForm;
+	ViperController viperController;
 
-	ViperGuiController viperGuiController;
+	public ViperClient(ViperController viperController) {
 
-	public ViperClient(String clientName, ViperClientGui gui) {
+		this.viperController = viperController;
+		this.viperController.setViperClient(this);
+		this.viperController.setGuiTitle("Viper");
+		this.viperController.showGui();
 
-		this.mainForm = gui;
-		this.mainForm.setTitle(clientName);
-		this.mainForm.show();
 	}
 
 	public abstract void open() throws Exception;

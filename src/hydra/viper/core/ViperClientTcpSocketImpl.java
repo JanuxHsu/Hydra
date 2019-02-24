@@ -1,55 +1,42 @@
 package hydra.viper.core;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
-
-import hydra.viper.gui.ViperClientGui;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ViperClientTcpSocketImpl extends ViperClient {
 
-	boolean running = true;
+	boolean isRun = true;
+	ExecutorService executorService = Executors.newCachedThreadPool();
 
-	public ViperClientTcpSocketImpl(String clientName, ViperClientGui gui) {
-		super(clientName, gui);
-		// TODO Auto-generated constructor stub
+	ViperConnector viperConnector;
+
+	ArrayList<Future<?>> jobHist = new ArrayList<>();
+
+	public ViperClientTcpSocketImpl(ViperController viperController) {
+		super(viperController);
 	}
 
 	@Override
-	public void open() throws UnknownHostException, IOException {
-		String host = "localhost";
-		int port = 5987;
-		Socket socket = null;
+	public void open() {
+		this.viperConnector = new ViperConnector(isRun);
+		Future<?> jobResult = executorService.submit(viperConnector);
 
-		System.out.println("請輸入Server端位址: " + host);
-
-		socket = new Socket(host, port);
-		DataInputStream input = null;
-		DataOutputStream output = null;
-
-		input = new DataInputStream(socket.getInputStream());
-		output = new DataOutputStream(socket.getOutputStream());
-
-		while (running) {
-
-			System.out.println("Input message: ");
-			Scanner consoleInput = new Scanner(System.in);
-			String tt = consoleInput.nextLine();
-			System.out.println("Sending " + tt);
-
-			output.writeUTF(tt);
-			output.flush();
-
+		jobHist.add(jobResult);
+		int count = 0;
+		for (Future<?> jobRes : jobHist) {
+			//System.out.println(count + " | " + jobRes.isDone());
+			count++;
 		}
 
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+
+		System.out.println("Closing");
+		this.viperConnector.shutDown();
 
 	}
 

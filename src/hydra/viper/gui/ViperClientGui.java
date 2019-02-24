@@ -1,9 +1,17 @@
 package hydra.viper.gui;
 
+import hydra.viper.core.ViperController;
+
 public abstract class ViperClientGui {
+	public static enum connectionBtnState {
+		Connect, Disconnect, Conncecting
+	};
 
-	public ViperClientGui() {
+	ViperController viperController;
 
+	public ViperClientGui(ViperController controller) {
+		this.viperController = controller;
+		this.viperController.setClientGui(this);
 	}
 
 	public abstract void setTitle(String title);
@@ -16,4 +24,9 @@ public abstract class ViperClientGui {
 
 	public abstract void displayMessage(String messages);
 
+	public abstract void resetInputState();
+
+	public abstract String getAutoCompleteKeyword();
+
+	public abstract void setConnectionBtnState(connectionBtnState connectState);
 }

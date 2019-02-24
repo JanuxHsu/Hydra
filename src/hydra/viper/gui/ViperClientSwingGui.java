@@ -4,9 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.SplashScreen;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,23 +20,35 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
 
+import hydra.viper.core.ViperController;
+
 public class ViperClientSwingGui extends ViperClientGui {
 
 	protected JFrame mainWindow;
 
-	protected ViperGuiController controller;
+	// protected ViperGuiController controller;
+
+	// ViperController clientController;
 
 	JTextArea debugMessageBox;
 
+	JButton connectionBtn;
 	JTextField commandInputBox;
 
 	JLabel currDir;
 	JTextArea remoteConsoleTextArea;
 
-	public ViperClientSwingGui() {
-		JFrame window = new JFrame();
+	public ViperClientSwingGui(ViperController viperController) {
+		super(viperController);
 
-		this.controller = new ViperGuiController(this);
+		
+
+		JFrame window = new JFrame();
+		
+		SplashScreen splashScreen = SplashScreen.getSplashScreen();
+		splashScreen.createGraphics();
+
+		// this.controller = new ViperGuiController(this);
 
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -66,8 +80,10 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 		sidePanel.setOpaque(true);
 		sidePanel.setBackground(new Color(24, 44, 97));
-		sidePanel.setPreferredSize(new Dimension(200, 0));
+
 		sidePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		JPanel connectionPanel = new JPanel(new BorderLayout());
 
 		JComboBox<String> hydraClientsComboBox = new JComboBox<>();
 
@@ -77,7 +93,23 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 		hydraClientsComboBox.setPreferredSize(new Dimension(0, 25));
 
-		sidePanel.add(hydraClientsComboBox, BorderLayout.NORTH);
+		connectionPanel.add(hydraClientsComboBox, BorderLayout.NORTH);
+
+		JPanel connectionButtonPanel = new JPanel(new GridLayout(2, 0));
+		connectionButtonPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+		JButton connectBtn = new JButton("Connect");
+		connectBtn.addActionListener(new ViperConnectionListener(this.viperController));
+		this.connectionBtn = connectBtn;
+
+		connectionButtonPanel.add(new JButton("Get Hydras"));
+		connectionButtonPanel.add(connectBtn);
+
+		connectionButtonPanel.setPreferredSize(new Dimension(150, 50));
+
+		connectionPanel.add(connectionButtonPanel, BorderLayout.CENTER);
+
+		sidePanel.add(connectionPanel, BorderLayout.NORTH);
 
 		return sidePanel;
 	}
@@ -117,8 +149,12 @@ public class ViperClientSwingGui extends ViperClientGui {
 		JTextField inputBox = new JTextField();
 
 		inputBox.setFocusTraversalKeysEnabled(false);
-		inputBox.addActionListener(new SendCmdListener(this.controller));
-		inputBox.addKeyListener(new UserActionListener(this.controller));
+		// inputBox.addActionListener(new SendCmdListener(this.controller));
+
+		System.out.println("init:" + this.viperController);
+
+		inputBox.addActionListener(new SendCmdListener(this.viperController));
+		inputBox.addKeyListener(new UserActionListener(this.viperController));
 
 		this.commandInputBox = inputBox;
 
@@ -163,6 +199,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 	@Override
 	public void show() {
+		
 		this.mainWindow.setVisible(true);
 
 	}
@@ -229,4 +266,11 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 		this.commandInputBox.setText(String.join(" ", origin));
 	}
+
+	@Override
+	public void setConnectionBtnState(connectionBtnState connectState) {
+		this.connectionBtn.setText(connectState.toString());
+
+	}
+
 }

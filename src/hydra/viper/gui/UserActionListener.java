@@ -5,14 +5,16 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileFilter;
 
+import hydra.viper.core.ViperController;
+
 public class UserActionListener implements KeyListener {
 
-	ViperGuiController controller;
+	ViperController controller;
 
 	Integer counter = 0;
 
-	public UserActionListener(ViperGuiController controller) {
-		this.controller = controller;
+	public UserActionListener(ViperController viperController) {
+		this.controller = viperController;
 
 	}
 
@@ -43,11 +45,11 @@ public class UserActionListener implements KeyListener {
 
 		switch (e.getExtendedKeyCode()) {
 		case KeyEvent.VK_TAB:
-
-			String keyword = this.controller.gui.getAutoCompleteKeyword();
+			
+			String keyword = this.controller.getAutoCompleteKeyword();
 
 			FileFilter filter = new CustomFileFilter(keyword);
-			File[] subfiles = this.controller.currentWorkingDir.listFiles(filter);
+			File[] subfiles = this.controller.listCurrentPathFiles(filter);
 
 			File autoTo = subfiles[this.counter];
 
@@ -58,7 +60,7 @@ public class UserActionListener implements KeyListener {
 				newWord = autoTo.getName();
 			}
 
-			this.controller.gui.autoComplete(newWord);
+			this.controller.autoCompleteKeyWord(newWord);
 
 			this.counter++;
 			this.counter = this.counter > subfiles.length - 1 ? 0 : counter;
