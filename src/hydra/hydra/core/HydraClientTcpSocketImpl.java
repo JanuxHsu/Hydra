@@ -2,12 +2,13 @@ package hydra.hydra.core;
 
 public class HydraClientTcpSocketImpl extends HydraClient {
 
-	public HydraClientTcpSocketImpl() {
+	public HydraClientTcpSocketImpl(HydraController hydraController) {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public void open() {
+	public boolean open() {
+		return false;
 		// TODO Auto-generated method stub
 
 	}
@@ -20,6 +21,12 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 
 	@Override
 	public void broadcast(String message) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendMessage(String text) {
 		// TODO Auto-generated method stub
 
 	}
