@@ -28,7 +28,7 @@ public abstract class ZolaServer {
 
 	public abstract void close();
 
-	public abstract void broadcast(String message);
+	public abstract void broadcast(String reqest_Client, String message2);
 
 	public HydraConnectionClient addClient(Socket socket) {
 		String clientId = UUID.randomUUID().toString();

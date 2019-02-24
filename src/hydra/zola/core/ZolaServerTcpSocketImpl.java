@@ -59,7 +59,7 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 	}
 
 	@Override
-	public void broadcast(String message) {
+	public void broadcast(String requestClient, String message) {
 
 		System.out.println("Request boardcast: " + message);
 		ConcurrentHashMap<String, HydraConnectionClient> clients = this.hydraRepository.getClients();
@@ -67,7 +67,7 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 		for (String client_id : clients.keySet()) {
 			HydraConnectionClient client = clients.get(client_id);
 			try {
-				client.clientThread.sendMessage(message);
+				client.clientThread.sendMessage(requestClient +" Send " + message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -76,5 +76,7 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 		}
 
 	}
+
+	
 
 }

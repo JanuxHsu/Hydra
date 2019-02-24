@@ -21,7 +21,7 @@ public class RequestThread implements Runnable {
 	}
 
 	public void sendMessage(String message) throws IOException {
-		output.writeUTF(String.format("%s send you [%s]!\n", this.clientId, message));
+		output.writeUTF(message);
 		output.flush();
 	}
 
@@ -34,14 +34,14 @@ public class RequestThread implements Runnable {
 		try {
 			input = new DataInputStream(this.clientSocket.getInputStream());
 			output = new DataOutputStream(this.clientSocket.getOutputStream());
-			output.writeUTF(String.format("Hi, %s!\n", clientSocket.getRemoteSocketAddress()));
+			output.writeUTF(String.format("Hi, %s!%n", clientSocket.getRemoteSocketAddress()));
 			output.flush();
 			String message;
 			while ((message = input.readUTF()) != null) {
 				this.hydraServer.updateClientMessage(this.clientId, message);
 
 				if (message.equals("go")) {
-					this.hydraServer.broadcast(message);
+					this.hydraServer.broadcast(this.clientId, message);
 				}
 				System.out.println(message);
 

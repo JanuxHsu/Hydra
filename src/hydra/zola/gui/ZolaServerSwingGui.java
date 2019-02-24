@@ -3,6 +3,7 @@ package hydra.zola.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.ScrollPane;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -32,7 +33,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	JTextArea loggingBox;
 
 	JTable clientListTable;
-	
+
 	public ZolaServerSwingGui() {
 		JFrame window = new JFrame();
 		try {
@@ -57,7 +58,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		window.pack();
 		this.mainWindow = window;
 	}
-	
+
 	@Override
 	public void setTitle(String name) {
 		this.mainWindow.setTitle(name);
@@ -128,7 +129,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		logArea.setEditable(false);
 
 		this.loggingBox = logArea;
-		serverLogPanel.add(logArea, BorderLayout.CENTER);
+		serverLogPanel.add(new JScrollPane(logArea), BorderLayout.CENTER);
 		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
 
 		return serverLogPanel;
@@ -162,11 +163,9 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	public void refreshTable(List<Object[]> objects) {
 		DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
 		model.setRowCount(0);
-		for(Object[] object:objects) {
+		for (Object[] object : objects) {
 			model.addRow(object);
 		}
 	}
-	
-
 
 }
