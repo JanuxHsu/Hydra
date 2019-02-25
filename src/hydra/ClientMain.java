@@ -4,10 +4,6 @@ import hydra.hydra.core.HydraClient;
 import hydra.hydra.core.HydraClientTcpSocketImpl;
 import hydra.hydra.core.HydraConfig;
 import hydra.hydra.core.HydraController;
-import hydra.viper.core.ViperClient;
-import hydra.viper.core.ViperClientTcpSocketImpl;
-import hydra.viper.core.ViperConfig;
-import hydra.viper.core.ViperController;
 
 public class ClientMain {
 
@@ -17,11 +13,11 @@ public class ClientMain {
 
 	public static void main(String[] args) throws Exception {
 
-		ViperConfig viperConfig = new ViperConfig();
-		viperConfig.setGUI_type(ViperConfig.Swing);
-
-		ViperController viperController = new ViperController(viperConfig);
-		ViperClient viperClient = new ViperClientTcpSocketImpl(viperController);
+//		ViperConfig viperConfig = new ViperConfig();
+//		viperConfig.setGUI_type(ViperConfig.Swing);
+//
+//		ViperController viperController = new ViperController(viperConfig);
+//		ViperClient viperClient = new ViperClientTcpSocketImpl(viperController);
 		// viperClient.open();
 
 		HydraConfig hydraConfig = new HydraConfig();

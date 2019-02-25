@@ -3,6 +3,7 @@ package hydra.hydra.core;
 public class HydraClientTcpSocketImpl extends HydraClient {
 
 	public HydraClientTcpSocketImpl(HydraController hydraController) {
+		super(hydraController);
 		// TODO Auto-generated constructor stub
 	}
 

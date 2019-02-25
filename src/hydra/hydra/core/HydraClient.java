@@ -2,8 +2,13 @@ package hydra.hydra.core;
 
 public abstract class HydraClient {
 
-	public HydraClient() {
-		// TODO Auto-generated constructor stub
+	private HydraController hydraController;
+
+	public HydraClient(HydraController hydraController) {
+		this.hydraController = hydraController;
+		this.hydraController.setHydraClient(this);
+		this.hydraController.setGuiTitle("Viper");
+		this.hydraController.showGui();
 	}
 
 	public abstract boolean open();
