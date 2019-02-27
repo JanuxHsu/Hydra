@@ -2,7 +2,7 @@ package hydra.hydra.core;
 
 public abstract class HydraClient {
 
-	private HydraController hydraController;
+	HydraController hydraController;
 
 	public HydraClient(HydraController hydraController) {
 		this.hydraController = hydraController;

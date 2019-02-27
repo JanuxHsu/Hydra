@@ -3,7 +3,7 @@ package hydra.hydra.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Label;
+import java.awt.GridLayout;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -68,7 +68,20 @@ public class HydraClientSwingGui extends HydraClientGui {
 		hostLabel.setOpaque(true);
 		hostLabel.setBackground(Color.RED);
 		hostLabel.setForeground(Color.WHITE);
+
+		JPanel dashboardPanel = new JPanel(new GridLayout(0, 4));
+
+		for (int i = 1; i <= 4; i++) {
+			JLabel mainLabel = new JLabel("Main");
+			mainLabel.setHorizontalAlignment(JLabel.CENTER);
+			mainLabel.setOpaque(true);
+			mainLabel.setBackground(Color.gray);
+			// mainLabel.setHorizontalTextPosition(JLabel.CENTER);
+			dashboardPanel.add(mainLabel);
+		}
+
 		topPanel.add(hostLabel, BorderLayout.NORTH);
+		topPanel.add(dashboardPanel, BorderLayout.SOUTH);
 
 		return topPanel;
 	}

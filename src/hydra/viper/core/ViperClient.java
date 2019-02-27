@@ -19,4 +19,6 @@ public abstract class ViperClient {
 
 	public abstract void sendMessage(String messageText);
 
+	public abstract void registerClient();
+
 }

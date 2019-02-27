@@ -2,20 +2,37 @@ package hydra.hydra.core;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
+import hydra.model.HydraMessage;
+import hydra.model.HydraMessage.MessageType;
 import hydra.viper.gui.ViperClientGui.connectionBtnState;
 
 public class HydraController {
 
+	ExecutorService executorService = Executors.newCachedThreadPool();
+	ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
+	public volatile boolean isConnectedToServer = false;
 
 	public HydraController(HydraConfig hydraConfig) {
 		this.clientGui = new HydraClientSwingGui(this);
 		this.setGuiTitle(hydraConfig.app_name);
+		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 10, TimeUnit.SECONDS);
 
+	}
+
+	public ExecutorService getExecutorPool() {
+		return this.executorService;
 	}
 
 	public void sendCommand(String text) {
@@ -77,10 +94,12 @@ public class HydraController {
 		}
 
 		if (isConnected) {
+			this.isConnectedToServer = true;
 			this.setConnectionBtnState(connectionBtnState.Disconnect);
 			this.systemLog("Zola Server Connected!");
 
 		} else {
+			this.isConnectedToServer = false;
 			this.setConnectionBtnState(connectionBtnState.Connect);
 			this.systemLog("Zola Server not responding, please try again!");
 		}
@@ -99,6 +118,28 @@ public class HydraController {
 
 	public void systemLog(String line) {
 		this.clientGui.displaySystemLog(line);
+
+	}
+
+	public void connectionClose() {
+		this.isConnectedToServer = false;
+
+	}
+
+	public boolean registerClient() {
+
+		HydraMessage hydraMessage = new HydraMessage("I'm Hydra", null, MessageType.REGISTER);
+		System.out.println(hydraMessage.toString());
+		this.sendCommand(hydraMessage.toString());
+		return isConnectedToServer;
+	}
+
+	public void sendHeartBeat() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		String timeStamp = sdf.format(Calendar.getInstance().getTime());
+		HydraMessage hydraMessage = new HydraMessage(timeStamp, null, MessageType.HEARTBEAT);
+		System.out.println(hydraMessage.toString());
+		this.sendCommand(hydraMessage.toString());
 
 	}
 

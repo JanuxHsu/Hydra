@@ -46,4 +46,12 @@ public class ViperClientTcpSocketImpl extends ViperClient {
 
 	}
 
+	@Override
+	public void registerClient() {
+		if (this.viperConnector.socket != null) {
+			this.sendMessage("I'm a Viper");
+		}
+
+	}
+
 }

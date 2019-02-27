@@ -1,6 +1,10 @@
 package hydra.hydra.core;
 
+import java.util.concurrent.Future;
+
 public class HydraClientTcpSocketImpl extends HydraClient {
+
+	HydraConnector hydraConnector;
 
 	public HydraClientTcpSocketImpl(HydraController hydraController) {
 		super(hydraController);
@@ -9,8 +13,16 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 
 	@Override
 	public boolean open() {
-		return false;
-		// TODO Auto-generated method stub
+		this.hydraConnector = new HydraConnector(this.hydraController);
+		Future<?> jobResult = this.hydraController.getExecutorPool().submit(this.hydraConnector);
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+
+		return !jobResult.isDone();
 
 	}
 
@@ -28,8 +40,12 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 
 	@Override
 	public void sendMessage(String text) {
-		// TODO Auto-generated method stub
+		if (this.hydraConnector != null) {
+			hydraConnector.sendMessage(text);
+			System.out.println("Message: " + text);
+		}
 
 	}
+
 
 }
