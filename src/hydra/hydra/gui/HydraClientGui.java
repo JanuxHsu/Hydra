@@ -1,11 +1,15 @@
 package hydra.hydra.gui;
 
+import hydra.hydra.core.HydraController;
 import hydra.viper.gui.ViperClientGui.connectionBtnState;
 
 public abstract class HydraClientGui {
 
-	public HydraClientGui() {
-		// TODO Auto-generated constructor stub
+	HydraController hydraController;
+
+	public HydraClientGui(HydraController hydraController) {
+		this.hydraController = hydraController;
+		this.hydraController.setClientGui(this);
 	}
 
 	public abstract void show();

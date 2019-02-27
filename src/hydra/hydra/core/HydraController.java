@@ -5,9 +5,7 @@ import java.io.FileFilter;
 
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
-import hydra.viper.gui.ViperClientGui;
 import hydra.viper.gui.ViperClientGui.connectionBtnState;
-import hydra.viper.gui.ViperClientSwingGui;
 
 public class HydraController {
 

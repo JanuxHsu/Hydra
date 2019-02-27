@@ -1,5 +1,7 @@
 package hydra.viper.gui;
 
+import javax.swing.JFrame;
+
 import hydra.viper.core.ViperController;
 
 public abstract class ViperClientGui {
@@ -8,6 +10,7 @@ public abstract class ViperClientGui {
 	};
 
 	ViperController viperController;
+	protected JFrame mainWindow;
 
 	public ViperClientGui(ViperController controller) {
 		this.viperController = controller;

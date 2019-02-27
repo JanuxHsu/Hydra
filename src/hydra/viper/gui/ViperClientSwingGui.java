@@ -23,12 +23,6 @@ import hydra.viper.core.ViperController;
 
 public class ViperClientSwingGui extends ViperClientGui {
 
-	protected JFrame mainWindow;
-
-	// protected ViperGuiController controller;
-
-	// ViperController clientController;
-
 	JTextArea debugMessageBox;
 
 	JButton connectionBtn;
