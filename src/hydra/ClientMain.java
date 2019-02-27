@@ -28,11 +28,10 @@ public class ClientMain {
 
 		HydraConfig hydraConfig = new HydraConfig();
 		hydraConfig.setGUI_type(HydraConfig.Swing);
+		hydraConfig.app_name = "Hydra";
 
 		HydraController hydraController = new HydraController(hydraConfig);
 		HydraClient hydraClient = new HydraClientTcpSocketImpl(hydraController);
-
-		hydraController.registerClient();
 
 	}
 

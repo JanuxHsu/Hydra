@@ -12,10 +12,10 @@ public class HydraServiceChecker implements Runnable {
 	public void run() {
 
 		System.out.println("Checking...");
-		if (!hydraController.isConnectedToServer) {
+		if (!hydraController.hydraRepository.getHydraStatus().isConnectedToServer()) {
 			System.out.println("Checking...trying to connect to zola server!");
 			hydraController.connectToTarget();
-			hydraController.registerClient();
+			//hydraController.registerClient();
 
 		} else {
 

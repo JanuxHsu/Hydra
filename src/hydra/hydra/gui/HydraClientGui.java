@@ -29,9 +29,11 @@ public abstract class HydraClientGui {
 
 	}
 
-	public void displaySystemLog(String line) {
-		// TODO Auto-generated method stub
+	public abstract void displaySystemLog(String line);
 
-	}
+	public abstract void updateConnectionStatus(String status);
 
+	public abstract void updateIsServerConnected(boolean isConnected);
+
+	// public abstract void updateZolaStatus(String state, String status);
 }
