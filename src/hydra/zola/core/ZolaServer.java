@@ -52,7 +52,7 @@ public abstract class ZolaServer {
 
 	public void removeClient(String clientId) {
 		HydraConnectionClient client = this.getRepository().getClients().remove(clientId);
-		this.mainForm.writeLog(String.format("%s終止連線!", client.clientID));
+		this.mainForm.writeLog(String.format("%s終止連線!", client.getClientID()));
 
 		refreshPanel();
 	}

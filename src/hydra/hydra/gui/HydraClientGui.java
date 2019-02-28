@@ -1,7 +1,6 @@
 package hydra.hydra.gui;
 
 import hydra.hydra.core.HydraController;
-import hydra.viper.gui.ViperClientGui.connectionBtnState;
 
 public abstract class HydraClientGui {
 
@@ -24,16 +23,15 @@ public abstract class HydraClientGui {
 
 	public abstract String getAutoCompleteKeyword();
 
-	public void setConnectionBtnState(connectionBtnState connectState) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public abstract void displaySystemLog(String line);
 
 	public abstract void updateConnectionStatus(String status);
 
+	public abstract void updateIsWorkerActive(boolean isWorking);
+
 	public abstract void updateIsServerConnected(boolean isConnected);
+
+	public abstract void updateMemoryUsages(Long freeMem, Long totalMem);
 
 	// public abstract void updateZolaStatus(String state, String status);
 }

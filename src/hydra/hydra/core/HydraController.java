@@ -14,7 +14,6 @@ import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
-import hydra.viper.gui.ViperClientGui.connectionBtnState;
 
 public class HydraController {
 
@@ -108,20 +107,16 @@ public class HydraController {
 		}
 
 		this.updateHydraStatus();
-		System.out.println("aaa");
+
 	}
 
 	public void disconnectToTarget() {
 		this.clientCore.close();
-		this.setConnectionBtnState(connectionBtnState.Connect);
+
 		this.systemLog("Connection to Zola Server closed!");
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo("Connection to Zola Server closed!");
 		this.updateHydraStatus();
-	}
-
-	public void setConnectionBtnState(connectionBtnState connectState) {
-		this.clientGui.setConnectionBtnState(connectState);
 	}
 
 	public void systemLog(String line) {
@@ -157,11 +152,10 @@ public class HydraController {
 	}
 
 	public void updateHydraStatus() {
-
-		System.out.println("bb");
+		this.clientGui.updateMemoryUsages(Runtime.getRuntime().freeMemory(), Runtime.getRuntime().totalMemory());
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
 		this.clientGui.updateIsServerConnected(this.hydraRepository.getHydraStatus().isConnectedToServer());
-		System.out.println("hh");
+		this.clientGui.updateIsWorkerActive(this.hydraRepository.getHydraStatus().isWorkerActive());
 	}
 
 }

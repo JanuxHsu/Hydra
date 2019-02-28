@@ -27,8 +27,8 @@ public class ZolaServerRepository {
 
 	public String addClient(HydraConnectionClient client) {
 
-		this.HydraClients.put(client.clientID, client);
-		return client.clientID;
+		this.HydraClients.put(client.getClientID(), client);
+		return client.getClientID();
 	}
 
 }

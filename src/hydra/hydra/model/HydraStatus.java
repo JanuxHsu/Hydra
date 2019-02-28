@@ -6,9 +6,17 @@ public class HydraStatus {
 	String connectionInfo = null;
 	boolean isWorkerActive = false;
 
+	Long maxMemory;
+
+	Long freeMemory;
+
+	public HydraStatus() {
+		//this.maxMemory = Runtime.getRuntime().totalMemory();
+	}
+
 	public boolean isConnectedToServer() {
-		
-	//System.out.println("b");
+
+		// System.out.println("b");
 		return isConnectedToServer;
 	}
 
@@ -17,7 +25,7 @@ public class HydraStatus {
 	}
 
 	public String getConnectionInfo() {
-	
+
 		return this.connectionInfo;
 	}
 
@@ -33,8 +41,20 @@ public class HydraStatus {
 		this.isWorkerActive = isWorkerActive;
 	}
 
-	public HydraStatus() {
+	public Long getMaxMemory() {
+		return maxMemory;
+	}
 
+	public void setMaxMemory(Long maxMemory) {
+		this.maxMemory = maxMemory;
+	}
+
+	public Long getFreeMemory() {
+		return freeMemory;
+	}
+
+	public void setFreeMemory(Long freeMemory) {
+		this.freeMemory = freeMemory;
 	}
 
 }

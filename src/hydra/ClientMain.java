@@ -15,7 +15,7 @@ public class ClientMain {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 //		ViperConfig viperConfig = new ViperConfig();
 //		viperConfig.setGUI_type(ViperConfig.Swing);
