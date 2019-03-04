@@ -5,11 +5,7 @@ import hydra.zola.core.ZolaServerTcpSocketImpl;
 import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.gui.ZolaServerSwingGui;
 
-public class Main {
-
-	public Main() {
-
-	}
+public class ZolaMain {
 
 	public static void main(String[] args) {
 

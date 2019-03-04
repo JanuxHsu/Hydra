@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -49,6 +50,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setPreferredSize(new Dimension(800, 400));
+		window.setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(this.getClass().getClassLoader().getResource("resources/hydra64.png")));
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
 		mainPanel.add(getServerInfoPanel(), BorderLayout.NORTH);
@@ -114,9 +117,9 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		JButton kickClient = new JButton("Kick");
 		kickClient.setPreferredSize(new Dimension(100, 25));
-		
+
 		clientActionPanel.add(kickClient, BorderLayout.EAST);
-		
+
 		clientActionPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
 		paddedPanel.add(clientActionPanel, BorderLayout.SOUTH);

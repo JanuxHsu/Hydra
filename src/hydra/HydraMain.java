@@ -9,9 +9,9 @@ import hydra.viper.core.ViperClientTcpSocketImpl;
 import hydra.viper.core.ViperConfig;
 import hydra.viper.core.ViperController;
 
-public class ClientMain {
+public class HydraMain {
 
-	public ClientMain() {
+	public HydraMain() {
 		// TODO Auto-generated constructor stub
 	}
 
