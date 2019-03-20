@@ -12,7 +12,6 @@ import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaServerTcpSocketImpl extends ZolaServer {
 
-	public static final int LISTEN_PORT = 5987;
 	ExecutorService threadPool = this.getRepository().getThreadPool();
 
 	public ZolaServerTcpSocketImpl(String serverName, ZolaServerGui gui) {
@@ -23,9 +22,9 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 
 		ServerSocket serverSocket = null;
 
-		serverSocket = new ServerSocket(LISTEN_PORT);
+		serverSocket = new ServerSocket(listenPort);
 
-		this.mainForm.writeLog("Server listening requests on port:" + LISTEN_PORT + "...");
+		this.mainForm.writeLog("Server listening requests on port:" + listenPort + "...");
 
 		while (ZolaServerRepository.isRunSocketServer) {
 			Socket socket = serverSocket.accept();

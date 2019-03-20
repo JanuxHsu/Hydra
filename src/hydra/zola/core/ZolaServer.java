@@ -12,6 +12,8 @@ import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.model.HydraConnectionClient;
 
 public abstract class ZolaServer {
+
+	int listenPort = 5978;
 	public String serverName;
 	ZolaServerGui mainForm;
 	ZolaServerRepository hydraRepository = new ZolaServerRepository();
@@ -20,6 +22,7 @@ public abstract class ZolaServer {
 		this.serverName = serverName;
 		this.mainForm = gui;
 		this.mainForm.setTitle(serverName);
+
 		this.mainForm.show();
 
 	}
@@ -67,6 +70,11 @@ public abstract class ZolaServer {
 			rowList.add(new Object[] { count, clientId, client.getFormattedAcceptTime(), client.getMessage() });
 		}
 		this.mainForm.refreshTable(rowList);
+	}
+
+	public void setPort(String serverPort) {
+		this.listenPort = Integer.parseInt(serverPort);
+
 	}
 
 }
