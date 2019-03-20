@@ -25,12 +25,11 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 
 		serverSocket = new ServerSocket(LISTEN_PORT);
 
-		this.mainForm.writeLog("Server listening requests...");
+		this.mainForm.writeLog("Server listening requests on port:" + LISTEN_PORT + "...");
 
 		while (ZolaServerRepository.isRunSocketServer) {
 			Socket socket = serverSocket.accept();
-			
-		
+
 			// String client_id = this.addClient(socket);
 
 			HydraConnectionClient client = this.addClient(socket);
@@ -69,7 +68,7 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 		for (String client_id : clients.keySet()) {
 			HydraConnectionClient client = clients.get(client_id);
 			try {
-				client.getClientThread().sendMessage(requestClient +" Send " + message);
+				client.getClientThread().sendMessage(requestClient + " Send " + message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -78,7 +77,5 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 		}
 
 	}
-
-	
 
 }

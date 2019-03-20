@@ -19,8 +19,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
-import javax.swing.text.AttributeSet.FontAttribute;
 
 import hydra.hydra.core.HydraController;
 import oshi.SystemInfo;
@@ -126,12 +124,12 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		memoryBar.setStringPainted(true);
 		cpuBar.setStringPainted(true);
-		
+
 		Font font = new Font(Font.MONOSPACED, Font.BOLD, 12);
-		
+
 		memoryBar.setFont(font);
 		cpuBar.setFont(font);
-		
+
 		memoryBar.setBorder(BorderFactory.createLineBorder(Color.black));
 		cpuBar.setBorder(BorderFactory.createLineBorder(Color.black));
 		// memoryBar.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -216,7 +214,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 	public void updateConnectionStatus(String status) {
 
 		// status = status != null ? status.trim() : "-";
-		displaySystemLog(status);
+		//displaySystemLog(status);
 
 	}
 

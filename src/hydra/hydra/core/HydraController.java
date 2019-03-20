@@ -9,15 +9,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
 import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.GlobalMemory;
 
 public class HydraController {
 
+	final String ZolaServerHost;
+	final int ZolaServerPort;
+	SystemInfo systemInfo = new SystemInfo();
 	final HydraRepository hydraRepository;
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
@@ -30,6 +38,9 @@ public class HydraController {
 
 		this.hydraRepository = new HydraRepository();
 		this.clientGui = new HydraClientSwingGui(this);
+
+		this.ZolaServerHost = hydraConfig.zolaHost;
+		this.ZolaServerPort = Integer.parseInt(hydraConfig.zolaPort);
 
 		this.setGuiTitle(hydraConfig.app_name);
 		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 5, TimeUnit.SECONDS);
@@ -90,7 +101,7 @@ public class HydraController {
 
 	public void connectToTarget() {
 
-		this.systemLog("Trying to connect to Zola Server...");
+		this.systemLog("Trying to connect to Zola Server using :" + this.ZolaServerHost + ":" + this.ZolaServerPort);
 		boolean isConnected = false;
 		try {
 			isConnected = this.clientCore.open();
@@ -144,10 +155,27 @@ public class HydraController {
 	}
 
 	public void sendHeartBeat() {
+		JsonObject res = new JsonObject();
+
+		GlobalMemory memory = systemInfo.getHardware().getMemory();
+		CentralProcessor processor = systemInfo.getHardware().getProcessor();
+
+		Double cpuUsage = processor.getSystemCpuLoad();
+		String cpuUsageVal = String.format("%.2f", cpuUsage * 100);
+		res.addProperty("cpu", cpuUsageVal);
+
+		Long availableMem = memory.getAvailable();
+		Long totalMem = memory.getTotal();
+
+		String usage = String.format("%.2f", 100 - (availableMem.doubleValue() / totalMem.doubleValue() * 100));
+		res.addProperty("memory", usage);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		String timeStamp = sdf.format(Calendar.getInstance().getTime());
-		HydraMessage hydraMessage = new HydraMessage(timeStamp, null, MessageType.HEARTBEAT);
+
+		res.addProperty("timestamp", timeStamp);
+
+		HydraMessage hydraMessage = new HydraMessage(new Gson().toJson(res), null, MessageType.HEARTBEAT);
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo(timeStamp);
 
@@ -163,16 +191,6 @@ public class HydraController {
 
 	public void updateHydraStatus() {
 
-		SystemInfo systemInfo = new SystemInfo();
-//		GlobalMemory memory = systemInfo.getHardware().getMemory();
-//		Long availableMem = memory.getAvailable();
-//		Long totalMem = memory.getTotal();
-
-//		String swap = FormatUtil.formatBytes(vm.getSwapUsed());
-//		String swapTotal = FormatUtil.formatBytes(vm.getSwapTotal());
-
-		// String usage = String.format("%.2f", 100 - (availableMem.doubleValue() /
-		// totalMem.doubleValue() * 100));
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());

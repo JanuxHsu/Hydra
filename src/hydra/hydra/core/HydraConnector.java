@@ -20,8 +20,8 @@ public class HydraConnector implements Runnable {
 
 	@Override
 	public void run() {
-		String host = "localhost";
-		int port = 5987;
+		String host = hydraController.ZolaServerHost;
+		int port = hydraController.ZolaServerPort;
 
 		try {
 			this.socket = new Socket(host, port);
@@ -34,7 +34,7 @@ public class HydraConnector implements Runnable {
 			while (running && (line = this.serverInputStream.readUTF()) != null) {
 
 				System.out.println(line);
-				//this.hydraController.systemLog(line);
+				// this.hydraController.systemLog(line);
 
 			}
 			System.out.println("loop end");

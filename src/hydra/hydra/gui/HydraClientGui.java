@@ -1,7 +1,6 @@
 package hydra.hydra.gui;
 
 import hydra.hydra.core.HydraController;
-import hydra.model.SystemInfoPackage;
 import oshi.SystemInfo;
 
 public abstract class HydraClientGui {
