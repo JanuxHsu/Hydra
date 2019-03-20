@@ -2,6 +2,8 @@ package hydra.hydra.core;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
@@ -156,6 +158,13 @@ public class HydraController {
 
 	public void sendHeartBeat() {
 		JsonObject res = new JsonObject();
+		
+		try {
+			res.addProperty("host", InetAddress.getLocalHost().getHostName());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
 		CentralProcessor processor = systemInfo.getHardware().getProcessor();

@@ -36,11 +36,10 @@ public class ZolaMain {
 			System.exit(1);
 		}
 
-		
 		String serverPort = cmd.getOptionValue("p");
 
 		ZolaServerGui gui = new ZolaServerSwingGui();
-		ZolaServer hydraServer = new ZolaServerTcpSocketImpl("Hydra Server", gui);
+		ZolaServer hydraServer = new ZolaServerTcpSocketImpl("Hydra Server (JanuxHsu) Dev 1.0", gui);
 		hydraServer.setPort(serverPort);
 		hydraServer.open();
 

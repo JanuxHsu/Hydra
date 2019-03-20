@@ -49,7 +49,7 @@ public class HydraMain {
 
 		HydraConfig hydraConfig = new HydraConfig();
 		hydraConfig.setGUI_type(HydraConfig.Swing);
-		hydraConfig.app_name = "Hydra";
+		hydraConfig.app_name = "Hydra (JanuxHsu Dev 1.0)";
 		hydraConfig.zolaHost = serverHost;
 		hydraConfig.zolaPort = serverPort;
 
