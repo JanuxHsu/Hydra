@@ -14,6 +14,7 @@ import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
+import oshi.SystemInfo;
 
 public class HydraController {
 
@@ -26,10 +27,12 @@ public class HydraController {
 	// public volatile boolean isConnectedToServer = false;
 
 	public HydraController(HydraConfig hydraConfig) {
+
 		this.hydraRepository = new HydraRepository();
 		this.clientGui = new HydraClientSwingGui(this);
+
 		this.setGuiTitle(hydraConfig.app_name);
-		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 10, TimeUnit.SECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 5, TimeUnit.SECONDS);
 
 	}
 
@@ -45,6 +48,7 @@ public class HydraController {
 	}
 
 	public void setGuiTitle(String title) {
+
 		this.clientGui.setTitle(title);
 
 	}
@@ -140,6 +144,7 @@ public class HydraController {
 	}
 
 	public void sendHeartBeat() {
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		String timeStamp = sdf.format(Calendar.getInstance().getTime());
 		HydraMessage hydraMessage = new HydraMessage(timeStamp, null, MessageType.HEARTBEAT);
@@ -147,12 +152,29 @@ public class HydraController {
 		this.hydraRepository.getHydraStatus().setConnectionInfo(timeStamp);
 
 		this.sendCommand(hydraMessage.toString());
-		updateHydraStatus();
+		try {
+
+			updateHydraStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public void updateHydraStatus() {
-		this.clientGui.updateMemoryUsages(Runtime.getRuntime().freeMemory(), Runtime.getRuntime().totalMemory());
+
+		SystemInfo systemInfo = new SystemInfo();
+//		GlobalMemory memory = systemInfo.getHardware().getMemory();
+//		Long availableMem = memory.getAvailable();
+//		Long totalMem = memory.getTotal();
+
+//		String swap = FormatUtil.formatBytes(vm.getSwapUsed());
+//		String swapTotal = FormatUtil.formatBytes(vm.getSwapTotal());
+
+		// String usage = String.format("%.2f", 100 - (availableMem.doubleValue() /
+		// totalMem.doubleValue() * 100));
+		this.clientGui.updateSystemInfo(systemInfo);
+		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
 		this.clientGui.updateIsServerConnected(this.hydraRepository.getHydraStatus().isConnectedToServer());
 		this.clientGui.updateIsWorkerActive(this.hydraRepository.getHydraStatus().isWorkerActive());

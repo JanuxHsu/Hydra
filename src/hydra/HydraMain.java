@@ -4,10 +4,6 @@ import hydra.hydra.core.HydraClient;
 import hydra.hydra.core.HydraClientTcpSocketImpl;
 import hydra.hydra.core.HydraConfig;
 import hydra.hydra.core.HydraController;
-import hydra.viper.core.ViperClient;
-import hydra.viper.core.ViperClientTcpSocketImpl;
-import hydra.viper.core.ViperConfig;
-import hydra.viper.core.ViperController;
 
 public class HydraMain {
 

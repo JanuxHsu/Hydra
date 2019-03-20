@@ -8,7 +8,7 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 
 	public HydraClientTcpSocketImpl(HydraController hydraController) {
 		super(hydraController);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
@@ -46,6 +46,5 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 		}
 
 	}
-
 
 }

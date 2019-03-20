@@ -1,6 +1,8 @@
 package hydra.hydra.gui;
 
 import hydra.hydra.core.HydraController;
+import hydra.model.SystemInfoPackage;
+import oshi.SystemInfo;
 
 public abstract class HydraClientGui {
 
@@ -32,6 +34,8 @@ public abstract class HydraClientGui {
 	public abstract void updateIsServerConnected(boolean isConnected);
 
 	public abstract void updateMemoryUsages(Long freeMem, Long totalMem);
+
+	public abstract void updateSystemInfo(SystemInfo systemInfo);
 
 	// public abstract void updateZolaStatus(String state, String status);
 }
