@@ -98,8 +98,6 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		}
 
 		JTable resultTable = new JTable(tableModel);
-		
-
 
 		resultTable.setAutoCreateRowSorter(true);
 
@@ -110,7 +108,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
 		this.clientListTable = resultTable;
-		this.clientListTable.setPreferredScrollableViewportSize(new Dimension(0, 120));
+		this.clientListTable.setPreferredScrollableViewportSize(new Dimension(0, 200));
 
 		JScrollPane scrollPane = new JScrollPane(resultTable);
 
@@ -130,8 +128,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		paddedPanel.add(clientActionPanel, BorderLayout.SOUTH);
 
 		serverInfoPanel.add(testPanel, BorderLayout.NORTH);
-		
-		
+
 		serverInfoPanel.add(paddedPanel, BorderLayout.CENTER);
 
 		return serverInfoPanel;

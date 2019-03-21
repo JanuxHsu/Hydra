@@ -8,7 +8,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import hydra.hydra.core.HydraClient;
 import hydra.hydra.core.HydraClientTcpSocketImpl;
 import hydra.hydra.core.HydraConfig;
 import hydra.hydra.core.HydraController;
@@ -54,7 +53,8 @@ public class HydraMain {
 		hydraConfig.zolaPort = serverPort;
 
 		HydraController hydraController = new HydraController(hydraConfig);
-		HydraClient hydraClient = new HydraClientTcpSocketImpl(hydraController);
+		// HydraClient hydraClient = new HydraClientTcpSocketImpl(hydraController);
+		new HydraClientTcpSocketImpl(hydraController);
 
 	}
 
