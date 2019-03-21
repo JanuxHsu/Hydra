@@ -29,6 +29,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	protected JFrame mainWindow;
 
+	Font defaultFont = new Font(Font.MONOSPACED, Font.BOLD, 12);
+
 	JLabel serverIndicator;
 	JLabel serverStatusInfo;
 
@@ -51,8 +53,12 @@ public class HydraClientSwingGui extends HydraClientGui {
 			e.printStackTrace();
 		}
 
+		window.setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png")));
+
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(600, 400));
+		window.setPreferredSize(new Dimension(600, 200));
+		window.setMinimumSize(new Dimension(600, 200));
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -81,18 +87,27 @@ public class HydraClientSwingGui extends HydraClientGui {
 		hostLabel.setOpaque(true);
 		hostLabel.setBackground(Color.RED);
 		hostLabel.setForeground(Color.WHITE);
+		hostLabel.setFont(defaultFont);
+
+		hostLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
 		JPanel dashboardPanel = new JPanel(new GridLayout(1, 3));
 
 		dashboardPanel.setOpaque(true);
 		dashboardPanel.setBackground(new Color(44, 62, 80));
 
-		JPanel leftDashPanel = new JPanel(new GridLayout(2, 1));
+		JPanel leftDashPanel = new JPanel(new GridLayout(2, 1, 2, 2));
+
+		leftDashPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
 		JLabel connectionIndicator = new JLabel("Initializing...");
 		connectionIndicator.setOpaque(true);
 		connectionIndicator.setHorizontalAlignment(JLabel.CENTER);
 		connectionIndicator.setBackground(Color.GRAY);
 		connectionIndicator.setForeground(Color.white);
+		// connectionIndicator.setFont(defaultFont);
+		connectionIndicator.setHorizontalAlignment(JLabel.LEFT);
+		connectionIndicator.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
 		this.serverIndicator = connectionIndicator;
 		leftDashPanel.add(connectionIndicator);
@@ -102,15 +117,22 @@ public class HydraClientSwingGui extends HydraClientGui {
 		workerIndicator.setHorizontalAlignment(JLabel.CENTER);
 		workerIndicator.setBackground(Color.GRAY);
 		workerIndicator.setForeground(Color.white);
+		// workerIndicator.setFont(defaultFont);
+		workerIndicator.setHorizontalAlignment(JLabel.LEFT);
+		workerIndicator.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+
 		this.workerIndicator = workerIndicator;
 		leftDashPanel.add(workerIndicator);
 
-		JLabel hydraIcon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
-				.getImage(this.getClass().getClassLoader().getResource("resources/hydra64.png"))));
-
-		hydraIcon.setHorizontalAlignment(JLabel.CENTER);
-
 		dashboardPanel.add(leftDashPanel);
+
+		JLabel hydraIcon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
+				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png"))));
+
+		hydraIcon.setPreferredSize(new Dimension(60, 60));
+		hydraIcon.setHorizontalAlignment(JLabel.CENTER);
+		// hydraIcon.setPreferredSize(new Dimension(60, 60));
+
 		dashboardPanel.add(hydraIcon);
 
 		JPanel rightDashPanel = new JPanel(new BorderLayout());
@@ -123,12 +145,11 @@ public class HydraClientSwingGui extends HydraClientGui {
 		barContainer.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
 		memoryBar.setStringPainted(true);
+
 		cpuBar.setStringPainted(true);
 
-		Font font = new Font(Font.MONOSPACED, Font.BOLD, 12);
-
-		memoryBar.setFont(font);
-		cpuBar.setFont(font);
+		memoryBar.setFont(defaultFont);
+		cpuBar.setFont(defaultFont);
 
 		memoryBar.setBorder(BorderFactory.createLineBorder(Color.black));
 		cpuBar.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -143,18 +164,11 @@ public class HydraClientSwingGui extends HydraClientGui {
 		rightDashPanel.add(barContainer, BorderLayout.CENTER);
 		dashboardPanel.add(rightDashPanel);
 
-		dashboardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		// dashboardPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
-//		for (int i = 1; i <= 4; i++) {
-//			JLabel mainLabel = new JLabel("Main");
-//			mainLabel.setHorizontalAlignment(JLabel.CENTER);
-//			mainLabel.setOpaque(true);
-//			mainLabel.setBackground(Color.gray);
-//			// mainLabel.setHorizontalTextPosition(JLabel.CENTER);
-//			dashboardPanel.add(mainLabel);
-//		}
+		dashboardPanel.setBorder(BorderFactory.createEmptyBorder(5, 35, 5, 35));
 
-		// dashboardPanel.add(leftDashPanel, BorderLayout.WEST);
+		// dashboardPanel.setPreferredSize(new Dimension(1000, 70));
 		topPanel.add(hostLabel, BorderLayout.NORTH);
 		topPanel.add(dashboardPanel, BorderLayout.SOUTH);
 
@@ -214,7 +228,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 	public void updateConnectionStatus(String status) {
 
 		// status = status != null ? status.trim() : "-";
-		//displaySystemLog(status);
+		// displaySystemLog(status);
 
 	}
 
@@ -226,7 +240,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 			this.serverIndicator.setBackground(new Color(39, 174, 96));
 
 		} else {
-			this.serverIndicator.setText("Server Status : Offline");
+			this.serverIndicator.setText("Server Status : Down");
 			this.serverIndicator.setBackground(Color.RED);
 		}
 
@@ -234,7 +248,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	@Override
 	public void displaySystemLog(String line) {
-		if (this.logArea.getLineCount() > 1000) {
+		if (this.logArea.getLineCount() > 6) {
 			logArea.setText("");
 		}
 

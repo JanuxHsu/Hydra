@@ -33,10 +33,12 @@ public class HydraConnectionClient {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-	public HydraConnectionClient(String clientId, RequestThread clientThread, Date acceptedTime) {
+	public HydraConnectionClient(String clientId, RequestThread clientThread, Date acceptedTime,
+			InetAddress inetAddress) {
 		this.clientID = clientId;
 		this.clientThread = clientThread;
 		this.acceptedTime = acceptedTime;
+		this.clientAddr = inetAddress;
 
 	}
 
@@ -62,6 +64,10 @@ public class HydraConnectionClient {
 
 	public String getClientID() {
 		return clientID;
+	}
+
+	public InetAddress getClientAddress() {
+		return this.clientAddr;
 	}
 
 	public static ArrayList<String> getTableCsolumn() {

@@ -5,9 +5,7 @@ import java.io.Serializable;
 import com.google.gson.Gson;
 
 public class HydraMessage implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 717594081457579756L;
 
 	public static enum MessageType {

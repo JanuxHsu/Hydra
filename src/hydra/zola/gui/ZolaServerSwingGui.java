@@ -1,9 +1,9 @@
 package hydra.zola.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -82,7 +82,10 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		JPanel testPanel = new JPanel(new GridLayout(1, 2));
 
 		JLabel basicServerInfo = new JLabel("Host: " + hostName);
-
+		basicServerInfo.setOpaque(true);
+		basicServerInfo.setForeground(Color.white);
+		basicServerInfo.setBackground(Color.red);
+		basicServerInfo.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
 		testPanel.add(basicServerInfo);
 
 		JPanel paddedPanel = new JPanel(new BorderLayout());
@@ -95,6 +98,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		}
 
 		JTable resultTable = new JTable(tableModel);
+		
+
 
 		resultTable.setAutoCreateRowSorter(true);
 
@@ -111,7 +116,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		paddedPanel.add(scrollPane, BorderLayout.CENTER);
 
-		paddedPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
+		paddedPanel.setBorder(BorderFactory.createEmptyBorder(5, 15, 15, 15));
 
 		JPanel clientActionPanel = new JPanel(new BorderLayout());
 
@@ -125,6 +130,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		paddedPanel.add(clientActionPanel, BorderLayout.SOUTH);
 
 		serverInfoPanel.add(testPanel, BorderLayout.NORTH);
+		
+		
 		serverInfoPanel.add(paddedPanel, BorderLayout.CENTER);
 
 		return serverInfoPanel;

@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import hydra.viper.core.ViperController;
-import hydra.viper.gui.ViperClientGui.connectionBtnState;
 
 public class ViperConnectionListener implements ActionListener {
 

@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import javax.net.SocketFactory;
+
 public class HydraConnector implements Runnable {
 	volatile boolean running = true;
 	HydraController hydraController;
@@ -24,7 +26,7 @@ public class HydraConnector implements Runnable {
 		int port = hydraController.ZolaServerPort;
 
 		try {
-			this.socket = new Socket(host, port);
+			this.socket = SocketFactory.getDefault().createSocket(host, port);
 
 			this.serverInputStream = new DataInputStream(this.socket.getInputStream());
 			this.serverOutputStream = new DataOutputStream(this.socket.getOutputStream());

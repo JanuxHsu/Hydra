@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 import hydra.repository.ZolaServerRepository;
 import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.model.HydraConnectionClient;
@@ -37,7 +43,7 @@ public abstract class ZolaServer {
 		String clientId = UUID.randomUUID().toString();
 		RequestThread clientThread = new RequestThread(this, clientId, socket);
 		HydraConnectionClient hydraClient = new HydraConnectionClient(clientId, clientThread,
-				Calendar.getInstance().getTime());
+				Calendar.getInstance().getTime(), socket.getInetAddress());
 		clientId = this.hydraRepository.addClient(hydraClient);
 
 		refreshPanel();
@@ -67,7 +73,29 @@ public abstract class ZolaServer {
 		for (String clientId : clients.keySet()) {
 			count++;
 			HydraConnectionClient client = clients.get(clientId);
-			rowList.add(new Object[] { count, clientId, client.getFormattedAcceptTime(), client.getMessage() });
+			System.out.println(client.getClientAddress().getHostAddress());
+			String displayMsg;
+			try {
+				JsonParser parser = new JsonParser();
+				JsonObject messageJson = parser.parse(client.getMessage()).getAsJsonObject();
+				
+				System.out.println(messageJson.get("message").getAsString());
+
+				JsonObject messagebody = parser.parse(messageJson.get("message").getAsString()).getAsJsonObject();
+
+				
+				
+				String cpu = messagebody.get("cpu").getAsString();
+				String memory = messagebody.get("memory").getAsString();
+				displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);
+			} catch (Exception e) {
+				displayMsg = client.getMessage();
+			}
+
+//			String displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);
+
+			rowList.add(new Object[] { count, client.getClientAddress().getHostName(),
+					client.getClientAddress().getHostAddress(), client.getFormattedAcceptTime(), displayMsg });
 		}
 		this.mainForm.refreshTable(rowList);
 	}

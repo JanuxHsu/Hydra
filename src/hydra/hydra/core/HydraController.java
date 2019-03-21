@@ -55,6 +55,8 @@ public class HydraController {
 
 	public void sendCommand(String text) {
 		// System.out.println("Controller :" + text);
+		
+		System.out.println(text);
 		this.clientCore.sendMessage(text);
 		this.resetCommandInputState();
 
@@ -199,6 +201,28 @@ public class HydraController {
 	}
 
 	public void updateHydraStatus() {
+		
+//		NetworkIF[] networkIFs = systemInfo.getHardware().getNetworkIFs();
+//		
+//		System.out.println("Network interfaces:");
+//		for (NetworkIF net : networkIFs) {
+//			System.out.format(" Name: %s (%s)%n", net.getName(), net.getDisplayName());
+//			System.out.format("   MAC Address: %s %n", net.getMacaddr());
+//			System.out.format("   MTU: %s, Speed: %s %n", net.getMTU(), FormatUtil.formatValue(net.getSpeed(), "bps"));
+//			System.out.format("   IPv4: %s %n", Arrays.toString(net.getIPv4addr()));
+//			// System.out.format(" IPv6: %s %n", Arrays.toString(net.getIPv6addr()));
+//			boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
+//					|| net.getPacketsSent() > 0;
+//			System.out.format("   Traffic: received %s/%s%s; transmitted %s/%s%s %n",
+//					hasData ? net.getPacketsRecv() + " packets" : "?",
+//					hasData ? FormatUtil.formatBytes(net.getBytesRecv()) : "?",
+//					hasData ? " (" + net.getInErrors() + " err)" : "",
+//					hasData ? net.getPacketsSent() + " packets" : "?",
+//					hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?",
+//					hasData ? " (" + net.getOutErrors() + " err)" : "");
+//		}
+		
+		
 
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);

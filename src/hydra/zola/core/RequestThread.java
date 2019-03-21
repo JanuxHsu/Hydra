@@ -3,7 +3,13 @@ package hydra.zola.core;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class RequestThread implements Runnable {
 	private final Socket clientSocket;
@@ -34,7 +40,15 @@ public class RequestThread implements Runnable {
 		try {
 			input = new DataInputStream(this.clientSocket.getInputStream());
 			output = new DataOutputStream(this.clientSocket.getOutputStream());
-			output.writeUTF(String.format("Hi, %s!%n", clientSocket.getRemoteSocketAddress()));
+
+			JsonObject responseJson = new JsonObject();
+			responseJson.addProperty("host", InetAddress.getLocalHost().getHostName());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			String timestamp = sdf.format(Calendar.getInstance().getTime());
+			responseJson.addProperty("host_recv_time", timestamp);
+			responseJson.addProperty("client_cnt", this.hydraServer.getRepository().getClients().size());
+
+			output.writeUTF(new Gson().toJson(responseJson));
 			output.flush();
 			String message;
 			while ((message = input.readUTF()) != null) {
