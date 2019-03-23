@@ -7,6 +7,10 @@ public class ViperConfig {
 
 	public String app_name = "Viper";
 
+	public String zolaHost = "localhost";
+
+	public String zolaPort = "5978";
+
 	public String getGuiType() {
 		return this.GUI_type;
 	}

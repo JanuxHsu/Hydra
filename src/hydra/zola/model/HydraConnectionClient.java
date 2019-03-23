@@ -46,6 +46,10 @@ public class HydraConnectionClient {
 		this.clientType = clientType;
 	}
 
+	public ClientType getClientType() {
+		return this.clientType;
+	}
+
 	public String getFormattedAcceptTime() {
 		return sdf.format(this.acceptedTime);
 	}

@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import hydra.repository.ZolaServerRepository;
 import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.model.HydraConnectionClient;
+import hydra.zola.model.HydraConnectionClient.ClientType;
 
 public abstract class ZolaServer {
 
@@ -52,8 +55,31 @@ public abstract class ZolaServer {
 	}
 
 	public void updateClientMessage(String clientId, String message) {
-		this.getRepository().getClients().get(clientId).updateLastMessage(message);
-		refreshPanel();
+
+		if (message.toLowerCase().equals("ls")) {
+
+			ConcurrentHashMap<String, HydraConnectionClient> clients = this.getRepository().getClients();
+			JsonArray statusJson = new JsonArray();
+
+			for (String client_id : clients.keySet()) {
+				JsonObject statusRes = new JsonObject();
+
+				HydraConnectionClient connected_client = clients.get(client_id);
+				if (connected_client.getClientType().equals(ClientType.UNKNOWN)) {
+					statusRes.addProperty("server", connected_client.getClientAddress().getHostName());
+					statusRes.addProperty("status", connected_client.getMessage());
+					statusJson.add(statusRes);
+				}
+
+			}
+
+			this.broadcast(clientId, new Gson().toJson(statusJson));
+
+		} else {
+			this.getRepository().getClients().get(clientId).updateLastMessage(message);
+			refreshPanel();
+		}
+
 	}
 
 	public void removeClient(String clientId) {
@@ -75,13 +101,11 @@ public abstract class ZolaServer {
 			try {
 				JsonParser parser = new JsonParser();
 				JsonObject messageJson = parser.parse(client.getMessage()).getAsJsonObject();
-				
+
 				System.out.println(messageJson.get("message").getAsString());
 
 				JsonObject messagebody = parser.parse(messageJson.get("message").getAsString()).getAsJsonObject();
 
-				
-				
 				String cpu = messagebody.get("cpu").getAsString();
 				String memory = messagebody.get("memory").getAsString();
 				displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);

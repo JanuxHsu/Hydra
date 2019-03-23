@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import javax.net.SocketFactory;
+
 public class ViperConnector implements Runnable {
 	volatile boolean running = true;
 	ViperController viperController;
@@ -20,14 +22,12 @@ public class ViperConnector implements Runnable {
 
 	@Override
 	public void run() {
-		String host = "localhost";
-		int port = 5987;
-		Socket socket = null;
+		String host = this.viperController.ZolaServerHost;
+		int port = this.viperController.ZolaServerPort;
 
-		DataInputStream input = null;
-		DataOutputStream output = null;
 		try {
-			this.socket = new Socket(host, port);
+			// this.socket =Socket.setSocketImplFactory();new Socket(host, port);
+			this.socket = SocketFactory.getDefault().createSocket(host, port);
 
 			this.serverInputStream = new DataInputStream(this.socket.getInputStream());
 			this.serverOutputStream = new DataOutputStream(this.socket.getOutputStream());

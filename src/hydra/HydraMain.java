@@ -15,7 +15,7 @@ import hydra.hydra.core.HydraController;
 public class HydraMain {
 
 	public HydraMain() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public static void main(String[] args) {

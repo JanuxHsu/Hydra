@@ -42,11 +42,15 @@ public class RequestThread implements Runnable {
 			output = new DataOutputStream(this.clientSocket.getOutputStream());
 
 			JsonObject responseJson = new JsonObject();
+
 			responseJson.addProperty("host", InetAddress.getLocalHost().getHostName());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String timestamp = sdf.format(Calendar.getInstance().getTime());
 			responseJson.addProperty("host_recv_time", timestamp);
+			responseJson.addProperty("messageType", "register");
+
 			responseJson.addProperty("client_cnt", this.hydraServer.getRepository().getClients().size());
+			responseJson.addProperty("client_id", this.clientId);
 
 			output.writeUTF(new Gson().toJson(responseJson));
 			output.flush();
@@ -54,9 +58,9 @@ public class RequestThread implements Runnable {
 			while ((message = input.readUTF()) != null) {
 				this.hydraServer.updateClientMessage(this.clientId, message);
 
-				if (message.equals("go")) {
-					this.hydraServer.broadcast(this.clientId, message);
-				}
+//				if (message.equals("go")) {
+//					this.hydraServer.broadcast(this.clientId, message);
+//				}
 				System.out.println(message);
 
 			}

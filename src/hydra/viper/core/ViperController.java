@@ -3,6 +3,12 @@ package hydra.viper.core;
 import java.io.File;
 import java.io.FileFilter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import hydra.viper.gui.ViperClientGui;
 import hydra.viper.gui.ViperClientGui.connectionBtnState;
 import hydra.viper.gui.ViperClientSwingGui;
@@ -11,9 +17,14 @@ public class ViperController {
 
 	protected ViperClient clientCore;
 	protected ViperClientGui clientGui;
+	final public String ZolaServerHost;
+	final public Integer ZolaServerPort;
 
 	public ViperController(ViperConfig viperConfig) {
 		this.clientGui = new ViperClientSwingGui(this);
+		this.ZolaServerHost = viperConfig.zolaHost;
+		this.ZolaServerPort = Integer.parseInt(viperConfig.zolaPort);
+
 		this.setGuiTitle(viperConfig.app_name);
 
 	}
@@ -98,6 +109,45 @@ public class ViperController {
 	}
 
 	public void systemLog(String line) {
+		Gson gson = new Gson();
+		try {
+			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
+
+			String jsonMessage = jsonObject.get("body").getAsString();
+
+			JsonArray array = gson.fromJson(jsonMessage, JsonArray.class);
+
+			JsonArray displayJson = new JsonArray();
+			for (JsonElement jsonElement : array) {
+
+				JsonObject res = new JsonObject();
+
+				try {
+					JsonObject gg = (JsonObject) jsonElement;
+					res.addProperty("server", gg.get("server").getAsString());
+
+					JsonObject heartbeatMessage = gson.fromJson(gg.get("status").getAsString(), JsonObject.class);
+
+					JsonObject statusJson = gson.fromJson(heartbeatMessage.get("message").getAsString(),
+							JsonObject.class);
+
+					res.add("status", statusJson);
+
+					displayJson.add(res);
+				} catch (Exception e) {
+
+				}
+
+			}
+
+			Gson hGson = new GsonBuilder().setPrettyPrinting().create();
+
+			this.clientGui.displayMessage(hGson.toJson(displayJson));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		this.clientGui.displaySystemLog(line);
 
 	}
