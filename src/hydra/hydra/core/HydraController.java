@@ -55,7 +55,7 @@ public class HydraController {
 
 	public void sendCommand(String text) {
 		// System.out.println("Controller :" + text);
-		
+
 		System.out.println(text);
 		this.clientCore.sendMessage(text);
 		this.resetCommandInputState();
@@ -136,6 +136,7 @@ public class HydraController {
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo("Connection to Zola Server closed!");
 		this.updateHydraStatus();
+		
 	}
 
 	public void systemLog(String line) {
@@ -146,6 +147,7 @@ public class HydraController {
 
 	public void connectionClose() {
 		this.hydraRepository.getHydraStatus().setConnectedToServer(false);
+		this.updateRecv(null);
 		this.updateHydraStatus();
 
 	}
@@ -160,7 +162,7 @@ public class HydraController {
 
 	public void sendHeartBeat() {
 		JsonObject res = new JsonObject();
-		
+
 		try {
 			res.addProperty("host", InetAddress.getLocalHost().getHostName());
 		} catch (UnknownHostException e1) {
@@ -201,7 +203,7 @@ public class HydraController {
 	}
 
 	public void updateHydraStatus() {
-		
+
 //		NetworkIF[] networkIFs = systemInfo.getHardware().getNetworkIFs();
 //		
 //		System.out.println("Network interfaces:");
@@ -221,14 +223,17 @@ public class HydraController {
 //					hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?",
 //					hasData ? " (" + net.getOutErrors() + " err)" : "");
 //		}
-		
-		
 
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
 		this.clientGui.updateIsServerConnected(this.hydraRepository.getHydraStatus().isConnectedToServer());
 		this.clientGui.updateIsWorkerActive(this.hydraRepository.getHydraStatus().isWorkerActive());
+	}
+
+	public void updateRecv(String line) {
+		this.hydraRepository.getHydraStatus().setServerLastResponse(line);
+
 	}
 
 }

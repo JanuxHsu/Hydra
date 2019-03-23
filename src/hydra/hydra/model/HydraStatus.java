@@ -3,21 +3,23 @@ package hydra.hydra.model;
 public class HydraStatus {
 
 	boolean isConnectedToServer = false;
+	String serverResponse;
 	String connectionInfo = null;
 	boolean isWorkerActive = false;
 
-	Long maxMemory;
-
-	Long freeMemory;
-
 	public HydraStatus() {
-		//this.maxMemory = Runtime.getRuntime().totalMemory();
+		// this.maxMemory = Runtime.getRuntime().totalMemory();
+	}
+
+	public void setServerLastResponse(String message) {
+		this.serverResponse = message;
 	}
 
 	public boolean isConnectedToServer() {
 
+		serverResponse = serverResponse == null ? "" : serverResponse;
 		// System.out.println("b");
-		return isConnectedToServer;
+		return isConnectedToServer && !serverResponse.isEmpty();
 	}
 
 	public void setConnectedToServer(boolean isConnectedToServer) {
@@ -39,22 +41,6 @@ public class HydraStatus {
 
 	public void setWorkerActive(boolean isWorkerActive) {
 		this.isWorkerActive = isWorkerActive;
-	}
-
-	public Long getMaxMemory() {
-		return maxMemory;
-	}
-
-	public void setMaxMemory(Long maxMemory) {
-		this.maxMemory = maxMemory;
-	}
-
-	public Long getFreeMemory() {
-		return freeMemory;
-	}
-
-	public void setFreeMemory(Long freeMemory) {
-		this.freeMemory = freeMemory;
 	}
 
 }
