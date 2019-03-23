@@ -20,6 +20,8 @@ public class ViperController {
 	final public String ZolaServerHost;
 	final public Integer ZolaServerPort;
 
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
 	public ViperController(ViperConfig viperConfig) {
 		this.clientGui = new ViperClientSwingGui(this);
 		this.ZolaServerHost = viperConfig.zolaHost;
@@ -109,7 +111,7 @@ public class ViperController {
 	}
 
 	public void systemLog(String line) {
-		Gson gson = new Gson();
+
 		try {
 			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
 
@@ -124,25 +126,22 @@ public class ViperController {
 
 				try {
 					JsonObject gg = (JsonObject) jsonElement;
+
 					res.addProperty("server", gg.get("server").getAsString());
 
-					JsonObject heartbeatMessage = gson.fromJson(gg.get("status").getAsString(), JsonObject.class);
+					// String status = gg.get("status").getAsString();
+					JsonObject status = gson.fromJson(gg.get("status").getAsString(), JsonObject.class);
 
-					JsonObject statusJson = gson.fromJson(heartbeatMessage.get("message").getAsString(),
-							JsonObject.class);
-
-					res.add("status", statusJson);
-
-					displayJson.add(res);
+					System.out.println(gson.toJson(jsonElement));
+					// res.add("status", status);
+					displayJson.add(status.get("message").getAsJsonObject());
 				} catch (Exception e) {
-
+					// e.printStackTrace();
 				}
 
 			}
 
-			Gson hGson = new GsonBuilder().setPrettyPrinting().create();
-
-			this.clientGui.displayMessage(hGson.toJson(displayJson));
+			this.clientGui.displayMessage(gson.toJson(displayJson));
 
 		} catch (Exception e) {
 			e.printStackTrace();

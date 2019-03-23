@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -96,20 +97,19 @@ public abstract class ZolaServer {
 		for (String clientId : clients.keySet()) {
 			count++;
 			HydraConnectionClient client = clients.get(clientId);
-			System.out.println(client.getClientAddress().getHostAddress());
+
 			String displayMsg;
 			try {
 				JsonParser parser = new JsonParser();
 				JsonObject messageJson = parser.parse(client.getMessage()).getAsJsonObject();
 
-				System.out.println(messageJson.get("message").getAsString());
+				messageJson = messageJson.get("message").getAsJsonObject();
 
-				JsonObject messagebody = parser.parse(messageJson.get("message").getAsString()).getAsJsonObject();
-
-				String cpu = messagebody.get("cpu").getAsString();
-				String memory = messagebody.get("memory").getAsString();
+				String cpu = messageJson.get("cpu").getAsString();
+				String memory = messageJson.get("memory").getAsString();
 				displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);
 			} catch (Exception e) {
+				e.printStackTrace();
 				displayMsg = client.getMessage();
 			}
 

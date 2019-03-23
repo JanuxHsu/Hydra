@@ -1,13 +1,23 @@
 package hydra.hydra.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -20,6 +30,8 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.google.gson.JsonObject;
+
 import hydra.hydra.core.HydraController;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -27,9 +39,18 @@ import oshi.hardware.GlobalMemory;
 
 public class HydraClientSwingGui extends HydraClientGui {
 
+	public enum IconMessageMode {
+		ALWAYS, PERIODIC
+	}
+
 	protected JFrame mainWindow;
 
-	Font defaultFont = new Font(Font.MONOSPACED, Font.BOLD, 12);
+	TrayIcon trayIcon;
+
+	Font defaultFont = new Font(Font.MONOSPACED, Font.BOLD, 10);
+	Font labelFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+
+	JLabel hostLabel;
 
 	JLabel serverIndicator;
 	JLabel serverStatusInfo;
@@ -40,8 +61,11 @@ public class HydraClientSwingGui extends HydraClientGui {
 	JProgressBar cpuBar;
 	JProgressBar memoryBar;
 
+	private Long iconShowMessageTimestamp = Calendar.getInstance().getTimeInMillis();
+
 	public HydraClientSwingGui(HydraController hydraController) {
 		super(hydraController);
+
 		JFrame window = new JFrame();
 
 		try {
@@ -56,9 +80,9 @@ public class HydraClientSwingGui extends HydraClientGui {
 		window.setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png")));
 
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(600, 200));
-		window.setMinimumSize(new Dimension(600, 200));
+		// window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setPreferredSize(new Dimension(460, 200));
+		window.setMinimumSize(new Dimension(460, 200));
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -71,19 +95,119 @@ public class HydraClientSwingGui extends HydraClientGui {
 		window.setLocationRelativeTo(null);
 		this.mainWindow = window;
 
+		this.trayIcon = this.addSystemTray();
+
+		TrayIcon icon = this.trayIcon;
+
+		this.mainWindow.addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+
+				icon.displayMessage("Hydra", "Hydra is still running!", MessageType.INFO);
+
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+	}
+
+	private TrayIcon addSystemTray() {
+
+		JFrame main = this.mainWindow;
+
+		// checking for support
+		if (!SystemTray.isSupported()) {
+			System.out.println("System tray is not supported !!! ");
+			return null;
+		}
+		// get the systemTray of the system
+		SystemTray systemTray = SystemTray.getSystemTray();
+
+		Image image = Toolkit.getDefaultToolkit()
+				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png"));
+
+		// popupmenu
+		PopupMenu trayPopupMenu = new PopupMenu();
+
+		// 1t menuitem for popupmenu
+		MenuItem status = new MenuItem("Status: Unknown");
+		status.setEnabled(false);
+		trayPopupMenu.add(status);
+		trayPopupMenu.addSeparator();
+		MenuItem action = new MenuItem("Show");
+
+		action.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				main.setVisible(true);
+			}
+		});
+		trayPopupMenu.add(action);
+
+		// 2nd menuitem of popupmenu
+		MenuItem close = new MenuItem("Close");
+		close.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		trayPopupMenu.add(close);
+
+		// setting tray icon
+		TrayIcon trayIcon = new TrayIcon(image, this.mainWindow.getTitle(), trayPopupMenu);
+		// adjust to default size as per system recommendation
+		trayIcon.setImageAutoSize(true);
+
+		try {
+			systemTray.add(trayIcon);
+		} catch (AWTException awtException) {
+			awtException.printStackTrace();
+		}
+		// trayIcon.displayMessage("Hello, World", "notification demo",
+		// MessageType.NONE);
+		return trayIcon;
 	}
 
 	private JPanel setupTopPanel() {
 		JPanel topPanel = new JPanel(new BorderLayout());
-		String hostname = "Unknown";
-		try {
-			hostname = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		JLabel hostLabel = new JLabel(hostname);
+		JLabel hostLabel = new JLabel("Connecting...");
+		this.hostLabel = hostLabel;
 		hostLabel.setOpaque(true);
 		hostLabel.setBackground(Color.RED);
 		hostLabel.setForeground(Color.WHITE);
@@ -109,6 +233,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 		connectionIndicator.setHorizontalAlignment(JLabel.LEFT);
 		connectionIndicator.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
+		connectionIndicator.setFont(labelFont);
+
 		this.serverIndicator = connectionIndicator;
 		leftDashPanel.add(connectionIndicator);
 
@@ -120,6 +246,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		// workerIndicator.setFont(defaultFont);
 		workerIndicator.setHorizontalAlignment(JLabel.LEFT);
 		workerIndicator.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		workerIndicator.setFont(labelFont);
 
 		this.workerIndicator = workerIndicator;
 		leftDashPanel.add(workerIndicator);
@@ -236,12 +363,39 @@ public class HydraClientSwingGui extends HydraClientGui {
 	public void updateIsServerConnected(boolean isConnected) {
 
 		if (isConnected) {
-			this.serverIndicator.setText("Server Status : Connected");
+			this.serverIndicator.setText("Server Status : Up");
 			this.serverIndicator.setBackground(new Color(39, 174, 96));
+			trayIcon.getPopupMenu().getItem(0).setLabel("Status: Connected");
+
+			// this.displayIconMessage("Hydra", "Connected to Server!", MessageType.INFO,
+			// IconMessageMode.ALWAYS);
 
 		} else {
 			this.serverIndicator.setText("Server Status : Down");
 			this.serverIndicator.setBackground(Color.RED);
+			trayIcon.getPopupMenu().getItem(0).setLabel("Status: Disonnected");
+
+			// this.displayIconMessage("Hydra", "Disconnected to Server!",
+			// MessageType.WARNING, IconMessageMode.PERIODIC);
+
+		}
+
+	}
+
+	@Override
+	public void displayIconMessage(String caption, String message, MessageType messageType, IconMessageMode mode) {
+		// TODO Auto-generated method stub
+
+		if (mode.equals(IconMessageMode.ALWAYS)) {
+			this.trayIcon.displayMessage(caption, message, messageType);
+		} else {
+			Long lapsed = Calendar.getInstance().getTimeInMillis() - this.iconShowMessageTimestamp;
+
+			if (lapsed > 20000 && !this.mainWindow.isVisible()) {
+				this.trayIcon.displayMessage(caption, message, messageType);
+				this.iconShowMessageTimestamp = Calendar.getInstance().getTimeInMillis();
+			}
+
 		}
 
 	}
@@ -307,4 +461,20 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	}
 
+	@Override
+	public void updateClientInfo(JsonObject clientInfoJson) {
+
+		if (clientInfoJson == null) {
+
+			this.hostLabel.setText("Connecting...");
+			this.hostLabel.setBackground(Color.RED);
+
+		} else {
+			this.hostLabel.setText(clientInfoJson.get("host").getAsString() + ", Client ID: "
+					+ clientInfoJson.get("client_id").getAsString());
+
+			this.hostLabel.setBackground(new Color(39, 174, 96));
+		}
+
+	}
 }

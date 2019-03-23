@@ -35,7 +35,7 @@ public class RequestThread implements Runnable {
 	public void run() {
 
 		this.hydraServer.mainForm
-				.writeLog(String.format("%s連線進來! ClientId: %s", clientSocket.getRemoteSocketAddress(), this.clientId));
+				.writeLog(String.format("%s 連線進來! ClientId: %s", clientSocket.getRemoteSocketAddress(), this.clientId));
 
 		try {
 			input = new DataInputStream(this.clientSocket.getInputStream());

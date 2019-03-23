@@ -13,9 +13,11 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
+import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
@@ -35,6 +37,7 @@ public class HydraController {
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
 	// public volatile boolean isConnectedToServer = false;
+	Gson gson = new Gson();
 
 	public HydraController(HydraConfig hydraConfig) {
 
@@ -118,6 +121,8 @@ public class HydraController {
 			this.hydraRepository.getHydraStatus().setConnectedToServer(true);
 
 			this.systemLog("Zola Server Connected!");
+			this.clientGui.displayIconMessage("Hydra", "Connected to Server!", java.awt.TrayIcon.MessageType.INFO,
+					IconMessageMode.ALWAYS);
 
 		} else {
 			this.hydraRepository.getHydraStatus().setConnectedToServer(false);
@@ -136,7 +141,7 @@ public class HydraController {
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo("Connection to Zola Server closed!");
 		this.updateHydraStatus();
-		
+
 	}
 
 	public void systemLog(String line) {
@@ -146,6 +151,9 @@ public class HydraController {
 	}
 
 	public void connectionClose() {
+		this.clientGui.displayIconMessage("Hydra", "Disonnected to Server!", java.awt.TrayIcon.MessageType.WARNING,
+				IconMessageMode.ALWAYS);
+
 		this.hydraRepository.getHydraStatus().setConnectedToServer(false);
 		this.updateRecv(null);
 		this.updateHydraStatus();
@@ -154,7 +162,9 @@ public class HydraController {
 
 	public boolean registerClient() {
 
-		HydraMessage hydraMessage = new HydraMessage("I'm Hydra", null, MessageType.REGISTER);
+		JsonPrimitive jsonPrimitive = new JsonPrimitive("I'm Hydra");
+
+		HydraMessage hydraMessage = new HydraMessage(jsonPrimitive, null, MessageType.REGISTER);
 
 		this.sendCommand(hydraMessage.toString());
 		return true;
@@ -188,7 +198,7 @@ public class HydraController {
 
 		res.addProperty("timestamp", timeStamp);
 
-		HydraMessage hydraMessage = new HydraMessage(new Gson().toJson(res), null, MessageType.HEARTBEAT);
+		HydraMessage hydraMessage = new HydraMessage(res, null, MessageType.HEARTBEAT);
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo(timeStamp);
 
@@ -232,6 +242,18 @@ public class HydraController {
 	}
 
 	public void updateRecv(String line) {
+
+		try {
+
+			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
+
+			this.clientGui.updateClientInfo(jsonObject);
+
+			// jsonObject.get(memberName)
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		this.hydraRepository.getHydraStatus().setServerLastResponse(line);
 
 	}

@@ -3,6 +3,7 @@ package hydra.model;
 import java.io.Serializable;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 public class HydraMessage implements Serializable {
 
@@ -12,12 +13,12 @@ public class HydraMessage implements Serializable {
 		P2P, BROADCAST, HEARTBEAT, SYSINFO, REGISTER
 	};
 
-	String message;
+	JsonElement message;
 	String destination;
 	String source;
 	MessageType messageType;
 
-	public HydraMessage(String message, String destination, MessageType messageType) {
+	public HydraMessage(JsonElement message, String destination, MessageType messageType) {
 		this.message = message;
 		this.destination = destination;
 		this.messageType = messageType;
@@ -30,6 +31,7 @@ public class HydraMessage implements Serializable {
 
 	@Override
 	public String toString() {
+
 		return new Gson().toJson(this, HydraMessage.class);
 	}
 

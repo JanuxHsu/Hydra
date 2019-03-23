@@ -1,6 +1,11 @@
 package hydra.hydra.gui;
 
+import java.awt.TrayIcon.MessageType;
+
+import com.google.gson.JsonObject;
+
 import hydra.hydra.core.HydraController;
+import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
 import oshi.SystemInfo;
 
 public abstract class HydraClientGui {
@@ -35,6 +40,11 @@ public abstract class HydraClientGui {
 	public abstract void updateMemoryUsages(Long freeMem, Long totalMem);
 
 	public abstract void updateSystemInfo(SystemInfo systemInfo);
+
+	public abstract void displayIconMessage(String caption, String message, MessageType messageType,
+			IconMessageMode mode);
+
+	public abstract void updateClientInfo(JsonObject clientInfoJson);
 
 	// public abstract void updateZolaStatus(String state, String status);
 }
