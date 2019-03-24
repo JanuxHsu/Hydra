@@ -16,14 +16,16 @@ public class RequestThread implements Runnable {
 
 	final String clientId;
 
-	ZolaServer hydraServer;
+	final ZolaController zolaController;
 	DataInputStream input = null;
 	DataOutputStream output = null;
 
-	public RequestThread(ZolaServer hydraServer, String clientId, Socket clientSocket) {
+	public RequestThread(ZolaController zolaController, String clientId, Socket clientSocket) {
 		this.clientId = clientId;
 		this.clientSocket = clientSocket;
-		this.hydraServer = hydraServer;
+
+		this.zolaController = zolaController;
+
 	}
 
 	public void sendMessage(String message) throws IOException {
@@ -34,8 +36,9 @@ public class RequestThread implements Runnable {
 	@Override
 	public void run() {
 
-		this.hydraServer.mainForm
-				.writeLog(String.format("%s 連線進來! ClientId: %s", clientSocket.getRemoteSocketAddress(), this.clientId));
+		String connectionText = String.format("%s 連線進來! ClientId: %s", clientSocket.getRemoteSocketAddress(),
+				this.clientId);
+		this.zolaController.syslog(connectionText);
 
 		try {
 			input = new DataInputStream(this.clientSocket.getInputStream());
@@ -49,14 +52,16 @@ public class RequestThread implements Runnable {
 			responseJson.addProperty("host_recv_time", timestamp);
 			responseJson.addProperty("messageType", "register");
 
-			responseJson.addProperty("client_cnt", this.hydraServer.getRepository().getClients().size());
+			responseJson.addProperty("client_cnt", this.zolaController.zolaServerRepository.getClients().size());
 			responseJson.addProperty("client_id", this.clientId);
 
 			output.writeUTF(new Gson().toJson(responseJson));
 			output.flush();
 			String message;
 			while ((message = input.readUTF()) != null) {
-				this.hydraServer.updateClientMessage(this.clientId, message);
+
+				this.zolaController.updateClientMessage(this.clientId, message);
+				// this.hydraServer.updateClientMessage(this.clientId, message);
 
 //				if (message.equals("go")) {
 //					this.hydraServer.broadcast(this.clientId, message);
@@ -69,7 +74,7 @@ public class RequestThread implements Runnable {
 			e.printStackTrace();
 		}
 
-		this.hydraServer.removeClient(this.clientId);
+		this.zolaController.removeClient(this.clientId);
 
 	}
 }

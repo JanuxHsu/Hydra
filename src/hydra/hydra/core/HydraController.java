@@ -120,10 +120,6 @@ public class HydraController {
 		if (isConnected) {
 			this.hydraRepository.getHydraStatus().setConnectedToServer(true);
 
-			this.systemLog("Zola Server Connected!");
-			this.clientGui.displayIconMessage("Hydra", "Connected to Server!", java.awt.TrayIcon.MessageType.INFO,
-					IconMessageMode.ALWAYS);
-
 		} else {
 			this.hydraRepository.getHydraStatus().setConnectedToServer(false);
 			this.systemLog("Zola Server not responding, please try again!");
@@ -248,6 +244,10 @@ public class HydraController {
 			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
 
 			this.clientGui.updateClientInfo(jsonObject);
+			
+			this.systemLog("Zola Server Connected!");
+			this.clientGui.displayIconMessage("Hydra", "Connected to Server!", java.awt.TrayIcon.MessageType.INFO,
+					IconMessageMode.ALWAYS);
 
 			// jsonObject.get(memberName)
 

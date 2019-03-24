@@ -2,18 +2,21 @@ package hydra.hydra.core;
 
 public class HydraConfig {
 
-	public static final String Swing = "swing";
+	public enum GUI_Type {
+		Swing
+	}
+
 	public String app_name;
-	private String GUI_type = "swing";
+	private GUI_Type GUI_type = GUI_Type.Swing;
 	public String zolaHost = "localhost";
 	public String zolaPort = "5978";
 
-	public void setGUI_type(String gui_type) {
+	public void setGUI_type(GUI_Type gui_type) {
 		this.GUI_type = gui_type;
 
 	}
 
-	public String getGuiType() {
+	public GUI_Type getGuiType() {
 		return this.GUI_type;
 	}
 

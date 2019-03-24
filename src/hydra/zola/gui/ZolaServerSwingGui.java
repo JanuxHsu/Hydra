@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
 import hydra.gui.utils.TableColumnAdjuster;
+import hydra.zola.core.ZolaController;
 import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaServerSwingGui implements ZolaServerGui {
@@ -36,7 +37,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	JTable clientListTable;
 
-	public ZolaServerSwingGui() {
+	public ZolaServerSwingGui(ZolaController zolaController) {
 		JFrame window = new JFrame();
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -171,7 +172,12 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	@Override
 	public void writeLog(String logText) {
+
+		if (this.loggingBox.getLineCount() > 50) {
+			this.loggingBox.setText("");
+		}
 		this.loggingBox.append(logText + "\n");
+
 		System.out.println(logText);
 
 	}

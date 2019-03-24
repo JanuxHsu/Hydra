@@ -8,10 +8,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import hydra.zola.core.ZolaConfig;
+import hydra.zola.core.ZolaConfig.GUI_Type;
+import hydra.zola.core.ZolaController;
 import hydra.zola.core.ZolaServer;
 import hydra.zola.core.ZolaServerTcpSocketImpl;
-import hydra.zola.gui.ZolaServerGui;
-import hydra.zola.gui.ZolaServerSwingGui;
 
 public class ZolaMain {
 
@@ -22,6 +23,10 @@ public class ZolaMain {
 		Option portParam = new Option("p", "port", true, "Service Port");
 		portParam.setRequired(true);
 		options.addOption(portParam);
+
+		Option webPortParam = new Option("wp", "webport", true, "Http Service Port");
+		webPortParam.setRequired(true);
+		options.addOption(webPortParam);
 
 		CommandLineParser parser = new DefaultParser();
 		HelpFormatter formatter = new HelpFormatter();
@@ -37,11 +42,23 @@ public class ZolaMain {
 		}
 
 		String serverPort = cmd.getOptionValue("p");
+		String serverHttpPort = cmd.getOptionValue("wp");
 
-		ZolaServerGui gui = new ZolaServerSwingGui();
-		ZolaServer hydraServer = new ZolaServerTcpSocketImpl("Hydra Server (JanuxHsu) Dev 1.0", gui);
-		hydraServer.setPort(serverPort);
-		hydraServer.open();
+		ZolaConfig zolaConfig = new ZolaConfig();
 
+		zolaConfig.servicePort = Integer.valueOf(serverPort);
+		zolaConfig.httpServicePort = Integer.valueOf(serverHttpPort);
+		zolaConfig.app_name = "Hydra Server (JanuxHsu) Dev 1.1";
+		zolaConfig.setGUI_type(GUI_Type.Swing);
+
+		ZolaController zolaController = new ZolaController(zolaConfig);
+
+		// ZolaServerGui gui = new ZolaServerSwingGui();
+//		ZolaServer hydraServer = new ZolaServerTcpSocketImpl("Hydra Server (JanuxHsu) Dev 1.1", gui);
+//		hydraServer.setPort(serverPort);
+//
+//		hydraServer.open();
+		ZolaServer zolaServer = new ZolaServerTcpSocketImpl(zolaController);
+		zolaServer.open();
 	}
 }
