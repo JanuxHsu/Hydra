@@ -15,7 +15,6 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 
 		ExecutorService executorService = this.zolaController.zolaServerRepository.getThreadPool();
 		executorService.submit(new ZolaConnector(this.zolaController));
-		
 		executorService.submit(new ZolaHttpService(this.zolaController));
 
 	}

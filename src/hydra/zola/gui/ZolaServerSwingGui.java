@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -33,6 +31,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+	JLabel serverInfoLabel;
+
 	JTextArea loggingBox;
 
 	JTable clientListTable;
@@ -50,7 +50,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		}
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(800, 400));
+		window.setPreferredSize(new Dimension(800, 500));
 		window.setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(this.getClass().getClassLoader().getResource("resources/hydra64.png")));
 		JPanel mainPanel = new JPanel(new BorderLayout());
@@ -70,24 +70,20 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	}
 
 	private JPanel getServerInfoPanel() {
-		String hostName = "Unknown Host";
-		try {
-			hostName = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-
-			e.printStackTrace();
-		}
 
 		JPanel serverInfoPanel = new JPanel(new BorderLayout());
 
 		JPanel testPanel = new JPanel(new GridLayout(1, 2));
 
-		JLabel basicServerInfo = new JLabel("Host: " + hostName);
-		basicServerInfo.setOpaque(true);
-		basicServerInfo.setForeground(Color.white);
-		basicServerInfo.setBackground(Color.red);
-		basicServerInfo.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
-		testPanel.add(basicServerInfo);
+		JLabel serverServiceInfoInfo = new JLabel("Resolving...");
+		serverServiceInfoInfo.setOpaque(true);
+		serverServiceInfoInfo.setForeground(Color.white);
+		serverServiceInfoInfo.setBackground(Color.red);
+		serverServiceInfoInfo.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
+
+		this.serverInfoLabel = serverServiceInfoInfo;
+
+		testPanel.add(serverServiceInfoInfo);
 
 		JPanel paddedPanel = new JPanel(new BorderLayout());
 
@@ -109,7 +105,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
 		this.clientListTable = resultTable;
-		this.clientListTable.setPreferredScrollableViewportSize(new Dimension(0, 200));
+		this.clientListTable.setPreferredScrollableViewportSize(new Dimension(0, 300));
 
 		JScrollPane scrollPane = new JScrollPane(resultTable);
 
@@ -193,6 +189,13 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		TableColumnAdjuster tt = new TableColumnAdjuster(this.clientListTable);
 
 		tt.adjustColumns();
+	}
+
+	@Override
+	public void setServiceInfo(String infoText) {
+		this.serverInfoLabel.setText(infoText);
+		this.serverInfoLabel.setBackground(new Color(52, 31, 151));
+
 	}
 
 }

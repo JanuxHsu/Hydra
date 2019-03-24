@@ -11,10 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import hydra.hydra.core.HydraClient;
 import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaHttpService implements Runnable {
@@ -31,9 +29,11 @@ public class ZolaHttpService implements Runnable {
 		ServerSocket serverSocket = null;
 		try {
 
-			int port = 8080;
+			int port = this.zolaController.httpServicePort;
 
 			serverSocket = new ServerSocket(port);
+			
+			this.zolaController.setWebServerInfo(port);
 			// Now enter an infinite loop, waiting for & handling connections.
 			while (true) {
 				// Wait for a client to connect. The method will block;

@@ -12,7 +12,9 @@ public interface ZolaServerGui {
 
 	public void writeLog(String logText);
 
-	void refreshTable(List<Object[]> objects);
+	public void refreshTable(List<Object[]> objects);
 
-	void setTitle(String name);
+	public void setTitle(String name);
+
+	public void setServiceInfo(String infoText);
 }

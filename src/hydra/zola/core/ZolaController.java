@@ -1,7 +1,9 @@
 package hydra.zola.core;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -159,6 +161,19 @@ public class ZolaController {
 		this.syslog(String.format("%s終止連線!", client.getClientID()));
 
 		refreshPanel();
+	}
+
+	public void setWebServerInfo(int port) {
+		String host = null;
+		try {
+			host = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			host = "Unknown";
+		}
+		this.serverGui.setServiceInfo("Web Service : " + host + ":" + port);
+
 	}
 
 }
