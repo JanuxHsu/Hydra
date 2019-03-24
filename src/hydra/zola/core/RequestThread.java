@@ -66,7 +66,7 @@ public class RequestThread implements Runnable {
 //				if (message.equals("go")) {
 //					this.hydraServer.broadcast(this.clientId, message);
 //				}
-				System.out.println(message);
+				// System.out.println(message);
 
 			}
 		} catch (IOException e) {

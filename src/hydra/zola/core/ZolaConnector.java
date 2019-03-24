@@ -20,15 +20,13 @@ public class ZolaConnector implements Runnable {
 
 	@Override
 	public void run() {
-		
-		System.out.println("11");
 
 		ServerSocket serverSocket = null;
 
 		try {
-			System.out.println("1111");
+
 			serverSocket = new ServerSocket(servicePort);
-			this.zolaController.syslog("Server listening requests on port:" + servicePort + "...");
+			this.zolaController.syslog("Server listening requests on port : " + servicePort + ".");
 
 			while (ZolaServerRepository.isRunSocketServer) {
 				Socket socket = serverSocket.accept();

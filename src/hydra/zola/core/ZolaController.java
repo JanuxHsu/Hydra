@@ -91,11 +91,9 @@ public class ZolaController {
 				String memory = messageJson.get("memory").getAsString();
 				displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);
 			} catch (Exception e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 				displayMsg = client.getMessage();
 			}
-
-//			String displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);
 
 			rowList.add(new Object[] { count, client.getClientAddress().getHostName(),
 					client.getClientAddress().getHostAddress(), client.getFormattedAcceptTime(), displayMsg });
