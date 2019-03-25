@@ -52,6 +52,7 @@ public class HydraMain {
 		hydraConfig.app_name = "Hydra (JanuxHsu Dev 1.1)";
 		hydraConfig.zolaHost = serverHost;
 		hydraConfig.zolaPort = serverPort;
+		hydraConfig.clientVersion = "v1.1";
 
 		HydraController hydraController = new HydraController(hydraConfig);
 		// HydraClient hydraClient = new HydraClientTcpSocketImpl(hydraController);

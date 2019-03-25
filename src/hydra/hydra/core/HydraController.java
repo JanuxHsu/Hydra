@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,20 +13,27 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
+import hydra.hydra.model.HydraStatus;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
+import hydra.zola.model.HydraConnectionClient.ClientType;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
+import oshi.hardware.NetworkIF;
+import oshi.util.FormatUtil;
 
 public class HydraController {
+
+	final String clientVersion;
 
 	final String ZolaServerHost;
 	final int ZolaServerPort;
@@ -37,9 +45,10 @@ public class HydraController {
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
 	// public volatile boolean isConnectedToServer = false;
-	Gson gson = new Gson();
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public HydraController(HydraConfig hydraConfig) {
+		this.clientVersion = hydraConfig.clientVersion;
 
 		this.hydraRepository = new HydraRepository();
 		this.clientGui = new HydraClientSwingGui(this);
@@ -59,7 +68,7 @@ public class HydraController {
 	public void sendCommand(String text) {
 		// System.out.println("Controller :" + text);
 
-		System.out.println(text);
+		// System.out.println(text);
 		this.clientCore.sendMessage(text);
 		this.resetCommandInputState();
 
@@ -158,9 +167,13 @@ public class HydraController {
 
 	public boolean registerClient() {
 
-		JsonPrimitive jsonPrimitive = new JsonPrimitive("I'm Hydra");
+		JsonObject registerJson = new JsonObject();
+		registerJson.addProperty("clientVersion", this.clientVersion);
+		registerJson.addProperty("clientType", ClientType.HYDRA.toString());
 
-		HydraMessage hydraMessage = new HydraMessage(jsonPrimitive, null, MessageType.REGISTER);
+//		JsonPrimitive jsonPrimitive = new JsonPrimitive("I'm Hydra");
+
+		HydraMessage hydraMessage = new HydraMessage(registerJson, null, MessageType.REGISTER);
 
 		this.sendCommand(hydraMessage.toString());
 		return true;
@@ -178,8 +191,10 @@ public class HydraController {
 
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
 		CentralProcessor processor = systemInfo.getHardware().getProcessor();
+		// HydraStatus hydraStatus = this.hydraRepository.getHydraStatus();
 
 		Double cpuUsage = processor.getSystemCpuLoad();
+
 		String cpuUsageVal = String.format("%.2f", cpuUsage * 100);
 		res.addProperty("cpu", cpuUsageVal);
 
@@ -192,7 +207,26 @@ public class HydraController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		String timeStamp = sdf.format(Calendar.getInstance().getTime());
 
+		NetworkIF[] networkIFs = systemInfo.getHardware().getNetworkIFs();
+
+		JsonArray netInfos = new JsonArray();
+		for (NetworkIF net : networkIFs) {
+			JsonObject netInfo = new JsonObject();
+			netInfo.addProperty("interface", net.getDisplayName());
+			boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
+					|| net.getPacketsSent() > 0;
+			netInfo.addProperty("packet_recv", hasData ? net.getPacketsRecv() + " packets" : "?");
+			netInfo.addProperty("bytes_recv", hasData ? FormatUtil.formatBytes(net.getBytesRecv()) : "?");
+			netInfo.addProperty("packet_trmt", hasData ? net.getPacketsSent() + " packets" : "?");
+			netInfo.addProperty("bytes_trmt", hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?");
+			netInfos.add(netInfo);
+		}
+
+		res.add("network", netInfos);
+
 		res.addProperty("timestamp", timeStamp);
+
+		System.out.println(gson.toJson(res));
 
 		HydraMessage hydraMessage = new HydraMessage(res, null, MessageType.HEARTBEAT);
 
@@ -210,26 +244,6 @@ public class HydraController {
 
 	public void updateHydraStatus() {
 
-//		NetworkIF[] networkIFs = systemInfo.getHardware().getNetworkIFs();
-//		
-//		System.out.println("Network interfaces:");
-//		for (NetworkIF net : networkIFs) {
-//			System.out.format(" Name: %s (%s)%n", net.getName(), net.getDisplayName());
-//			System.out.format("   MAC Address: %s %n", net.getMacaddr());
-//			System.out.format("   MTU: %s, Speed: %s %n", net.getMTU(), FormatUtil.formatValue(net.getSpeed(), "bps"));
-//			System.out.format("   IPv4: %s %n", Arrays.toString(net.getIPv4addr()));
-//			// System.out.format(" IPv6: %s %n", Arrays.toString(net.getIPv6addr()));
-//			boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
-//					|| net.getPacketsSent() > 0;
-//			System.out.format("   Traffic: received %s/%s%s; transmitted %s/%s%s %n",
-//					hasData ? net.getPacketsRecv() + " packets" : "?",
-//					hasData ? FormatUtil.formatBytes(net.getBytesRecv()) : "?",
-//					hasData ? " (" + net.getInErrors() + " err)" : "",
-//					hasData ? net.getPacketsSent() + " packets" : "?",
-//					hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?",
-//					hasData ? " (" + net.getOutErrors() + " err)" : "");
-//		}
-
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
@@ -244,10 +258,14 @@ public class HydraController {
 			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
 
 			this.clientGui.updateClientInfo(jsonObject);
-			
-			this.systemLog("Zola Server Connected!");
-			this.clientGui.displayIconMessage("Hydra", "Connected to Server!", java.awt.TrayIcon.MessageType.INFO,
-					IconMessageMode.ALWAYS);
+
+			if (jsonObject != null) {
+				this.systemLog("Zola Server Connected!");
+				this.clientGui.displayIconMessage("Hydra", "Connected to Server!", java.awt.TrayIcon.MessageType.INFO,
+						IconMessageMode.ALWAYS);
+
+				this.registerClient();
+			}
 
 			// jsonObject.get(memberName)
 

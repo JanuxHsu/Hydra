@@ -16,6 +16,9 @@ public class HydraConnectionClient {
 	@TableColumn(columName = "Client")
 	private final String clientID;
 
+	@TableColumn(columName = "Ver.")
+	private String clientVersion;
+
 	@TableColumn(columName = "Client Addr.")
 	InetAddress clientAddr;
 
@@ -33,9 +36,11 @@ public class HydraConnectionClient {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-	public HydraConnectionClient(String clientId, RequestThread clientThread, Date acceptedTime,
+	public HydraConnectionClient(String clientId, String clientVersion, RequestThread clientThread, Date acceptedTime,
 			InetAddress inetAddress) {
+
 		this.clientID = clientId;
+		this.clientVersion = clientVersion;
 		this.clientThread = clientThread;
 		this.acceptedTime = acceptedTime;
 		this.clientAddr = inetAddress;
@@ -89,5 +94,16 @@ public class HydraConnectionClient {
 
 		}
 		return cols;
+	}
+
+	public String getClientVersion() {
+
+		return this.clientVersion;
+	}
+
+	public void setClientInfo(ClientType clientType, String clientVersion) {
+		this.clientType = clientType;
+		this.clientVersion = clientVersion;
+
 	}
 }

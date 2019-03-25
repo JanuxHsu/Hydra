@@ -1,13 +1,9 @@
 package hydra.model;
 
-import java.io.Serializable;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-public class HydraMessage implements Serializable {
-
-	private static final long serialVersionUID = 717594081457579756L;
+public class HydraMessage {
 
 	public static enum MessageType {
 		P2P, BROADCAST, HEARTBEAT, SYSINFO, REGISTER
@@ -33,6 +29,14 @@ public class HydraMessage implements Serializable {
 	public String toString() {
 
 		return new Gson().toJson(this, HydraMessage.class);
+	}
+
+	public MessageType getMessageType() {
+		return this.messageType;
+	}
+
+	public JsonElement getMessageBody() {
+		return this.message;
 	}
 
 }

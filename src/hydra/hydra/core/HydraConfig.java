@@ -11,6 +11,8 @@ public class HydraConfig {
 	public String zolaHost = "localhost";
 	public String zolaPort = "5978";
 
+	public String clientVersion;
+
 	public void setGUI_type(GUI_Type gui_type) {
 		this.GUI_type = gui_type;
 

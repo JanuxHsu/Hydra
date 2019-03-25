@@ -11,10 +11,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import hydra.model.HydraMessage;
+import hydra.model.HydraMessage.MessageType;
 import hydra.repository.ZolaServerRepository;
 import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.gui.ZolaServerSwingGui;
@@ -29,6 +33,9 @@ public class ZolaController {
 	protected ZolaServer serverCore;
 	protected ZolaServerGui serverGui;
 	ZolaServerRepository zolaServerRepository;
+
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	JsonParser jsonParser = new JsonParser();
 
 	public ZolaController(ZolaConfig zolaConfig) {
 
@@ -64,7 +71,7 @@ public class ZolaController {
 	public void addClient(Socket socket) {
 		String clientId = UUID.randomUUID().toString();
 		RequestThread clientThread = new RequestThread(this, clientId, socket);
-		HydraConnectionClient hydraClient = new HydraConnectionClient(clientId, clientThread,
+		HydraConnectionClient hydraClient = new HydraConnectionClient(clientId, "unknown", clientThread,
 				Calendar.getInstance().getTime(), socket.getInetAddress());
 		clientId = zolaServerRepository.addClient(hydraClient);
 
@@ -97,8 +104,16 @@ public class ZolaController {
 				displayMsg = client.getMessage();
 			}
 
-			rowList.add(new Object[] { count, client.getClientAddress().getHostName(),
-					client.getClientAddress().getHostAddress(), client.getFormattedAcceptTime(), displayMsg });
+			ArrayList<String> tableData = new ArrayList<>();
+
+			tableData.add(Integer.toString(count));
+			tableData.add(client.getClientAddress().getHostName());
+			tableData.add(client.getClientVersion());
+			tableData.add(client.getClientAddress().getHostAddress());
+			tableData.add(client.getFormattedAcceptTime());
+			tableData.add(displayMsg);
+
+			rowList.add(tableData.toArray());
 		}
 
 		this.serverGui.refreshTable(rowList);
@@ -107,28 +122,37 @@ public class ZolaController {
 
 	public void updateClientMessage(String clientId, String message) {
 
-		if (message.toLowerCase().equals("ls")) {
+		try {
+			JsonElement clientMessage = jsonParser.parse(message);
 
-			ConcurrentHashMap<String, HydraConnectionClient> clients = this.zolaServerRepository.getClients();
-			JsonArray statusJson = new JsonArray();
+			if (clientMessage.isJsonObject()) {
 
-			for (String client_id : clients.keySet()) {
-				JsonObject statusRes = new JsonObject();
+				HydraMessage hydraMessage = gson.fromJson(clientMessage, HydraMessage.class);
+				MessageType messageType = hydraMessage.getMessageType();
 
-				HydraConnectionClient connected_client = clients.get(client_id);
-				if (connected_client.getClientType().equals(ClientType.UNKNOWN)) {
-					statusRes.addProperty("server", connected_client.getClientAddress().getHostName());
-					statusRes.addProperty("status", connected_client.getMessage());
-					statusJson.add(statusRes);
+				HydraConnectionClient client = this.zolaServerRepository.getClients().get(clientId);
+				switch (messageType) {
+				case HEARTBEAT:
+					client.updateLastMessage(message);
+
+					break;
+
+				case REGISTER:
+					JsonObject infoJson = hydraMessage.getMessageBody().getAsJsonObject();
+
+					ClientType clientType = ClientType.valueOf(infoJson.get("clientType").getAsString());
+					String clientVersion = infoJson.get("clientVersion").getAsString();
+					client.setClientInfo(clientType, clientVersion);
+					break;
+
+				default:
+					break;
 				}
-
 			}
-
-			this.broadcast(clientId, new Gson().toJson(statusJson));
-
-		} else {
-			this.zolaServerRepository.getClients().get(clientId).updateLastMessage(message);
 			refreshPanel();
+
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
 
 	}
