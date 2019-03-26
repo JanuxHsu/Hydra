@@ -3,9 +3,10 @@ package hydra.hydra.core;
 import java.io.File;
 import java.io.FileFilter;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +21,6 @@ import com.google.gson.JsonObject;
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
-import hydra.hydra.model.HydraStatus;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
@@ -211,15 +211,31 @@ public class HydraController {
 
 		JsonArray netInfos = new JsonArray();
 		for (NetworkIF net : networkIFs) {
-			JsonObject netInfo = new JsonObject();
-			netInfo.addProperty("interface", net.getDisplayName());
-			boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
-					|| net.getPacketsSent() > 0;
-			netInfo.addProperty("packet_recv", hasData ? net.getPacketsRecv() + " packets" : "?");
-			netInfo.addProperty("bytes_recv", hasData ? FormatUtil.formatBytes(net.getBytesRecv()) : "?");
-			netInfo.addProperty("packet_trmt", hasData ? net.getPacketsSent() + " packets" : "?");
-			netInfo.addProperty("bytes_trmt", hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?");
-			netInfos.add(netInfo);
+
+			NetworkInterface networkInterface = net.getNetworkInterface();
+			boolean isLoopBackInterface = false;
+			boolean isUp = false;
+
+			try {
+				isLoopBackInterface = networkInterface.isLoopback();
+				isUp = net.getNetworkInterface().isUp();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (!isLoopBackInterface && isUp) {
+				JsonObject netInfo = new JsonObject();
+				netInfo.addProperty("interface", net.getDisplayName());
+				boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
+						|| net.getPacketsSent() > 0;
+				netInfo.addProperty("packet_recv", hasData ? net.getPacketsRecv() + " packets" : "?");
+				netInfo.addProperty("bytes_recv", hasData ? FormatUtil.formatBytes(net.getBytesRecv()) : "?");
+				netInfo.addProperty("packet_trmt", hasData ? net.getPacketsSent() + " packets" : "?");
+				netInfo.addProperty("bytes_trmt", hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?");
+				netInfos.add(netInfo);
+			}
+
 		}
 
 		res.add("network", netInfos);
