@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import hydra.hydra.gui.HydraClientGui;
@@ -209,7 +208,14 @@ public class HydraController {
 
 		NetworkIF[] networkIFs = systemInfo.getHardware().getNetworkIFs();
 
-		JsonArray netInfos = new JsonArray();
+		Long totalPacketRecv = new Long(0);
+		Long totalBytesRecv = new Long(0);
+		Long totalPacketSent = new Long(0);
+		Long totalBytesSent = new Long(0);
+		Long totalNetErr = new Long(0);
+
+		int totalValidInterfaceCnt = 0;
+
 		for (NetworkIF net : networkIFs) {
 
 			NetworkInterface networkInterface = net.getNetworkInterface();
@@ -225,20 +231,33 @@ public class HydraController {
 			}
 
 			if (!isLoopBackInterface && isUp) {
-				JsonObject netInfo = new JsonObject();
-				netInfo.addProperty("interface", net.getDisplayName());
+
 				boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
 						|| net.getPacketsSent() > 0;
-				netInfo.addProperty("packet_recv", hasData ? net.getPacketsRecv() + " packets" : "?");
-				netInfo.addProperty("bytes_recv", hasData ? FormatUtil.formatBytes(net.getBytesRecv()) : "?");
-				netInfo.addProperty("packet_trmt", hasData ? net.getPacketsSent() + " packets" : "?");
-				netInfo.addProperty("bytes_trmt", hasData ? FormatUtil.formatBytes(net.getBytesSent()) : "?");
-				netInfos.add(netInfo);
+
+				if (hasData) {
+					totalPacketRecv += net.getPacketsRecv();
+					totalBytesRecv += net.getBytesRecv();
+					totalPacketSent += net.getPacketsSent();
+					totalBytesSent += net.getBytesSent();
+
+					totalNetErr += net.getOutErrors() + net.getInErrors();
+
+				}
+
 			}
+			totalValidInterfaceCnt++;
 
 		}
 
-		res.add("network", netInfos);
+		JsonObject networkInfo = new JsonObject();
+		networkInfo.addProperty("workingInterfaces", totalValidInterfaceCnt);
+		networkInfo.addProperty("totalPacketRecv", totalPacketRecv);
+		networkInfo.addProperty("totalBytesRecv", FormatUtil.formatBytes(totalBytesRecv));
+		networkInfo.addProperty("totalPacketSent", totalPacketSent);
+		networkInfo.addProperty("totalBytesSent", FormatUtil.formatBytes(totalBytesSent));
+		networkInfo.addProperty("totalNetworkErr", totalNetErr);
+		res.add("network", networkInfo);
 
 		res.addProperty("timestamp", timeStamp);
 

@@ -19,7 +19,7 @@ public class HydraConnectionClient {
 	@TableColumn(columName = "Ver.")
 	private String clientVersion;
 
-	@TableColumn(columName = "Client Addr.")
+	@TableColumn(columName = "Client IP")
 	InetAddress clientAddr;
 
 	ClientType clientType = ClientType.UNKNOWN;

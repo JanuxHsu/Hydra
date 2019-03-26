@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -98,9 +97,17 @@ public class ZolaController {
 
 				String cpu = messageJson.get("cpu").getAsString();
 				String memory = messageJson.get("memory").getAsString();
-				displayMsg = String.format("CPU: %s%%, Memory: %s%%", cpu, memory);
+
+				JsonObject networkJson = messageJson.get("network").getAsJsonObject();
+				String bytesRecv = networkJson.get("totalBytesRecv").getAsString();
+				String bytesSent = networkJson.get("totalBytesSent").getAsString();
+				String totalErr = networkJson.get("totalNetworkErr").getAsString();
+				displayMsg = String.format("CPU: %s%%, Memory: %s%%, Recv: %s, Sent: %s, Error: %s", cpu, memory,
+						bytesRecv, bytesSent, totalErr);
 			} catch (Exception e) {
-				// e.printStackTrace();
+				e.printStackTrace();
+
+				System.out.println(client.getMessage());
 				displayMsg = client.getMessage();
 			}
 
