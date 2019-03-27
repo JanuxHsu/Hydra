@@ -1,6 +1,7 @@
 package hydra.hydra.gui;
 
 import java.awt.TrayIcon.MessageType;
+import java.util.List;
 
 import com.google.gson.JsonObject;
 
@@ -45,6 +46,8 @@ public abstract class HydraClientGui {
 			IconMessageMode mode);
 
 	public abstract void updateClientInfo(JsonObject clientInfoJson);
+
+	public abstract void refreshTable(List<Object[]> objects);
 
 	// public abstract void updateZolaStatus(String state, String status);
 }

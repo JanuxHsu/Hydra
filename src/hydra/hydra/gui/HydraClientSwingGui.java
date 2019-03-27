@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -26,12 +27,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
 
 import com.google.gson.JsonObject;
 
+import hydra.gui.utils.TableColumnAdjuster;
 import hydra.hydra.core.HydraController;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -57,6 +61,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	JLabel workerIndicator;
 
+	JTable systemInfoTable;
+
 	JTextArea logArea;
 	JProgressBar cpuBar;
 	JProgressBar memoryBar;
@@ -81,8 +87,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png")));
 
 		// window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(460, 200));
-		window.setMinimumSize(new Dimension(460, 200));
+		window.setPreferredSize(new Dimension(300, 400));
+		window.setMinimumSize(new Dimension(300, 400));
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -206,6 +212,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 	private JPanel setupTopPanel() {
 		JPanel topPanel = new JPanel(new BorderLayout());
 
+		JPanel topBar = new JPanel(new BorderLayout());
 		JLabel hostLabel = new JLabel("Connecting...");
 		this.hostLabel = hostLabel;
 		hostLabel.setOpaque(true);
@@ -214,6 +221,12 @@ public class HydraClientSwingGui extends HydraClientGui {
 		hostLabel.setFont(defaultFont);
 
 		hostLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+
+		JLabel hydraIcon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
+				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra24.png"))));
+		hydraIcon.setHorizontalAlignment(JLabel.CENTER);
+		topBar.add(hydraIcon, BorderLayout.WEST);
+		topBar.add(hostLabel, BorderLayout.CENTER);
 
 		JPanel dashboardPanel = new JPanel(new GridLayout(1, 3));
 
@@ -253,14 +266,14 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		dashboardPanel.add(leftDashPanel);
 
-		JLabel hydraIcon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
-				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png"))));
-
-		hydraIcon.setPreferredSize(new Dimension(60, 60));
-		hydraIcon.setHorizontalAlignment(JLabel.CENTER);
-		// hydraIcon.setPreferredSize(new Dimension(60, 60));
-
-		dashboardPanel.add(hydraIcon);
+//		JLabel hydraIcon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
+//				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra32.png"))));
+//
+//		hydraIcon.setPreferredSize(new Dimension(60, 60));
+//		hydraIcon.setHorizontalAlignment(JLabel.CENTER);
+//		// hydraIcon.setPreferredSize(new Dimension(60, 60));
+//
+//		dashboardPanel.add(hydraIcon);
 
 		JPanel rightDashPanel = new JPanel(new BorderLayout());
 		JProgressBar cpuBar = new JProgressBar();
@@ -293,10 +306,10 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		// dashboardPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
-		dashboardPanel.setBorder(BorderFactory.createEmptyBorder(5, 35, 5, 35));
+		dashboardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		// dashboardPanel.setPreferredSize(new Dimension(1000, 70));
-		topPanel.add(hostLabel, BorderLayout.NORTH);
+		topPanel.add(topBar, BorderLayout.NORTH);
 		topPanel.add(dashboardPanel, BorderLayout.SOUTH);
 
 		// topPanel.setPreferredSize(new Dimension(800, 80));
@@ -306,12 +319,31 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	private JPanel setupCenterPanel() {
 		JPanel centerPanel = new JPanel(new BorderLayout());
+
 		centerPanel.setOpaque(true);
 		centerPanel.setBackground(new Color(44, 62, 80));
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		DefaultTableModel tableModel = new DefaultTableModel();
+		tableModel.addColumn("Item");
+		tableModel.addColumn("Value");
+
+		JTable resultTable = new JTable(tableModel);
+
+		resultTable.setFont(defaultFont);
+
+		resultTable.setAutoCreateRowSorter(true);
+
+		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+
+		this.systemInfoTable = resultTable;
+		centerPanel.add(new JScrollPane(resultTable), BorderLayout.CENTER);
+
 		JTextArea logArea = new JTextArea();
+		logArea.setLineWrap(true);
+		logArea.setEditable(false);
 		this.logArea = logArea;
-		centerPanel.add(new JScrollPane(logArea), BorderLayout.CENTER);
+		centerPanel.add(new JScrollPane(logArea), BorderLayout.SOUTH);
 
 		return centerPanel;
 	}
@@ -476,5 +508,18 @@ public class HydraClientSwingGui extends HydraClientGui {
 			this.hostLabel.setBackground(new Color(39, 174, 96));
 		}
 
+	}
+
+	@Override
+	public void refreshTable(List<Object[]> objects) {
+		DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
+		model.setRowCount(0);
+		for (Object[] object : objects) {
+			model.addRow(object);
+		}
+
+		TableColumnAdjuster tt = new TableColumnAdjuster(this.systemInfoTable);
+
+		tt.adjustColumns();
 	}
 }

@@ -7,7 +7,10 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,6 +60,7 @@ public class HydraController {
 
 		this.setGuiTitle(hydraConfig.app_name);
 		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 5, TimeUnit.SECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(new SystemChecker(this), 5, 3600, TimeUnit.SECONDS);
 
 	}
 
@@ -308,6 +312,28 @@ public class HydraController {
 			// TODO: handle exception
 		}
 		this.hydraRepository.getHydraStatus().setServerLastResponse(line);
+
+	}
+
+	public SystemInfo getSystemInfo() {
+		return this.systemInfo;
+	}
+
+	public void refreshTable() {
+		List<Object[]> rowList = new ArrayList<>();
+
+		Map<String, String> infoMap = this.hydraRepository.getSystemInfoMap();
+
+		for (String key : infoMap.keySet()) {
+			ArrayList<String> row = new ArrayList<>();
+			row.add(key);
+			row.add(infoMap.get(key));
+
+			rowList.add(row.toArray());
+
+		}
+
+		this.clientGui.refreshTable(rowList);
 
 	}
 

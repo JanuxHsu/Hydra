@@ -1,4 +1,4 @@
-package hydra.zola.model;
+package hydra.model;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

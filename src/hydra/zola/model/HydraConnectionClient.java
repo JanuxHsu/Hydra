@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import hydra.model.TableColumn;
 import hydra.zola.core.RequestThread;
 
 public class HydraConnectionClient {
