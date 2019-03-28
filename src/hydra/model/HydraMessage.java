@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 public class HydraMessage {
 
 	public static enum MessageType {
-		P2P, BROADCAST, HEARTBEAT, SYSINFO, REGISTER
+		P2P, BROADCAST, HEARTBEAT, FULLSYSINFO, REGISTER
 	};
 
 	JsonElement message;

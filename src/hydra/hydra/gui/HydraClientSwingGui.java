@@ -288,8 +288,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		cpuBar.setStringPainted(true);
 
-		memoryBar.setFont(defaultFont);
-		cpuBar.setFont(defaultFont);
+		memoryBar.setFont(labelFont);
+		cpuBar.setFont(labelFont);
 
 		memoryBar.setBorder(BorderFactory.createLineBorder(Color.black));
 		cpuBar.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -330,7 +330,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		JTable resultTable = new JTable(tableModel);
 
-		resultTable.setFont(defaultFont);
+		resultTable.setFont(labelFont);
+		resultTable.getTableHeader().setFont(labelFont);
 
 		resultTable.setAutoCreateRowSorter(true);
 
@@ -342,6 +343,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		JTextArea logArea = new JTextArea();
 		logArea.setLineWrap(true);
 		logArea.setEditable(false);
+		logArea.setFont(labelFont);
 		this.logArea = logArea;
 		centerPanel.add(new JScrollPane(logArea), BorderLayout.SOUTH);
 

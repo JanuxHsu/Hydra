@@ -49,10 +49,10 @@ public class HydraMain {
 
 		HydraConfig hydraConfig = new HydraConfig();
 		hydraConfig.setGUI_type(GUI_Type.Swing);
-		hydraConfig.app_name = "Hydra (JanuxHsu Dev 1.12)";
+		hydraConfig.app_name = "Hydra (JanuxHsu Dev 1.13)";
 		hydraConfig.zolaHost = serverHost;
 		hydraConfig.zolaPort = serverPort;
-		hydraConfig.clientVersion = "v1.12";
+		hydraConfig.clientVersion = "v1.13";
 
 		HydraController hydraController = new HydraController(hydraConfig);
 		// HydraClient hydraClient = new HydraClientTcpSocketImpl(hydraController);

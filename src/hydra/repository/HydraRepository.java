@@ -9,7 +9,10 @@ public class HydraRepository {
 
 	final HydraStatus hydraStatus;
 
-	final Map<String, String> systeminfo = new LinkedHashMap<>();
+	final Map<String, String> systeminfoMap = new LinkedHashMap<>();
+
+	public Long last_recv_bytes = new Long(0);
+	public Long last_sent_bytes = new Long(0);
 
 	public HydraRepository() {
 		hydraStatus = new HydraStatus();
@@ -20,7 +23,7 @@ public class HydraRepository {
 	}
 
 	public Map<String, String> getSystemInfoMap() {
-		return this.systeminfo;
+		return this.systeminfoMap;
 	}
 
 }

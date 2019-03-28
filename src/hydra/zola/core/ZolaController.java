@@ -23,6 +23,7 @@ import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.gui.ZolaServerSwingGui;
 import hydra.zola.model.HydraConnectionClient;
 import hydra.zola.model.HydraConnectionClient.ClientType;
+import oshi.util.FormatUtil;
 
 public class ZolaController {
 
@@ -99,11 +100,12 @@ public class ZolaController {
 				String memory = messageJson.get("memory").getAsString();
 
 				JsonObject networkJson = messageJson.get("network").getAsJsonObject();
-				String bytesRecv = networkJson.get("totalBytesRecv").getAsString();
-				String bytesSent = networkJson.get("totalBytesSent").getAsString();
+				String bytesRecv = networkJson.get("totalBytesRecvDelta").getAsString();
+				String bytesSent = networkJson.get("totalBytesSentDelta").getAsString();
 				String totalErr = networkJson.get("totalNetworkErr").getAsString();
 				displayMsg = String.format("CPU: %s%%, Memory: %s%%, Recv: %s, Sent: %s, Error: %s", cpu, memory,
-						bytesRecv, bytesSent, totalErr);
+						FormatUtil.formatBytes(Long.parseLong(bytesRecv)),
+						FormatUtil.formatBytes(Long.parseLong(bytesSent)), totalErr);
 			} catch (Exception e) {
 				e.printStackTrace();
 
@@ -203,7 +205,7 @@ public class ZolaController {
 			e.printStackTrace();
 			host = "Unknown";
 		}
-		this.serverGui.setServiceInfo("Web Service : " + host + ":" + port);
+		this.serverGui.setServiceInfo("Http API : " + host + ":" + port);
 
 	}
 

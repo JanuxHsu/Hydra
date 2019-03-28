@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +32,9 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.NetworkIF;
+import oshi.software.os.NetworkParams;
+import oshi.software.os.OSFileStore;
+import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 
 public class HydraController {
@@ -59,9 +63,10 @@ public class HydraController {
 		this.ZolaServerPort = Integer.parseInt(hydraConfig.zolaPort);
 
 		this.setGuiTitle(hydraConfig.app_name);
-		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 5, TimeUnit.SECONDS);
-		scheduledExecutorService.scheduleAtFixedRate(new SystemChecker(this), 5, 3600, TimeUnit.SECONDS);
 
+		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 5, TimeUnit.SECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(new SystemChecker(this), 5, 1800, TimeUnit.SECONDS);
+		this.initTable();
 	}
 
 	public ExecutorService getExecutorPool() {
@@ -184,6 +189,7 @@ public class HydraController {
 
 	public void sendHeartBeat() {
 		JsonObject res = new JsonObject();
+		Map<String, String> sysInfoMap = this.hydraRepository.getSystemInfoMap();
 
 		try {
 			res.addProperty("host", InetAddress.getLocalHost().getHostName());
@@ -194,6 +200,7 @@ public class HydraController {
 
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
 		CentralProcessor processor = systemInfo.getHardware().getProcessor();
+		OperatingSystem os = systemInfo.getOperatingSystem();
 		// HydraStatus hydraStatus = this.hydraRepository.getHydraStatus();
 
 		Double cpuUsage = processor.getSystemCpuLoad();
@@ -206,6 +213,16 @@ public class HydraController {
 
 		String usage = String.format("%.2f", 100 - (availableMem.doubleValue() / totalMem.doubleValue() * 100));
 		res.addProperty("memory", usage);
+
+		JsonObject processObj = new JsonObject();
+
+		String processCnt = Integer.toString(os.getProcessCount());
+		String threadCnt = Integer.toString(os.getThreadCount());
+		sysInfoMap.put("Processes", String.format("%s (Threads: %s)", processCnt, threadCnt));
+		processObj.addProperty("process", processCnt);
+		processObj.addProperty("threads", threadCnt);
+
+		res.add("os", processObj);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		String timeStamp = sdf.format(Calendar.getInstance().getTime());
@@ -255,17 +272,33 @@ public class HydraController {
 		}
 
 		JsonObject networkInfo = new JsonObject();
+
+		Long delta_recv_bytes = totalBytesRecv
+				- (this.hydraRepository.last_recv_bytes == 0 ? totalBytesRecv : this.hydraRepository.last_recv_bytes);
+		Long delta_sent_bytes = totalBytesSent
+				- (this.hydraRepository.last_sent_bytes == 0 ? totalBytesSent : this.hydraRepository.last_sent_bytes);
+		this.hydraRepository.last_recv_bytes = totalBytesRecv;
+		this.hydraRepository.last_sent_bytes = totalBytesSent;
+
 		networkInfo.addProperty("workingInterfaces", totalValidInterfaceCnt);
 		networkInfo.addProperty("totalPacketRecv", totalPacketRecv);
-		networkInfo.addProperty("totalBytesRecv", FormatUtil.formatBytes(totalBytesRecv));
+		networkInfo.addProperty("totalBytesRecv", totalBytesRecv);
+		networkInfo.addProperty("totalBytesRecvDelta", delta_recv_bytes);
 		networkInfo.addProperty("totalPacketSent", totalPacketSent);
-		networkInfo.addProperty("totalBytesSent", FormatUtil.formatBytes(totalBytesSent));
+		networkInfo.addProperty("totalBytesSent", totalBytesSent);
+		networkInfo.addProperty("totalBytesSentDelta", delta_sent_bytes);
 		networkInfo.addProperty("totalNetworkErr", totalNetErr);
+
+		sysInfoMap.put("Traffic(Recv)", String.format("%s (Total: %s)", FormatUtil.formatBytes(delta_recv_bytes),
+				FormatUtil.formatBytes(totalBytesRecv)));
+		sysInfoMap.put("Traffic(Sent)", String.format("%s (Total: %s)", FormatUtil.formatBytes(delta_sent_bytes),
+				FormatUtil.formatBytes(totalBytesSent)));
+
 		res.add("network", networkInfo);
 
 		res.addProperty("timestamp", timeStamp);
 
-		System.out.println(gson.toJson(res));
+		//System.out.println(gson.toJson(res));
 
 		HydraMessage hydraMessage = new HydraMessage(res, null, MessageType.HEARTBEAT);
 
@@ -288,6 +321,8 @@ public class HydraController {
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
 		this.clientGui.updateIsServerConnected(this.hydraRepository.getHydraStatus().isConnectedToServer());
 		this.clientGui.updateIsWorkerActive(this.hydraRepository.getHydraStatus().isWorkerActive());
+
+		this.refreshTable();
 	}
 
 	public void updateRecv(String line) {
@@ -335,6 +370,46 @@ public class HydraController {
 
 		this.clientGui.refreshTable(rowList);
 
+	}
+
+	public void initTable() {
+		Map<String, String> systemInfoMap = this.hydraRepository.getSystemInfoMap();
+		SystemInfo systemInfo = this.getSystemInfo();
+
+		CentralProcessor processor = systemInfo.getHardware().getProcessor();
+
+		long sysetmStartTime = Calendar.getInstance().getTimeInMillis() - processor.getSystemUptime() * 1000;
+
+		Date bootTime = new Date(sysetmStartTime);
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		// System.out.println(simpleDateFormat.format(d));
+
+		systemInfoMap.put("BootTime", simpleDateFormat.format(bootTime) + " ("
+				+ FormatUtil.formatElapsedSecs(processor.getSystemUptime()) + ")");
+
+		systemInfoMap.put("Traffic(Recv)", "...");
+		systemInfoMap.put("Traffic(Sent)", "...");
+
+//		systemInfoMap.put("Core", "Physical/Logical : " + Integer.toString(processor.getPhysicalProcessorCount()) + "/"
+//				+ Integer.toString(processor.getLogicalProcessorCount()));
+		systemInfoMap.put("Processes", "...");
+		OSFileStore[] fileStores = systemInfo.getOperatingSystem().getFileSystem().getFileStores();
+
+		for (OSFileStore fs : fileStores) {
+			long usable = fs.getUsableSpace();
+			long total = fs.getTotalSpace();
+
+			systemInfoMap.put(fs.getName(), String.format("%.1f%% free, %s of %s", 100d * usable / total,
+					FormatUtil.formatBytes(usable), FormatUtil.formatBytes(fs.getTotalSpace())));
+
+		}
+
+		NetworkParams net = systemInfo.getOperatingSystem().getNetworkParams();
+
+		systemInfoMap.put("DNS", "[" + String.join(", ", net.getDnsServers()) + "]");
+		systemInfoMap.put("Gateway", net.getIpv4DefaultGateway());
+		systemInfoMap.put("DomainName", net.getDomainName());
 	}
 
 }

@@ -6,14 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
-import hydra.zola.model.HydraConnectionClient;
 
 public class ZolaHttpService implements Runnable {
 
@@ -32,7 +24,7 @@ public class ZolaHttpService implements Runnable {
 			int port = this.zolaController.httpServicePort;
 
 			serverSocket = new ServerSocket(port);
-			
+
 			this.zolaController.setWebServerInfo(port);
 			// Now enter an infinite loop, waiting for & handling connections.
 			while (true) {
@@ -58,30 +50,9 @@ public class ZolaHttpService implements Runnable {
 					String method = tokens[0];
 					String req_path = tokens[1];
 
-					if (method.equals("GET") && req_path.equals("/status/servers")) {
-
-						ConcurrentHashMap<String, HydraConnectionClient> clients = zolaController.zolaServerRepository
-								.getClients();
-
-						JsonArray res = new JsonArray();
-
-						for (String clientId : clients.keySet()) {
-							HydraConnectionClient clientItem = clients.get(clientId);
-
-							try {
-								JsonObject json = new Gson().fromJson(clientItem.getMessage(), JsonObject.class);
-								res.add(json.get("message").getAsJsonObject());
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-
-						}
-
-						out.print(new GsonBuilder().setPrettyPrinting().create().toJson(res));
-
-					} else {
-						out.print("404 Page Not Found. Invalid Request\r\n");
-					}
+					HttpPathHandler handler = new HttpPathHandler(this.zolaController.zolaServerRepository, method,
+							req_path);
+					out.println(handler.getResponse());
 
 				} catch (Exception e) {
 					e.printStackTrace();
