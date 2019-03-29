@@ -397,23 +397,25 @@ public class HydraClientSwingGui extends HydraClientGui {
 	@Override
 	public void updateIsServerConnected(boolean isConnected) {
 
-		if (isConnected) {
-			this.serverIndicator.setText("Server Status : Up");
-			this.serverIndicator.setBackground(new Color(39, 174, 96));
-			trayIcon.getPopupMenu().getItem(0).setLabel("Status: Connected");
+		SwingUtilities.invokeLater(() -> {
+			if (isConnected) {
+				this.serverIndicator.setText("Server Status : Up");
+				this.serverIndicator.setBackground(new Color(39, 174, 96));
+				trayIcon.getPopupMenu().getItem(0).setLabel("Status: Connected");
 
-			// this.displayIconMessage("Hydra", "Connected to Server!", MessageType.INFO,
-			// IconMessageMode.ALWAYS);
+				// this.displayIconMessage("Hydra", "Connected to Server!", MessageType.INFO,
+				// IconMessageMode.ALWAYS);
 
-		} else {
-			this.serverIndicator.setText("Server Status : Down");
-			this.serverIndicator.setBackground(Color.RED);
-			trayIcon.getPopupMenu().getItem(0).setLabel("Status: Disonnected");
+			} else {
+				this.serverIndicator.setText("Server Status : Down");
+				this.serverIndicator.setBackground(Color.RED);
+				trayIcon.getPopupMenu().getItem(0).setLabel("Status: Disonnected");
 
-			// this.displayIconMessage("Hydra", "Disconnected to Server!",
-			// MessageType.WARNING, IconMessageMode.PERIODIC);
+				// this.displayIconMessage("Hydra", "Disconnected to Server!",
+				// MessageType.WARNING, IconMessageMode.PERIODIC);
 
-		}
+			}
+		});
 
 	}
 
@@ -437,24 +439,30 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	@Override
 	public void displaySystemLog(String line) {
-		if (this.logArea.getLineCount() > 6) {
-			logArea.setText("");
-		}
+		String lineText = String.format("%s%n", line);
+		SwingUtilities.invokeLater(() -> {
+			if (this.logArea.getLineCount() > 6) {
+				logArea.setText("");
+			}
 
-		line = String.format("%s%n", line);
-		this.logArea.append(line);
+			this.logArea.append(lineText);
+		});
+
 	}
 
 	@Override
 	public void updateIsWorkerActive(boolean isWorking) {
-		if (isWorking) {
-			this.workerIndicator.setText("Worker Status : Running");
-			this.workerIndicator.setBackground(new Color(39, 174, 96));
 
-		} else {
-			this.workerIndicator.setText("Worker Status : Idle");
-			this.workerIndicator.setBackground(new Color(243, 156, 18));
-		}
+		SwingUtilities.invokeLater(() -> {
+			if (isWorking) {
+				this.workerIndicator.setText("Worker Status : Running");
+				this.workerIndicator.setBackground(new Color(39, 174, 96));
+
+			} else {
+				this.workerIndicator.setText("Worker Status : Idle");
+				this.workerIndicator.setBackground(new Color(243, 156, 18));
+			}
+		});
 
 	}
 
@@ -464,8 +472,14 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		Integer freePercent = ((Double) ((totalMem.doubleValue() - freeMem.doubleValue()) / totalMem.doubleValue()
 				* 100)).intValue();
-		this.memoryBar.setValue(freePercent);
-		this.memoryBar.setString("Memory Usage : " + freePercent + "%");
+		// this.memoryBar.setValue(freePercent);
+		// this.memoryBar.setString("Memory Usage : " + freePercent + "%");
+
+		SwingUtilities.invokeLater(() -> {
+
+			this.memoryBar.setValue(freePercent);
+			this.memoryBar.setString("Memory Usage : " + freePercent + "%");
+		});
 
 	}
 
@@ -479,9 +493,6 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		Integer cpuUsageText = ((Double) Double.parseDouble(cpuUsageVal)).intValue();
 
-		this.cpuBar.setValue(cpuUsageText);
-		this.cpuBar.setString("CPU Usage : " + cpuUsageVal + "%");
-
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
 
 		Long availableMem = memory.getAvailable();
@@ -491,34 +502,42 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		Integer usageValue = ((Double) Double.parseDouble(usage)).intValue();
 
-		this.memoryBar.setValue(usageValue);
-		this.memoryBar.setString("Mem Usage : " + usage + "%");
+		SwingUtilities.invokeLater(() -> {
+			this.cpuBar.setValue(cpuUsageText);
+			this.cpuBar.setString("CPU Usage : " + cpuUsageVal + "%");
+
+			this.memoryBar.setValue(usageValue);
+			this.memoryBar.setString("Mem Usage : " + usage + "%");
+		});
 
 	}
 
 	@Override
 	public void updateClientInfo(JsonObject clientInfoJson) {
 
-		if (clientInfoJson == null) {
+		SwingUtilities.invokeLater(() -> {
+			if (clientInfoJson == null) {
 
-			this.hostLabel.setText("Connecting...");
-			this.hostLabel.setBackground(Color.RED);
+				this.hostLabel.setText("Connecting...");
+				this.hostLabel.setBackground(Color.RED);
 
-		} else {
-			this.hostLabel.setText(clientInfoJson.get("host").getAsString() + ", Client ID: "
-					+ clientInfoJson.get("client_id").getAsString());
+			} else {
+				this.hostLabel.setText(clientInfoJson.get("host").getAsString() + ", Client ID: "
+						+ clientInfoJson.get("client_id").getAsString());
 
-			this.hostLabel.setBackground(new Color(39, 174, 96));
-		}
+				this.hostLabel.setBackground(new Color(39, 174, 96));
+			}
+		});
 
 	}
 
 	@Override
 	public void refreshTable(List<Object[]> objects) {
-		DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
-		JTable table = this.systemInfoTable;
 
 		SwingUtilities.invokeLater(() -> {
+			DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
+			JTable table = this.systemInfoTable;
+
 			model.setRowCount(0);
 			for (Object[] object : objects) {
 				model.addRow(object);

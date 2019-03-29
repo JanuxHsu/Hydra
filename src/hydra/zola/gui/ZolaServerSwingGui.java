@@ -170,10 +170,14 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	@Override
 	public void writeLog(String logText) {
 
-		if (this.loggingBox.getLineCount() > 50) {
-			this.loggingBox.setText("");
-		}
-		this.loggingBox.append(logText + "\n");
+		JTextArea logger = this.loggingBox;
+
+		SwingUtilities.invokeLater(() -> {
+			if (logger.getLineCount() > 50) {
+				logger.setText("");
+			}
+			logger.append(logText + "\n");
+		});
 
 		System.out.println(logText);
 
@@ -185,29 +189,29 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
 		JTable table = this.clientListTable;
 
-		SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(() -> {
 
-			@Override
-			public void run() {
-
-				model.setRowCount(0);
-				for (Object[] object : objects) {
-					model.addRow(object);
-				}
-
-				TableColumnAdjuster tt = new TableColumnAdjuster(table);
-
-				tt.adjustColumns();
-
+			model.setRowCount(0);
+			for (Object[] object : objects) {
+				model.addRow(object);
 			}
+
+			TableColumnAdjuster tt = new TableColumnAdjuster(table);
+
+			tt.adjustColumns();
+
 		});
 
 	}
 
 	@Override
 	public void setServiceInfo(String infoText) {
-		this.serverInfoLabel.setText(infoText);
-		this.serverInfoLabel.setBackground(new Color(52, 31, 151));
+
+		SwingUtilities.invokeLater(() -> {
+			this.serverInfoLabel.setText(infoText);
+			this.serverInfoLabel.setBackground(new Color(52, 31, 151));
+
+		});
 
 	}
 
