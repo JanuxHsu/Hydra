@@ -29,6 +29,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -515,13 +516,18 @@ public class HydraClientSwingGui extends HydraClientGui {
 	@Override
 	public void refreshTable(List<Object[]> objects) {
 		DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
-		model.setRowCount(0);
-		for (Object[] object : objects) {
-			model.addRow(object);
-		}
+		JTable table = this.systemInfoTable;
 
-		TableColumnAdjuster tt = new TableColumnAdjuster(this.systemInfoTable);
+		SwingUtilities.invokeLater(() -> {
+			model.setRowCount(0);
+			for (Object[] object : objects) {
+				model.addRow(object);
+			}
 
-		tt.adjustColumns();
+			TableColumnAdjuster tt = new TableColumnAdjuster(table);
+
+			tt.adjustColumns();
+		});
+
 	}
 }

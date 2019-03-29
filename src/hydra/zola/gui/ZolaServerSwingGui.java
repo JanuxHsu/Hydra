@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -180,15 +181,27 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	@Override
 	public void refreshTable(List<Object[]> objects) {
+
 		DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
-		model.setRowCount(0);
-		for (Object[] object : objects) {
-			model.addRow(object);
-		}
+		JTable table = this.clientListTable;
 
-		TableColumnAdjuster tt = new TableColumnAdjuster(this.clientListTable);
+		SwingUtilities.invokeLater(new Runnable() {
 
-		tt.adjustColumns();
+			@Override
+			public void run() {
+
+				model.setRowCount(0);
+				for (Object[] object : objects) {
+					model.addRow(object);
+				}
+
+				TableColumnAdjuster tt = new TableColumnAdjuster(table);
+
+				tt.adjustColumns();
+
+			}
+		});
+
 	}
 
 	@Override

@@ -5,10 +5,14 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +38,8 @@ public class ZolaController {
 	protected ZolaServerGui serverGui;
 	ZolaServerRepository zolaServerRepository;
 
+	ScheduledExecutorService zolaSchedulerPool = Executors.newScheduledThreadPool(5);
+
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	JsonParser jsonParser = new JsonParser();
 
@@ -46,6 +52,15 @@ public class ZolaController {
 		this.httpServicePort = zolaConfig.httpServicePort;
 
 		this.setGuiTitle(zolaConfig.app_name);
+
+		this.zolaSchedulerPool.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				refreshPanel();
+
+			}
+		}, 0, 1, TimeUnit.SECONDS);
 	}
 
 	private void setGuiTitle(String app_name) {
@@ -75,7 +90,7 @@ public class ZolaController {
 				Calendar.getInstance().getTime(), socket.getInetAddress());
 		clientId = zolaServerRepository.addClient(hydraClient);
 
-		refreshPanel();
+		// refreshPanel();
 
 		this.zolaServerRepository.getThreadPool().execute(hydraClient.getClientThread());
 
@@ -85,7 +100,12 @@ public class ZolaController {
 		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
 		List<Object[]> rowList = new ArrayList<>();
 		int count = 0;
-		for (String clientId : clients.keySet()) {
+
+		String[] keys = new ArrayList<>(clients.keySet()).toArray(new String[] {});
+
+		Arrays.sort(keys);
+
+		for (String clientId : keys) {
 			count++;
 			HydraConnectionClient client = clients.get(clientId);
 
@@ -107,7 +127,7 @@ public class ZolaController {
 						FormatUtil.formatBytes(Long.parseLong(bytesRecv)),
 						FormatUtil.formatBytes(Long.parseLong(bytesSent)), totalErr);
 			} catch (Exception e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 
 				System.out.println(client.getMessage());
 				displayMsg = client.getMessage();
@@ -158,10 +178,11 @@ public class ZolaController {
 					break;
 				}
 			}
-			refreshPanel();
+			// refreshPanel();
 
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			System.out.println("unknowm format of message!");
+			// System.err.println(e.getMessage());
 		}
 
 	}
@@ -193,7 +214,7 @@ public class ZolaController {
 		HydraConnectionClient client = this.zolaServerRepository.getClients().remove(clientId);
 		this.syslog(String.format("%s終止連線!", client.getClientID()));
 
-		refreshPanel();
+		// refreshPanel();
 	}
 
 	public void setWebServerInfo(int port) {
