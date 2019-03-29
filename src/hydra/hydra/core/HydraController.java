@@ -46,7 +46,7 @@ public class HydraController {
 	SystemInfo systemInfo = new SystemInfo();
 	final HydraRepository hydraRepository;
 	ExecutorService executorService = Executors.newCachedThreadPool();
-	ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+	ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
 
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
@@ -64,7 +64,8 @@ public class HydraController {
 
 		this.setGuiTitle(hydraConfig.app_name);
 
-		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, 5, TimeUnit.SECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, HydraConfig.heartBeat_interval,
+				TimeUnit.SECONDS);
 		scheduledExecutorService.scheduleAtFixedRate(new SystemChecker(this), 5, 1800, TimeUnit.SECONDS);
 		this.initTable();
 	}
@@ -198,6 +199,8 @@ public class HydraController {
 			e1.printStackTrace();
 		}
 
+		res.addProperty("interval", HydraConfig.heartBeat_interval);
+
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
 		CentralProcessor processor = systemInfo.getHardware().getProcessor();
 		OperatingSystem os = systemInfo.getOperatingSystem();
@@ -289,16 +292,20 @@ public class HydraController {
 		networkInfo.addProperty("totalBytesSentDelta", delta_sent_bytes);
 		networkInfo.addProperty("totalNetworkErr", totalNetErr);
 
-		sysInfoMap.put("Traffic(Recv)", String.format("%s (Total: %s)", FormatUtil.formatBytes(delta_recv_bytes),
-				FormatUtil.formatBytes(totalBytesRecv)));
-		sysInfoMap.put("Traffic(Sent)", String.format("%s (Total: %s)", FormatUtil.formatBytes(delta_sent_bytes),
-				FormatUtil.formatBytes(totalBytesSent)));
+		sysInfoMap.put("Traffic(Recv)",
+				String.format("%s/s (Total: %s)",
+						FormatUtil.formatBytes(delta_recv_bytes / HydraConfig.heartBeat_interval),
+						FormatUtil.formatBytes(totalBytesRecv)));
+		sysInfoMap.put("Traffic(Sent)",
+				String.format("%s/s (Total: %s)",
+						FormatUtil.formatBytes(delta_sent_bytes / HydraConfig.heartBeat_interval),
+						FormatUtil.formatBytes(totalBytesSent)));
 
 		res.add("network", networkInfo);
 
 		res.addProperty("timestamp", timeStamp);
 
-		//System.out.println(gson.toJson(res));
+		// System.out.println(gson.toJson(res));
 
 		HydraMessage hydraMessage = new HydraMessage(res, null, MessageType.HEARTBEAT);
 

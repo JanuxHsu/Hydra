@@ -53,13 +53,8 @@ public class ZolaController {
 
 		this.setGuiTitle(zolaConfig.app_name);
 
-		this.zolaSchedulerPool.scheduleAtFixedRate(new Runnable() {
-
-			@Override
-			public void run() {
-				refreshPanel();
-
-			}
+		this.zolaSchedulerPool.scheduleAtFixedRate(() -> {
+			refreshPanel();
 		}, 0, 1, TimeUnit.SECONDS);
 	}
 
@@ -123,9 +118,12 @@ public class ZolaController {
 				String bytesRecv = networkJson.get("totalBytesRecvDelta").getAsString();
 				String bytesSent = networkJson.get("totalBytesSentDelta").getAsString();
 				String totalErr = networkJson.get("totalNetworkErr").getAsString();
-				displayMsg = String.format("CPU: %s%%, Memory: %s%%, Recv: %s, Sent: %s, Error: %s", cpu, memory,
-						FormatUtil.formatBytes(Long.parseLong(bytesRecv)),
-						FormatUtil.formatBytes(Long.parseLong(bytesSent)), totalErr);
+
+				Integer heartBeatInterval = messageJson.get("interval").getAsInt();
+
+				displayMsg = String.format("CPU: %s%%, Memory: %s%%, Recv: %s/s, Sent: %s/s, Error: %s", cpu, memory,
+						FormatUtil.formatBytes(Long.parseLong(bytesRecv) / heartBeatInterval),
+						FormatUtil.formatBytes(Long.parseLong(bytesSent) / heartBeatInterval), totalErr);
 			} catch (Exception e) {
 				// e.printStackTrace();
 
