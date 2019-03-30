@@ -28,6 +28,10 @@ public class ZolaMain {
 		webPortParam.setRequired(true);
 		options.addOption(webPortParam);
 
+		Option hydraCurrentVersion = new Option("hv", "hydraClient Ver.", true, "hydraClient Version");
+		hydraCurrentVersion.setRequired(false);
+		options.addOption(hydraCurrentVersion);
+
 		CommandLineParser parser = new DefaultParser();
 		HelpFormatter formatter = new HelpFormatter();
 		CommandLine cmd = null;
@@ -43,12 +47,16 @@ public class ZolaMain {
 
 		String serverPort = cmd.getOptionValue("p");
 		String serverHttpPort = cmd.getOptionValue("wp");
+		String hydraClientVersion = cmd.getOptionValue("hv");
 
 		ZolaConfig zolaConfig = new ZolaConfig();
+		if (hydraClientVersion != null) {
+			ZolaConfig.hydraClientVersion = hydraClientVersion;
+		}
 
 		zolaConfig.servicePort = Integer.valueOf(serverPort);
 		zolaConfig.httpServicePort = Integer.valueOf(serverHttpPort);
-		zolaConfig.app_name = "Hydra Server (JanuxHsu) Dev 1.15";
+		zolaConfig.app_name = "Hydra Server (JanuxHsu) Dev " + ZolaConfig.zolaVersion;
 		zolaConfig.setGUI_type(GUI_Type.Swing);
 
 		ZolaController zolaController = new ZolaController(zolaConfig);

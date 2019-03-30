@@ -27,7 +27,6 @@ import hydra.repository.ZolaServerRepository;
 import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.gui.ZolaServerSwingGui;
 import hydra.zola.model.HydraConnectionClient;
-import hydra.zola.model.HydraConnectionClient.ClientType;
 import oshi.util.FormatUtil;
 
 public class ZolaController {
@@ -163,14 +162,6 @@ public class ZolaController {
 
 					break;
 
-				case REGISTER:
-					JsonObject infoJson = hydraMessage.getMessageBody().getAsJsonObject();
-
-					ClientType clientType = ClientType.valueOf(infoJson.get("clientType").getAsString());
-					String clientVersion = infoJson.get("clientVersion").getAsString();
-					client.setClientInfo(clientType, clientVersion);
-					break;
-
 				case FULLSYSINFO:
 
 					client.setClientSystemInfo(message);
@@ -182,7 +173,7 @@ public class ZolaController {
 			}
 
 		} catch (Exception e) {
-			System.out.println("unknowm format of message!");
+			System.out.println("Unknown type of message!");
 		}
 
 	}

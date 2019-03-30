@@ -3,9 +3,11 @@ package hydra.zola.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -29,6 +31,7 @@ import hydra.zola.model.HydraConnectionClient;
 public class ZolaServerSwingGui implements ZolaServerGui {
 
 	protected JFrame mainWindow;
+	Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -166,6 +169,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		logArea.setEditable(false);
 
+		logArea.setFont(defaultFont);
+
 		this.loggingBox = logArea;
 		serverLogPanel.add(new JScrollPane(logArea), BorderLayout.CENTER);
 		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
@@ -195,14 +200,17 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		JTextArea logger = this.loggingBox;
 
+		String logText2 = String.format("[%s] %s%n", this.simpleDateFormat.format(Calendar.getInstance().getTime()),
+				logText);
+
 		SwingUtilities.invokeLater(() -> {
 			if (logger.getLineCount() > 50) {
 				logger.setText("");
 			}
-			logger.append(logText + "\n");
+			logger.append(logText2);
 		});
 
-		System.out.println("[Info]: " + logText);
+		System.out.println(logText2);
 
 	}
 

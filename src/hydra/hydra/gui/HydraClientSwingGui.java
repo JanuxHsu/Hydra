@@ -52,8 +52,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	TrayIcon trayIcon;
 
-	Font defaultFont = new Font(Font.MONOSPACED, Font.BOLD, 10);
-	Font labelFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+	Font monoFont = new Font(Font.MONOSPACED, Font.BOLD, 10);
+	Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
 	JLabel hostLabel;
 
@@ -219,7 +219,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		hostLabel.setOpaque(true);
 		hostLabel.setBackground(Color.RED);
 		hostLabel.setForeground(Color.WHITE);
-		hostLabel.setFont(defaultFont);
+		hostLabel.setFont(monoFont);
 
 		hostLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
@@ -247,7 +247,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		connectionIndicator.setHorizontalAlignment(JLabel.LEFT);
 		connectionIndicator.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
-		connectionIndicator.setFont(labelFont);
+		connectionIndicator.setFont(defaultFont);
 
 		this.serverIndicator = connectionIndicator;
 		leftDashPanel.add(connectionIndicator);
@@ -260,7 +260,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		// workerIndicator.setFont(defaultFont);
 		workerIndicator.setHorizontalAlignment(JLabel.LEFT);
 		workerIndicator.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-		workerIndicator.setFont(labelFont);
+		workerIndicator.setFont(defaultFont);
 
 		this.workerIndicator = workerIndicator;
 		leftDashPanel.add(workerIndicator);
@@ -289,8 +289,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		cpuBar.setStringPainted(true);
 
-		memoryBar.setFont(labelFont);
-		cpuBar.setFont(labelFont);
+		memoryBar.setFont(defaultFont);
+		cpuBar.setFont(defaultFont);
 
 		memoryBar.setBorder(BorderFactory.createLineBorder(Color.black));
 		cpuBar.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -331,8 +331,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		JTable resultTable = new JTable(tableModel);
 
-		resultTable.setFont(labelFont);
-		resultTable.getTableHeader().setFont(labelFont);
+		resultTable.setFont(defaultFont);
+		resultTable.getTableHeader().setFont(defaultFont);
 
 		resultTable.setAutoCreateRowSorter(true);
 
@@ -344,7 +344,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		JTextArea logArea = new JTextArea();
 		logArea.setLineWrap(true);
 		logArea.setEditable(false);
-		logArea.setFont(labelFont);
+		logArea.setFont(defaultFont);
 		this.logArea = logArea;
 		centerPanel.add(new JScrollPane(logArea), BorderLayout.SOUTH);
 

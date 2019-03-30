@@ -35,7 +35,7 @@ public class HydraConnector implements Runnable {
 			String line;
 			while (running && (line = this.serverInputStream.readUTF()) != null) {
 
-				System.out.println(line);
+				//System.out.println(line);
 				this.hydraController.updateRecv(line);
 				// this.hydraController.systemLog(line);
 

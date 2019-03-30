@@ -19,7 +19,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
@@ -54,6 +56,7 @@ public class HydraController {
 	protected HydraClientGui clientGui;
 	// public volatile boolean isConnectedToServer = false;
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	JsonParser jsonParser = new JsonParser();
 
 	public HydraController(HydraConfig hydraConfig) {
 		this.clientVersion = hydraConfig.clientVersion;
@@ -177,13 +180,12 @@ public class HydraController {
 
 	}
 
-	public boolean registerClient() {
+	public boolean doRegisterClient(JsonObject messageBody) {
+		this.clientGui.updateClientInfo(messageBody);
 
 		JsonObject registerJson = new JsonObject();
 		registerJson.addProperty("clientVersion", this.clientVersion);
 		registerJson.addProperty("clientType", ClientType.HYDRA.toString());
-
-//		JsonPrimitive jsonPrimitive = new JsonPrimitive("I'm Hydra");
 
 		HydraMessage hydraMessage = new HydraMessage(registerJson, null, MessageType.REGISTER);
 
@@ -326,8 +328,8 @@ public class HydraController {
 
 	public void updateHydraStatus() {
 
-		System.out.println(this.scheduledThreadPoolExecutor.getActiveCount() + "/"
-				+ this.scheduledThreadPoolExecutor.getCorePoolSize());
+//		System.out.println(this.scheduledThreadPoolExecutor.getActiveCount() + "/"
+//				+ this.scheduledThreadPoolExecutor.getCorePoolSize());
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
@@ -341,22 +343,40 @@ public class HydraController {
 
 		try {
 
-			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
+			JsonElement recv_message_json = jsonParser.parse(line);
 
-			this.clientGui.updateClientInfo(jsonObject);
+			if (recv_message_json.isJsonObject()) {
+				System.out.println(gson.toJson(recv_message_json));
+				HydraMessage hydraMessage = gson.fromJson(line, HydraMessage.class);
 
-			if (jsonObject != null) {
-				this.systemLog("Zola Server Connected!");
-				this.clientGui.displayIconMessage("Hydra", "Connected to Server!", java.awt.TrayIcon.MessageType.INFO,
-						IconMessageMode.ALWAYS);
+				MessageType messageType = hydraMessage.getMessageType();
+				switch (messageType) {
+				case REGISTER:
+					JsonObject messageBody = gson.fromJson(line, JsonObject.class).get("message").getAsJsonObject();
 
-				this.registerClient();
+					if (messageBody != null) {
+
+						this.systemLog("Zola Server Connected!");
+						this.clientGui.displayIconMessage("Hydra", "Connected to Server!",
+								java.awt.TrayIcon.MessageType.INFO, IconMessageMode.ALWAYS);
+
+						this.doRegisterClient(messageBody);
+					}
+					break;
+
+				case MANAGEMENT:
+
+					break;
+
+				default:
+					break;
+				}
 			}
 
 			// jsonObject.get(memberName)
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		this.hydraRepository.getHydraStatus().setServerLastResponse(line);
 

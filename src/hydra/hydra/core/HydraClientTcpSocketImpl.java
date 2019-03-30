@@ -42,7 +42,7 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 	public void sendMessage(String text) {
 		if (this.hydraConnector != null) {
 			hydraConnector.sendMessage(text);
-			System.out.println("Message: " + text);
+			// System.out.println("Message: " + text);
 		}
 
 	}

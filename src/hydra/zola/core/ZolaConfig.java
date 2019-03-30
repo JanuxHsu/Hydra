@@ -5,6 +5,9 @@ public class ZolaConfig {
 		Swing
 	}
 
+	public final static String zolaVersion = "v1.15";
+	public static String hydraClientVersion = zolaVersion;
+
 	public String app_name;
 	private GUI_Type GUI_type = GUI_Type.Swing;
 

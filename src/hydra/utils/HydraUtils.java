@@ -11,7 +11,6 @@ public class HydraUtils {
 		int pid = -1;
 		try {
 			String pid_host = ManagementFactory.getRuntimeMXBean().getName();
-			System.out.println(pid_host);
 			pid = Integer.parseInt(pid_host.split("@")[0]);
 		} catch (Exception e) {
 			e.printStackTrace();

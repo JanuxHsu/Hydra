@@ -3,7 +3,7 @@ package hydra.hydra.core;
 public class HydraConfig {
 
 	public static int heartBeat_interval = 5;
-	public static String version = "v1.14";
+	public static String version = "v1.15";
 
 	public enum GUI_Type {
 		Swing

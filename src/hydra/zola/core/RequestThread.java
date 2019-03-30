@@ -11,6 +11,9 @@ import java.util.Calendar;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import hydra.model.HydraMessage;
+import hydra.model.HydraMessage.MessageType;
+
 public class RequestThread implements Runnable {
 	private final Socket clientSocket;
 
@@ -51,11 +54,19 @@ public class RequestThread implements Runnable {
 			String timestamp = sdf.format(Calendar.getInstance().getTime());
 			responseJson.addProperty("host_recv_time", timestamp);
 			responseJson.addProperty("messageType", "register");
-
 			responseJson.addProperty("client_cnt", this.zolaController.zolaServerRepository.getClients().size());
 			responseJson.addProperty("client_id", this.clientId);
 
-			output.writeUTF(new Gson().toJson(responseJson));
+			String url = "http://" + InetAddress.getLocalHost().getHostAddress() + ":"
+					+ this.zolaController.httpServicePort + "/api/cleints/download";
+			responseJson.addProperty("action", "update");
+			responseJson.addProperty("currentVersion", ZolaConfig.hydraClientVersion.trim());
+			responseJson.addProperty("file_url", url);
+			HydraMessage echoMessage = new HydraMessage(responseJson, clientId, MessageType.REGISTER);
+			// System.out.println(new
+			// GsonBuilder().setPrettyPrinting().create().toJson(updateMessage));
+
+			output.writeUTF(new Gson().toJson(echoMessage));
 			output.flush();
 			String message;
 			while ((message = input.readUTF()) != null) {
