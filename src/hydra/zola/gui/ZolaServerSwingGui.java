@@ -38,6 +38,10 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	JTable clientListTable;
 
+	JLabel threadPoolStatus;
+
+	JLabel httpServiceStatus;
+
 	public ZolaServerSwingGui(ZolaController zolaController) {
 		JFrame window = new JFrame();
 		try {
@@ -99,10 +103,6 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		resultTable.setAutoCreateRowSorter(true);
 
-//		resultTable.getColumnModel().getColumn(0).setPreferredWidth(15);
-//		resultTable.getColumnModel().getColumn(1).setPreferredWidth(200);
-//		resultTable.getColumnModel().getColumn(2).setPreferredWidth(60);
-
 		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
 		this.clientListTable = resultTable;
@@ -117,14 +117,25 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		JPanel clientActionPanel = new JPanel(new BorderLayout());
 
 		JPanel threadPanel = new JPanel(new GridLayout(1, 2, 2, 0));
-		//threadPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		JLabel threadLabel = new JLabel("init...");
-		threadLabel.setOpaque(true);
-		threadLabel.setBackground(new Color(238, 90, 36));
-		threadLabel.setForeground(Color.white);
-		threadLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		threadPanel.add(threadLabel);
+		threadPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
+
+		JLabel httpServiceLabel = new JLabel("Checking...");
+
+		httpServiceLabel.setOpaque(true);
+		httpServiceLabel.setBackground(new Color(52, 31, 151));
+		httpServiceLabel.setForeground(Color.white);
+		httpServiceLabel.setHorizontalAlignment(JLabel.CENTER);
+		this.httpServiceStatus = httpServiceLabel;
+		threadPanel.add(httpServiceLabel);
+
+		JLabel threadPoolLabel = new JLabel("Checking...");
+		threadPoolLabel.setOpaque(true);
+		threadPoolLabel.setBackground(new Color(238, 90, 36));
+		threadPoolLabel.setForeground(Color.white);
+		threadPoolLabel.setHorizontalAlignment(JLabel.CENTER);
+		this.threadPoolStatus = threadPoolLabel;
+		threadPanel.add(threadPoolLabel);
 
 		clientActionPanel.add(threadPanel, BorderLayout.CENTER);
 
@@ -191,7 +202,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 			logger.append(logText + "\n");
 		});
 
-		System.out.println(logText);
+		System.out.println("[Info]: " + logText);
 
 	}
 
@@ -225,6 +236,21 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		});
 
+	}
+
+	@Override
+	public void updateThreadPoolStatus(String status) {
+		SwingUtilities.invokeLater(() -> {
+			this.threadPoolStatus.setText(status);
+		});
+
+	}
+
+	@Override
+	public void updateHttpServiceStatus(String status) {
+		SwingUtilities.invokeLater(() -> {
+			this.httpServiceStatus.setText(status);
+		});
 	}
 
 }

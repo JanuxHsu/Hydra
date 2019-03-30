@@ -61,17 +61,13 @@ public class RequestThread implements Runnable {
 			while ((message = input.readUTF()) != null) {
 
 				this.zolaController.updateClientMessage(this.clientId, message);
-				// this.hydraServer.updateClientMessage(this.clientId, message);
-
-//				if (message.equals("go")) {
-//					this.hydraServer.broadcast(this.clientId, message);
-//				}
-				// System.out.println(message);
 
 			}
 		} catch (IOException e) {
 
-			e.printStackTrace();
+			// e.printStackTrace();
+
+			System.err.println("Client disconnected!");
 		}
 
 		this.zolaController.removeClient(this.clientId);

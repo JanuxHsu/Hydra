@@ -48,16 +48,11 @@ public class ZolaMain {
 
 		zolaConfig.servicePort = Integer.valueOf(serverPort);
 		zolaConfig.httpServicePort = Integer.valueOf(serverHttpPort);
-		zolaConfig.app_name = "Hydra Server (JanuxHsu) Dev 1.12";
+		zolaConfig.app_name = "Hydra Server (JanuxHsu) Dev 1.15";
 		zolaConfig.setGUI_type(GUI_Type.Swing);
 
 		ZolaController zolaController = new ZolaController(zolaConfig);
 
-		// ZolaServerGui gui = new ZolaServerSwingGui();
-//		ZolaServer hydraServer = new ZolaServerTcpSocketImpl("Hydra Server (JanuxHsu) Dev 1.1", gui);
-//		hydraServer.setPort(serverPort);
-//
-//		hydraServer.open();
 		ZolaServer zolaServer = new ZolaServerTcpSocketImpl(zolaController);
 		zolaServer.open();
 	}

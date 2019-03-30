@@ -35,6 +35,8 @@ public class HydraConnectionClient {
 	@TableColumn(columName = "Last Message")
 	String message = "Connected";
 
+	String systemInfoMessage = "";
+
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	public HydraConnectionClient(String clientId, String clientVersion, RequestThread clientThread, Date acceptedTime,
@@ -106,5 +108,13 @@ public class HydraConnectionClient {
 		this.clientType = clientType;
 		this.clientVersion = clientVersion;
 
+	}
+
+	public void setClientSystemInfo(String msg) {
+		this.systemInfoMessage = msg;
+	}
+
+	public String getClientSystemInfo() {
+		return this.systemInfoMessage;
 	}
 }

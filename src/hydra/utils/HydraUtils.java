@@ -3,7 +3,6 @@ package hydra.utils;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 
@@ -23,7 +22,6 @@ public class HydraUtils {
 	}
 
 	public static int[] getAllHydraPid() {
-		ProcessBuilder processBuilder = new ProcessBuilder();
 
 		try {
 			String[] command = { "jps", "-l", "-m" };
@@ -36,7 +34,7 @@ public class HydraUtils {
 			String[] processes = stdout.split("\n");
 
 			for (String raw : processes) {
-				System.out.println(Arrays.toString(stdout.split(" ")));
+				System.out.println(raw);
 
 			}
 

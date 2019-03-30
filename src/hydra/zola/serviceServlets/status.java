@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -16,18 +17,20 @@ import hydra.zola.core.ZolaController;
 import hydra.zola.core.ZolaHelper;
 import hydra.zola.model.HydraConnectionClient;
 
-@Path("/Servers")
-public class Servers {
+@Path("/status")
+public class status {
 
-	ZolaController zolaController = ZolaHelper.getInstance().getController();
+	ZolaHelper zolaHelper = ZolaHelper.getInstance();
+	ZolaController zolaController = zolaHelper.getController();
 	Gson gson = new Gson();
 	Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllStatus() {
+	public String doGetAllStatus() {
 
 		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaController.getRepository().getClients();
+		JsonElement res = null;
 		JsonArray resArray = new JsonArray();
 		for (String clientId : clients.keySet()) {
 			HydraConnectionClient clientItem = clients.get(clientId);
@@ -35,7 +38,6 @@ public class Servers {
 			try {
 				JsonElement json = new Gson().fromJson(clientItem.getMessage(), JsonElement.class);
 				if (json.isJsonObject()) {
-
 					resArray.add(json.getAsJsonObject().get("message").getAsJsonObject());
 				}
 
@@ -44,8 +46,21 @@ public class Servers {
 			}
 
 		}
-
-		return gsonPretty.toJson(resArray);
-
+		res = resArray;
+		return gsonPretty.toJson(res);
 	}
+
+	@GET
+	@Path("/{param}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String hello(@PathParam("param") String client_id) {
+		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaController.getRepository().getClients();
+		JsonElement json = null;
+		if (clients.containsKey(client_id)) {
+			json = gsonPretty.fromJson(clients.get(client_id).getClientSystemInfo(), JsonElement.class);
+		}
+
+		return gsonPretty.toJson(json);
+	}
+
 }

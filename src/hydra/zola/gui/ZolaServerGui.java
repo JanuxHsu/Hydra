@@ -17,4 +17,8 @@ public interface ZolaServerGui {
 	public void setTitle(String name);
 
 	public void setServiceInfo(String infoText);
+
+	public void updateThreadPoolStatus(String status);
+
+	public void updateHttpServiceStatus(String status);
 }

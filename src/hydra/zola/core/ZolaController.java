@@ -40,12 +40,9 @@ public class ZolaController {
 	ZolaServerRepository zolaServerRepository;
 
 	ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(5);
-	// ExecutorService threadPool = Executors.newCachedThreadPool();
+
 	ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 100, 5000, TimeUnit.MILLISECONDS,
 			new LinkedBlockingQueue<>());
-
-	// ScheduledExecutorService zolaSchedulerPool =
-	// Executors.newScheduledThreadPool(5);
 
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	JsonParser jsonParser = new JsonParser();
@@ -125,9 +122,7 @@ public class ZolaController {
 						FormatUtil.formatBytes(Long.parseLong(bytesRecv) / heartBeatInterval),
 						FormatUtil.formatBytes(Long.parseLong(bytesSent) / heartBeatInterval), totalErr);
 			} catch (Exception e) {
-				// e.printStackTrace();
 
-				System.out.println(client.getMessage());
 				displayMsg = client.getMessage();
 			}
 
@@ -145,8 +140,9 @@ public class ZolaController {
 
 		this.serverGui.refreshTable(rowList);
 
-//		this.serverGui.writeLog(String.format("%s/%s", this.threadPoolExecutor.getActiveCount(),
-//				this.threadPoolExecutor.getCorePoolSize()));
+		String threadStatus = String.format("Active/PoolSize : [%s/%s]", this.threadPoolExecutor.getActiveCount(),
+				this.threadPoolExecutor.getCorePoolSize());
+		this.serverGui.updateThreadPoolStatus(threadStatus);
 
 	}
 
@@ -175,15 +171,18 @@ public class ZolaController {
 					client.setClientInfo(clientType, clientVersion);
 					break;
 
+				case FULLSYSINFO:
+
+					client.setClientSystemInfo(message);
+					break;
+
 				default:
 					break;
 				}
 			}
-			// refreshPanel();
 
 		} catch (Exception e) {
 			System.out.println("unknowm format of message!");
-			// System.err.println(e.getMessage());
 		}
 
 	}
@@ -242,14 +241,14 @@ public class ZolaController {
 	public void setWebServerInfo(int port) {
 		String host = null;
 		try {
-			host = InetAddress.getLocalHost().getHostName();
+			host = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 			host = "Unknown";
 		}
-		this.serverGui.setServiceInfo("Http API : " + host + ":" + port);
-
+		this.serverGui.setServiceInfo("HTTP API : " + host + ":" + port);
+		this.serverGui.updateHttpServiceStatus("Jetty Server Started");
 	}
 
 	public ZolaServerRepository getRepository() {
