@@ -1,6 +1,6 @@
 package hydra.zola.core;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import hydra.repository.ZolaServerRepository;
 
@@ -13,9 +13,8 @@ public class ZolaServerTcpSocketImpl extends ZolaServer {
 	@Override
 	public void open() {
 
-		ExecutorService executorService = this.zolaController.zolaServerRepository.getThreadPool();
-		executorService.submit(new ZolaConnector(this.zolaController));
-		executorService.submit(new ZolaHttpService(this.zolaController));
+		ThreadPoolExecutor threadPoolExecutor = this.zolaController.threadPoolExecutor;
+		threadPoolExecutor.execute((new ZolaConnector(this.zolaController)));
 
 	}
 

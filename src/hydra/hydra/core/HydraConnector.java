@@ -43,7 +43,9 @@ public class HydraConnector implements Runnable {
 			System.out.println("loop end");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			
+			System.err.println("Connection fail...");
 		} finally {
 			try {
 				this.socket.close();

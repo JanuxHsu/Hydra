@@ -12,6 +12,7 @@ import hydra.hydra.core.HydraClientTcpSocketImpl;
 import hydra.hydra.core.HydraConfig;
 import hydra.hydra.core.HydraConfig.GUI_Type;
 import hydra.hydra.core.HydraController;
+import hydra.utils.HydraUtils;
 
 public class HydraMain {
 
@@ -43,6 +44,9 @@ public class HydraMain {
 
 			System.exit(1);
 		}
+
+		HydraUtils.getHydraPid();
+		HydraUtils.getAllHydraPid();
 
 		String serverHost = cmd.getOptionValue("s");
 		String serverPort = cmd.getOptionValue("p");

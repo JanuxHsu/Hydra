@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -45,8 +45,10 @@ public class HydraController {
 	final int ZolaServerPort;
 	SystemInfo systemInfo = new SystemInfo();
 	final HydraRepository hydraRepository;
+
+	ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(5);
+
 	ExecutorService executorService = Executors.newCachedThreadPool();
-	ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
 
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
@@ -64,9 +66,10 @@ public class HydraController {
 
 		this.setGuiTitle(hydraConfig.app_name);
 
-		scheduledExecutorService.scheduleAtFixedRate(new HydraServiceChecker(this), 1, HydraConfig.heartBeat_interval,
-				TimeUnit.SECONDS);
-		scheduledExecutorService.scheduleAtFixedRate(new SystemChecker(this), 5, 1800, TimeUnit.SECONDS);
+		scheduledThreadPoolExecutor.scheduleAtFixedRate(new HydraServiceChecker(this), 1,
+				HydraConfig.heartBeat_interval, TimeUnit.SECONDS);
+
+		scheduledThreadPoolExecutor.scheduleAtFixedRate(new SystemChecker(this), 5, 1800, TimeUnit.SECONDS);
 		this.initTable();
 	}
 
@@ -323,6 +326,8 @@ public class HydraController {
 
 	public void updateHydraStatus() {
 
+		System.out.println(this.scheduledThreadPoolExecutor.getActiveCount() + "/"
+				+ this.scheduledThreadPoolExecutor.getCorePoolSize());
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());

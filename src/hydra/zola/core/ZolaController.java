@@ -10,8 +10,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -38,7 +39,13 @@ public class ZolaController {
 	protected ZolaServerGui serverGui;
 	ZolaServerRepository zolaServerRepository;
 
-	ScheduledExecutorService zolaSchedulerPool = Executors.newScheduledThreadPool(5);
+	ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(5);
+	// ExecutorService threadPool = Executors.newCachedThreadPool();
+	ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 100, 5000, TimeUnit.MILLISECONDS,
+			new LinkedBlockingQueue<>());
+
+	// ScheduledExecutorService zolaSchedulerPool =
+	// Executors.newScheduledThreadPool(5);
 
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	JsonParser jsonParser = new JsonParser();
@@ -53,9 +60,15 @@ public class ZolaController {
 
 		this.setGuiTitle(zolaConfig.app_name);
 
-		this.zolaSchedulerPool.scheduleAtFixedRate(() -> {
+		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
 			refreshPanel();
 		}, 0, 1, TimeUnit.SECONDS);
+
+		this.threadPoolExecutor.allowCoreThreadTimeOut(true);
+		this.threadPoolExecutor.execute(new ZolaHttpService(this));
+
+		ZolaHelper zolaHelper = ZolaHelper.getInstance();
+		zolaHelper.setZolaController(this);
 	}
 
 	private void setGuiTitle(String app_name) {
@@ -75,19 +88,6 @@ public class ZolaController {
 
 	public void syslog(String log) {
 		this.serverGui.writeLog(log);
-
-	}
-
-	public void addClient(Socket socket) {
-		String clientId = UUID.randomUUID().toString();
-		RequestThread clientThread = new RequestThread(this, clientId, socket);
-		HydraConnectionClient hydraClient = new HydraConnectionClient(clientId, "unknown", clientThread,
-				Calendar.getInstance().getTime(), socket.getInetAddress());
-		clientId = zolaServerRepository.addClient(hydraClient);
-
-		// refreshPanel();
-
-		this.zolaServerRepository.getThreadPool().execute(hydraClient.getClientThread());
 
 	}
 
@@ -144,6 +144,9 @@ public class ZolaController {
 		}
 
 		this.serverGui.refreshTable(rowList);
+
+//		this.serverGui.writeLog(String.format("%s/%s", this.threadPoolExecutor.getActiveCount(),
+//				this.threadPoolExecutor.getCorePoolSize()));
 
 	}
 
@@ -212,7 +215,28 @@ public class ZolaController {
 		HydraConnectionClient client = this.zolaServerRepository.getClients().remove(clientId);
 		this.syslog(String.format("%s終止連線!", client.getClientID()));
 
+		if (this.threadPoolExecutor.getActiveCount() + 1 < this.threadPoolExecutor.getCorePoolSize()) {
+			this.threadPoolExecutor.setCorePoolSize(this.threadPoolExecutor.getCorePoolSize() - 1);
+		}
+
 		// refreshPanel();
+	}
+
+	public void addClient(Socket socket) {
+		String clientId = UUID.randomUUID().toString();
+		RequestThread clientThread = new RequestThread(this, clientId, socket);
+		HydraConnectionClient hydraClient = new HydraConnectionClient(clientId, "unknown", clientThread,
+				Calendar.getInstance().getTime(), socket.getInetAddress());
+		clientId = zolaServerRepository.addClient(hydraClient);
+
+		// refreshPanel();
+		this.threadPoolExecutor.execute(hydraClient.getClientThread());
+		if (this.threadPoolExecutor.getActiveCount() + 1 > this.threadPoolExecutor.getCorePoolSize()) {
+			this.threadPoolExecutor.setCorePoolSize(this.threadPoolExecutor.getCorePoolSize() + 2);
+		}
+
+		// this.exeexecute(hydraClient.getClientThread());
+
 	}
 
 	public void setWebServerInfo(int port) {
@@ -226,6 +250,10 @@ public class ZolaController {
 		}
 		this.serverGui.setServiceInfo("Http API : " + host + ":" + port);
 
+	}
+
+	public ZolaServerRepository getRepository() {
+		return this.zolaServerRepository;
 	}
 
 }

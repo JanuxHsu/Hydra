@@ -116,12 +116,24 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		JPanel clientActionPanel = new JPanel(new BorderLayout());
 
+		JPanel threadPanel = new JPanel(new GridLayout(1, 2, 2, 0));
+		//threadPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		JLabel threadLabel = new JLabel("init...");
+		threadLabel.setOpaque(true);
+		threadLabel.setBackground(new Color(238, 90, 36));
+		threadLabel.setForeground(Color.white);
+		threadLabel.setHorizontalAlignment(JLabel.CENTER);
+
+		threadPanel.add(threadLabel);
+
+		clientActionPanel.add(threadPanel, BorderLayout.CENTER);
+
 		JButton kickClient = new JButton("Kick");
 		kickClient.setPreferredSize(new Dimension(100, 25));
 
 		clientActionPanel.add(kickClient, BorderLayout.EAST);
 
-		clientActionPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		clientActionPanel.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
 
 		paddedPanel.add(clientActionPanel, BorderLayout.SOUTH);
 
