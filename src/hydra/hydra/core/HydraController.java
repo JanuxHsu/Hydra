@@ -45,7 +45,7 @@ public class HydraController {
 
 	final HydraType hydraMode;
 
-	final String clientVersion;
+	public final String clientVersion;
 
 	final String ZolaServerHost;
 	final int ZolaServerPort;
@@ -63,10 +63,9 @@ public class HydraController {
 	JsonParser jsonParser = new JsonParser();
 
 	public HydraController(HydraConfig hydraConfig) {
-
-		this.hydraMode = HydraConfig.mode;
 		this.clientVersion = hydraConfig.clientVersion;
-
+		this.hydraMode = HydraConfig.mode;
+	
 		this.hydraRepository = new HydraRepository();
 		this.clientGui = new HydraClientSwingGui(this);
 

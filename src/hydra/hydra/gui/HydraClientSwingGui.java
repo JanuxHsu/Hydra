@@ -171,6 +171,11 @@ public class HydraClientSwingGui extends HydraClientGui {
 		PopupMenu trayPopupMenu = new PopupMenu();
 
 		// 1t menuitem for popupmenu
+		MenuItem version = new MenuItem("Version : " + this.hydraController.clientVersion);
+		version.setEnabled(false);
+		trayPopupMenu.add(version);
+		trayPopupMenu.addSeparator();
+
 		MenuItem status = new MenuItem("Status: Unknown");
 		status.setEnabled(false);
 		trayPopupMenu.add(status);
@@ -401,7 +406,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 			if (isConnected) {
 				this.serverIndicator.setText("Server Status : Up");
 				this.serverIndicator.setBackground(new Color(39, 174, 96));
-				trayIcon.getPopupMenu().getItem(0).setLabel("Status: Connected");
+				trayIcon.getPopupMenu().getItem(1).setLabel("Status: Connected");
 
 				// this.displayIconMessage("Hydra", "Connected to Server!", MessageType.INFO,
 				// IconMessageMode.ALWAYS);
@@ -409,7 +414,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 			} else {
 				this.serverIndicator.setText("Server Status : Down");
 				this.serverIndicator.setBackground(Color.RED);
-				trayIcon.getPopupMenu().getItem(0).setLabel("Status: Disonnected");
+				trayIcon.getPopupMenu().getItem(1).setLabel("Status: Disonnected");
 
 				// this.displayIconMessage("Hydra", "Disconnected to Server!",
 				// MessageType.WARNING, IconMessageMode.PERIODIC);
