@@ -1,12 +1,17 @@
 package hydra.zola.model;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.google.gson.JsonObject;
+
+import hydra.model.HydraMessage;
 import hydra.model.TableColumn;
+import hydra.model.HydraMessage.MessageType;
 import hydra.zola.core.RequestThread;
 
 public class HydraConnectionClient {
@@ -33,7 +38,7 @@ public class HydraConnectionClient {
 	final Date acceptedTime;
 
 	@TableColumn(columName = "Last Message")
-	String message = "Connected";
+	String message = "---";
 
 	String systemInfoMessage = "";
 
@@ -116,5 +121,23 @@ public class HydraConnectionClient {
 
 	public String getClientSystemInfo() {
 		return this.systemInfoMessage;
+	}
+
+	public void disconnect(boolean isShutDown) {
+
+		JsonObject jsonObject = new JsonObject();
+
+		jsonObject.addProperty("action", isShutDown ? "shutdown" : "reset");
+
+		HydraMessage hydraMessage = new HydraMessage(jsonObject, this.clientID, MessageType.MANAGEMENT);
+		
+		System.out.println(hydraMessage.toString());
+
+		try {
+			this.clientThread.sendMessage(hydraMessage.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.clientThread.close();
 	}
 }

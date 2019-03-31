@@ -7,7 +7,7 @@ public class HydraConfig {
 	}
 
 	public static int heartBeat_interval = 5;
-	public static String version = "v1.15";
+	public static String version = "v1.15b";
 	public static HydraType mode = HydraType.DEV;
 
 	public enum GUI_Type {

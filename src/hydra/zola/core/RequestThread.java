@@ -23,6 +23,8 @@ public class RequestThread implements Runnable {
 	DataInputStream input = null;
 	DataOutputStream output = null;
 
+	private boolean runFlag = true;
+
 	public RequestThread(ZolaController zolaController, String clientId, Socket clientSocket) {
 		this.clientId = clientId;
 		this.clientSocket = clientSocket;
@@ -69,7 +71,7 @@ public class RequestThread implements Runnable {
 			output.writeUTF(new Gson().toJson(echoMessage));
 			output.flush();
 			String message;
-			while ((message = input.readUTF()) != null) {
+			while (this.runFlag && (message = input.readUTF()) != null) {
 
 				this.zolaController.updateClientMessage(this.clientId, message);
 
@@ -82,6 +84,11 @@ public class RequestThread implements Runnable {
 		}
 
 		this.zolaController.removeClient(this.clientId);
+
+	}
+
+	public void close() {
+		this.runFlag = false;
 
 	}
 }

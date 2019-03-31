@@ -63,11 +63,12 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 				.getImage(this.getClass().getClassLoader().getResource("resources/hydra64.png")));
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
-		mainPanel.add(getServerInfoPanel(), BorderLayout.NORTH);
+		mainPanel.add(getServerInfoPanel(), BorderLayout.CENTER);
 
-		mainPanel.add(getServerLogPanel(), BorderLayout.CENTER);
+		// mainPanel.add(getServerLogPanel(), BorderLayout.SOUTH);
+
 		window.add(mainPanel, BorderLayout.CENTER);
-
+		window.add(getServerLogPanel(), BorderLayout.SOUTH);
 		window.pack();
 		this.mainWindow = window;
 	}
@@ -103,9 +104,10 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		}
 
 		JTable resultTable = new JTable(tableModel);
-		
-		resultTable.setFont(defaultFont);
-		resultTable.getTableHeader().setFont(defaultFont);
+
+		// resultTable.setFont(defaultFont);
+
+		// resultTable.getTableHeader().setFont(defaultFont);
 
 		resultTable.setAutoCreateRowSorter(true);
 
@@ -145,7 +147,9 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		clientActionPanel.add(threadPanel, BorderLayout.CENTER);
 
-		JButton kickClient = new JButton("Kick");
+		JButton kickClient = new JButton("Close All");
+		kickClient.setFont(defaultFont);
+		kickClient.addActionListener(new buttonListener());
 		kickClient.setPreferredSize(new Dimension(100, 25));
 
 		clientActionPanel.add(kickClient, BorderLayout.EAST);
@@ -175,9 +179,12 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		logArea.setFont(defaultFont);
 
 		this.loggingBox = logArea;
-		serverLogPanel.add(new JScrollPane(logArea), BorderLayout.CENTER);
-		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
 
+		JScrollPane scrollPane = new JScrollPane(logArea);
+		scrollPane.setMaximumSize(new Dimension(0, 30));
+		serverLogPanel.add(scrollPane, BorderLayout.CENTER);
+		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
+		serverLogPanel.setMaximumSize(new Dimension(0, 30));
 		return serverLogPanel;
 
 	}
@@ -207,7 +214,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 				logText);
 
 		SwingUtilities.invokeLater(() -> {
-			if (logger.getLineCount() > 50) {
+			if (logger.getLineCount() > 10) {
 				logger.setText("");
 			}
 			logger.append(logText2);

@@ -14,6 +14,8 @@ public class HydraRepository {
 	public Long last_recv_bytes = new Long(0);
 	public Long last_sent_bytes = new Long(0);
 
+	public String update_file_url;
+
 	public HydraRepository() {
 		hydraStatus = new HydraStatus();
 	}

@@ -3,18 +3,15 @@ package hydra.zola.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import hydra.zola.core.ZolaController;
+import hydra.zola.core.ZolaHelper;
+
 public class buttonListener implements ActionListener {
-
-	ZolaServerGui form;
-
-	public buttonListener(ZolaServerGui form) {
-		this.form = form;
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//this.form.refreshClientPanel();
-
+		ZolaController zolaController = ZolaHelper.getInstance().getController();
+		zolaController.shutDownAllClient();
 	}
 
 }

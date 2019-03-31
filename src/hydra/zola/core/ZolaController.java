@@ -27,6 +27,7 @@ import hydra.repository.ZolaServerRepository;
 import hydra.zola.gui.ZolaServerGui;
 import hydra.zola.gui.ZolaServerSwingGui;
 import hydra.zola.model.HydraConnectionClient;
+import hydra.zola.model.HydraConnectionClient.ClientType;
 import oshi.util.FormatUtil;
 
 public class ZolaController {
@@ -60,11 +61,26 @@ public class ZolaController {
 			refreshPanel();
 		}, 0, 1, TimeUnit.SECONDS);
 
+//		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
+//			clearIdleConnection();
+//		}, 0, 30, TimeUnit.SECONDS);
+
 		this.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		this.threadPoolExecutor.execute(new ZolaHttpService(this));
 
 		ZolaHelper zolaHelper = ZolaHelper.getInstance();
 		zolaHelper.setZolaController(this);
+	}
+
+	private void clearIdleConnection() {
+		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
+		for (String clientId : clients.keySet()) {
+			HydraConnectionClient client = clients.get(clientId);
+			if (client.getMessage().equals("---")) {
+				client.disconnect(false);
+			}
+		}
+
 	}
 
 	private void setGuiTitle(String app_name) {
@@ -162,12 +178,21 @@ public class ZolaController {
 
 					break;
 
-				case FULLSYSINFO:
+				case REGISTER:
+					JsonObject clientConfigjson = hydraMessage.getMessageBody().getAsJsonObject();
+					client.setClientInfo(ClientType.valueOf(clientConfigjson.get("clientType").getAsString()),
+							clientConfigjson.get("clientVersion").getAsString());
+					break;
 
-					client.setClientSystemInfo(message);
+				case FULLSYSINFO:
+					JsonObject fullInfo = hydraMessage.getMessageBody().getAsJsonObject();
+					//System.out.println(gson.toJson(fullInfo));
+					client.setClientSystemInfo(gson.toJson(fullInfo));
 					break;
 
 				default:
+
+					System.out.println(hydraMessage.getMessageBody());
 					break;
 				}
 			}
@@ -244,6 +269,14 @@ public class ZolaController {
 
 	public ZolaServerRepository getRepository() {
 		return this.zolaServerRepository;
+	}
+
+	public void shutDownAllClient() {
+		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
+		for (String clientId : clients.keySet()) {
+			HydraConnectionClient client = clients.get(clientId);
+			client.disconnect(true);
+		}
 	}
 
 }

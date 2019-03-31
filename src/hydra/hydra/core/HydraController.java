@@ -30,7 +30,6 @@ import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
-import hydra.utils.HydraUtils;
 import hydra.zola.model.HydraConnectionClient.ClientType;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -50,7 +49,7 @@ public class HydraController {
 	final String ZolaServerHost;
 	final int ZolaServerPort;
 	SystemInfo systemInfo = new SystemInfo();
-	final HydraRepository hydraRepository;
+	public final HydraRepository hydraRepository;
 
 	ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(5);
 
@@ -65,7 +64,7 @@ public class HydraController {
 	public HydraController(HydraConfig hydraConfig) {
 		this.clientVersion = hydraConfig.clientVersion;
 		this.hydraMode = HydraConfig.mode;
-	
+
 		this.hydraRepository = new HydraRepository();
 		this.clientGui = new HydraClientSwingGui(this);
 
@@ -188,33 +187,7 @@ public class HydraController {
 	public boolean doRegisterClient(JsonObject messageBody) {
 		this.clientGui.updateClientInfo(messageBody);
 
-		System.out.println(gson.toJson(messageBody));
-
-		if (this.hydraMode == HydraType.DEPLOYED) {
-			if (!this.clientVersion.equals(messageBody.get("currentVersion").getAsString())) {
-				String currentName = HydraUtils.getRunningJarName();
-				System.out.println("Version not match, re-download new version from server...");
-				System.out.println("Renaming the old jar...");
-				boolean isRenameOK = HydraUtils.renameCurrentJar();
-
-				if (isRenameOK) {
-					System.out.println("Renaming done.");
-
-					boolean isDownloadOK = HydraUtils.downloadNewClient(messageBody.get("file_url").getAsString(),
-							currentName);
-
-					if (isDownloadOK) {
-						System.out.println("Download OK!");
-					} else {
-						System.err.println("Download Fail.");
-					}
-					System.exit(1);
-
-				} else {
-					System.err.println("Renaming Fail.");
-				}
-			}
-		}
+		this.hydraRepository.update_file_url = messageBody.get("file_url").getAsString();
 
 		JsonObject registerJson = new JsonObject();
 		registerJson.addProperty("clientVersion", this.clientVersion);
@@ -374,6 +347,10 @@ public class HydraController {
 
 	public void updateRecv(String line) {
 
+		if (line == null) {
+			return;
+		}
+
 		try {
 
 			JsonElement recv_message_json = jsonParser.parse(line);
@@ -383,9 +360,9 @@ public class HydraController {
 				HydraMessage hydraMessage = gson.fromJson(line, HydraMessage.class);
 
 				MessageType messageType = hydraMessage.getMessageType();
+				JsonObject messageBody = gson.fromJson(line, JsonObject.class).get("message").getAsJsonObject();
 				switch (messageType) {
 				case REGISTER:
-					JsonObject messageBody = gson.fromJson(line, JsonObject.class).get("message").getAsJsonObject();
 
 					if (messageBody != null) {
 
@@ -399,6 +376,22 @@ public class HydraController {
 
 				case MANAGEMENT:
 
+					if (messageBody != null) {
+						String action = messageBody.get("action").getAsString();
+						System.out.println(gson.toJson(messageBody));
+						switch (action.toLowerCase()) {
+						case "shutdown":
+							System.exit(0);
+							break;
+
+						case "reset":
+							this.clientCore.close();
+							break;
+
+						default:
+							break;
+						}
+					}
 					break;
 
 				default:

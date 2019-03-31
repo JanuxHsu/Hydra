@@ -5,7 +5,7 @@ public class ZolaConfig {
 		Swing
 	}
 
-	public final static String zolaVersion = "v1.15";
+	public final static String zolaVersion = "v1.16";
 	public static String hydraClientVersion = zolaVersion;
 
 	public String app_name;

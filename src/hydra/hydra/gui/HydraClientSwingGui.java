@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import com.google.gson.JsonObject;
 
 import hydra.gui.utils.TableColumnAdjuster;
 import hydra.hydra.core.HydraController;
+import hydra.utils.HydraUtils;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
@@ -69,6 +71,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 	JProgressBar memoryBar;
 
 	private Long iconShowMessageTimestamp = Calendar.getInstance().getTimeInMillis();
+
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	public HydraClientSwingGui(HydraController hydraController) {
 		super(hydraController);
@@ -153,7 +157,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 	}
 
 	private TrayIcon addSystemTray() {
-
+		HydraController hydraController = this.hydraController;
 		JFrame main = this.mainWindow;
 
 		// checking for support
@@ -161,16 +165,16 @@ public class HydraClientSwingGui extends HydraClientGui {
 			System.out.println("System tray is not supported !!! ");
 			return null;
 		}
-		// get the systemTray of the system
+		// get the systemTray of the systems
 		SystemTray systemTray = SystemTray.getSystemTray();
 
 		Image image = Toolkit.getDefaultToolkit()
 				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra64.png"));
 
-		// popupmenu
+		// Pop-up menu
 		PopupMenu trayPopupMenu = new PopupMenu();
 
-		// 1t menuitem for popupmenu
+		// add menu item for Pop-up menu
 		MenuItem version = new MenuItem("Version : " + this.hydraController.clientVersion);
 		version.setEnabled(false);
 		trayPopupMenu.add(version);
@@ -180,9 +184,34 @@ public class HydraClientSwingGui extends HydraClientGui {
 		status.setEnabled(false);
 		trayPopupMenu.add(status);
 		trayPopupMenu.addSeparator();
+
+		MenuItem update = new MenuItem("Check Update");
+
+		update.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				String updateUrl = hydraController.hydraRepository.update_file_url;
+				HydraUtils.getRunningJarName();
+				boolean isDownloadOK = HydraUtils.downloadNewClient(updateUrl, "tmp_" + HydraUtils.getRunningJarName());
+
+				if (isDownloadOK) {
+					System.out.println("Download OK!");
+					System.exit(1);
+				} else {
+					System.err.println("Download Fail.");
+				}
+
+			}
+
+		});
+		trayPopupMenu.add(update);
+
 		MenuItem action = new MenuItem("Show");
 
 		action.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				main.setVisible(true);
@@ -406,7 +435,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 			if (isConnected) {
 				this.serverIndicator.setText("Server Status : Up");
 				this.serverIndicator.setBackground(new Color(39, 174, 96));
-				trayIcon.getPopupMenu().getItem(1).setLabel("Status: Connected");
+				trayIcon.getPopupMenu().getItem(2).setLabel("Status: Connected");
 
 				// this.displayIconMessage("Hydra", "Connected to Server!", MessageType.INFO,
 				// IconMessageMode.ALWAYS);
@@ -414,7 +443,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 			} else {
 				this.serverIndicator.setText("Server Status : Down");
 				this.serverIndicator.setBackground(Color.RED);
-				trayIcon.getPopupMenu().getItem(1).setLabel("Status: Disonnected");
+				trayIcon.getPopupMenu().getItem(2).setLabel("Status: Disonnected");
 
 				// this.displayIconMessage("Hydra", "Disconnected to Server!",
 				// MessageType.WARNING, IconMessageMode.PERIODIC);
@@ -444,7 +473,9 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	@Override
 	public void displaySystemLog(String line) {
-		String lineText = String.format("%s%n", line);
+		// String lineText = String.format("%s%n", line);
+		String lineText = String.format("[%s] %s%n", this.simpleDateFormat.format(Calendar.getInstance().getTime()),
+				line);
 		SwingUtilities.invokeLater(() -> {
 			if (this.logArea.getLineCount() > 6) {
 				logArea.setText("");

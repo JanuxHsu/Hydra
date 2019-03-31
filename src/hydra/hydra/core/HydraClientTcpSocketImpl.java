@@ -28,7 +28,7 @@ public class HydraClientTcpSocketImpl extends HydraClient {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+		this.hydraConnector.shutDown();
 
 	}
 

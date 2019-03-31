@@ -54,6 +54,7 @@ public class status {
 	@Path("/{param}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String hello(@PathParam("param") String client_id) {
+	
 		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaController.getRepository().getClients();
 		JsonElement json = null;
 		if (clients.containsKey(client_id)) {
