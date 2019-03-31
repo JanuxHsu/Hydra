@@ -103,6 +103,9 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		}
 
 		JTable resultTable = new JTable(tableModel);
+		
+		resultTable.setFont(defaultFont);
+		resultTable.getTableHeader().setFont(defaultFont);
 
 		resultTable.setAutoCreateRowSorter(true);
 

@@ -58,7 +58,7 @@ public class RequestThread implements Runnable {
 			responseJson.addProperty("client_id", this.clientId);
 
 			String url = "http://" + InetAddress.getLocalHost().getHostAddress() + ":"
-					+ this.zolaController.httpServicePort + "/api/cleints/download";
+					+ this.zolaController.httpServicePort + "/api/clients/download";
 			responseJson.addProperty("action", "update");
 			responseJson.addProperty("currentVersion", ZolaConfig.hydraClientVersion.trim());
 			responseJson.addProperty("file_url", url);

@@ -2,8 +2,13 @@ package hydra.hydra.core;
 
 public class HydraConfig {
 
+	public enum HydraType {
+		DEPLOYED, DEV
+	}
+
 	public static int heartBeat_interval = 5;
 	public static String version = "v1.15";
+	public static HydraType mode = HydraType.DEV;
 
 	public enum GUI_Type {
 		Swing

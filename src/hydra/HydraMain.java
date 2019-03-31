@@ -11,6 +11,7 @@ import org.apache.commons.cli.ParseException;
 import hydra.hydra.core.HydraClientTcpSocketImpl;
 import hydra.hydra.core.HydraConfig;
 import hydra.hydra.core.HydraConfig.GUI_Type;
+import hydra.hydra.core.HydraConfig.HydraType;
 import hydra.hydra.core.HydraController;
 import hydra.utils.HydraUtils;
 
@@ -47,6 +48,12 @@ public class HydraMain {
 
 		HydraUtils.getHydraPid();
 		HydraUtils.getAllHydraPid();
+		if (HydraUtils.isLaunchByJar()) {
+			HydraConfig.mode = HydraType.DEPLOYED;
+
+			// System.out.println(Arrays.toString(HydraUtils.getAllHydraPid().toArray()));
+
+		}
 
 		String serverHost = cmd.getOptionValue("s");
 		String serverPort = cmd.getOptionValue("p");
@@ -54,6 +61,10 @@ public class HydraMain {
 		HydraConfig hydraConfig = new HydraConfig();
 		hydraConfig.setGUI_type(GUI_Type.Swing);
 		hydraConfig.app_name = "Hydra (JanuxHsu Dev " + HydraConfig.version + ")";
+		if (HydraUtils.isLaunchByJar()) {
+			HydraConfig.mode = HydraType.DEPLOYED;
+		}
+
 		hydraConfig.zolaHost = serverHost;
 		hydraConfig.zolaPort = serverPort;
 		hydraConfig.clientVersion = HydraConfig.version;

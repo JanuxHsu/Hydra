@@ -23,12 +23,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import hydra.hydra.core.HydraConfig.HydraType;
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
+import hydra.utils.HydraUtils;
 import hydra.zola.model.HydraConnectionClient.ClientType;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -40,6 +42,8 @@ import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 
 public class HydraController {
+
+	final HydraType hydraMode;
 
 	final String clientVersion;
 
@@ -59,6 +63,8 @@ public class HydraController {
 	JsonParser jsonParser = new JsonParser();
 
 	public HydraController(HydraConfig hydraConfig) {
+
+		this.hydraMode = HydraConfig.mode;
 		this.clientVersion = hydraConfig.clientVersion;
 
 		this.hydraRepository = new HydraRepository();
@@ -182,6 +188,34 @@ public class HydraController {
 
 	public boolean doRegisterClient(JsonObject messageBody) {
 		this.clientGui.updateClientInfo(messageBody);
+
+		System.out.println(gson.toJson(messageBody));
+
+		if (this.hydraMode == HydraType.DEPLOYED) {
+			if (!this.clientVersion.equals(messageBody.get("currentVersion").getAsString())) {
+				String currentName = HydraUtils.getRunningJarName();
+				System.out.println("Version not match, re-download new version from server...");
+				System.out.println("Renaming the old jar...");
+				boolean isRenameOK = HydraUtils.renameCurrentJar();
+
+				if (isRenameOK) {
+					System.out.println("Renaming done.");
+
+					boolean isDownloadOK = HydraUtils.downloadNewClient(messageBody.get("file_url").getAsString(),
+							currentName);
+
+					if (isDownloadOK) {
+						System.out.println("Download OK!");
+					} else {
+						System.err.println("Download Fail.");
+					}
+					System.exit(1);
+
+				} else {
+					System.err.println("Renaming Fail.");
+				}
+			}
+		}
 
 		JsonObject registerJson = new JsonObject();
 		registerJson.addProperty("clientVersion", this.clientVersion);
@@ -346,7 +380,7 @@ public class HydraController {
 			JsonElement recv_message_json = jsonParser.parse(line);
 
 			if (recv_message_json.isJsonObject()) {
-				System.out.println(gson.toJson(recv_message_json));
+				// System.out.println(gson.toJson(recv_message_json));
 				HydraMessage hydraMessage = gson.fromJson(line, HydraMessage.class);
 
 				MessageType messageType = hydraMessage.getMessageType();
