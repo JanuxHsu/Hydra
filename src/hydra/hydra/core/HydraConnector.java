@@ -35,7 +35,7 @@ public class HydraConnector implements Runnable {
 			String line;
 			while (running && (line = this.serverInputStream.readUTF()) != null) {
 
-				//System.out.println(line);
+				// System.out.println(line);
 				this.hydraController.updateRecv(line);
 				// this.hydraController.systemLog(line);
 
@@ -43,8 +43,8 @@ public class HydraConnector implements Runnable {
 			System.out.println("loop end");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			
+			// e.printStackTrace();
+
 			System.err.println("Connection fail...");
 		} finally {
 			try {

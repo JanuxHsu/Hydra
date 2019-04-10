@@ -28,6 +28,5 @@ public class ZolaHelper {
 	public ZolaController getController() {
 		return this.zolaController;
 	}
-	
 
 }

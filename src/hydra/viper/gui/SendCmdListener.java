@@ -31,7 +31,6 @@ public class SendCmdListener implements ActionListener {
 
 		System.out.println(this.viperController);
 		this.viperController.sendCommand(text);
-		
 
 	}
 

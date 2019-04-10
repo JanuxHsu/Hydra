@@ -8,7 +8,6 @@ public class ZolaServerRepository {
 
 	public static Boolean isRunSocketServer = true;
 	ConcurrentHashMap<String, HydraConnectionClient> HydraClients = new ConcurrentHashMap<>();
-	
 
 	public ZolaServerRepository() {
 		// TODO Auto-generated constructor stub

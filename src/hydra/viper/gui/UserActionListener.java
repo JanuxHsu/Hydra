@@ -45,7 +45,7 @@ public class UserActionListener implements KeyListener {
 
 		switch (e.getExtendedKeyCode()) {
 		case KeyEvent.VK_TAB:
-			
+
 			String keyword = this.controller.getAutoCompleteKeyword();
 
 			FileFilter filter = new CustomFileFilter(keyword);

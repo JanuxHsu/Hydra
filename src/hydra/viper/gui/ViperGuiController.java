@@ -19,8 +19,6 @@ public class ViperGuiController {
 	}
 
 	public void sendCommand(String command) {
-		
-	
 
 		String[] commands = command.split(" ");
 

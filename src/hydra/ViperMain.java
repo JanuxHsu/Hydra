@@ -15,7 +15,7 @@ import hydra.viper.core.ViperController;
 
 public class ViperMain {
 	public static void main(String[] args) {
-		
+
 		Options options = new Options();
 
 		Option serverParam = new Option("s", "server", true, "Status Report Server Host");
@@ -41,7 +41,7 @@ public class ViperMain {
 
 		String serverHost = cmd.getOptionValue("s");
 		String serverPort = cmd.getOptionValue("p");
-		
+
 		ViperConfig viperConfig = new ViperConfig();
 		viperConfig.setGUI_type(ViperConfig.Swing);
 		viperConfig.zolaHost = serverHost;

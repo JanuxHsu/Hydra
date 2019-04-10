@@ -130,7 +130,7 @@ public class HydraConnectionClient {
 		jsonObject.addProperty("action", isShutDown ? "shutdown" : "reset");
 
 		HydraMessage hydraMessage = new HydraMessage(jsonObject, this.clientID, MessageType.MANAGEMENT);
-		
+
 		System.out.println(hydraMessage.toString());
 
 		try {
