@@ -33,7 +33,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	protected JFrame mainWindow;
 	Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
-	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	JLabel serverInfoLabel;
 
