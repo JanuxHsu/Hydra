@@ -1,8 +1,13 @@
 package hydra.hydra.model;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class HydraStatus {
 
 	boolean isConnectedToServer = false;
+
+	Date lastAckTime = Calendar.getInstance().getTime();
 	String serverResponse;
 	String connectionInfo = null;
 	boolean isWorkerActive = false;
@@ -41,6 +46,16 @@ public class HydraStatus {
 
 	public void setWorkerActive(boolean isWorkerActive) {
 		this.isWorkerActive = isWorkerActive;
+	}
+
+	public void setLastAckTime() {
+		this.lastAckTime = Calendar.getInstance().getTime();
+
+	}
+
+	public Date getLastAckTime() {
+		return this.lastAckTime;
+
 	}
 
 }

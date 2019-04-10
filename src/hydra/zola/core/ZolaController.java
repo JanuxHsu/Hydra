@@ -72,17 +72,6 @@ public class ZolaController {
 		zolaHelper.setZolaController(this);
 	}
 
-	private void clearIdleConnection() {
-		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
-		for (String clientId : clients.keySet()) {
-			HydraConnectionClient client = clients.get(clientId);
-			if (client.getMessage().equals("---")) {
-				client.disconnect(false);
-			}
-		}
-
-	}
-
 	private void setGuiTitle(String app_name) {
 		this.serverGui.setTitle(app_name);
 
@@ -173,8 +162,13 @@ public class ZolaController {
 
 				HydraConnectionClient client = this.zolaServerRepository.getClients().get(clientId);
 				switch (messageType) {
-				case HEARTBEAT:
+				case REALTIMEINFO:
 					client.updateLastMessage(message);
+					JsonObject ack_json = new JsonObject();
+					ack_json.addProperty("status", "received");
+					HydraMessage ack_msg = new HydraMessage(ack_json, client.getClientID(), MessageType.ACKNOWLEDGE);
+
+					client.getClientThread().sendMessage(ack_msg.toString());
 
 					break;
 
@@ -186,7 +180,7 @@ public class ZolaController {
 
 				case FULLSYSINFO:
 					JsonObject fullInfo = hydraMessage.getMessageBody().getAsJsonObject();
-					//System.out.println(gson.toJson(fullInfo));
+					// System.out.println(gson.toJson(fullInfo));
 					client.setClientSystemInfo(gson.toJson(fullInfo));
 					break;
 

@@ -318,7 +318,7 @@ public class HydraController {
 
 		// System.out.println(gson.toJson(res));
 
-		HydraMessage hydraMessage = new HydraMessage(res, null, MessageType.HEARTBEAT);
+		HydraMessage hydraMessage = new HydraMessage(res, null, MessageType.REALTIMEINFO);
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo(timeStamp);
 
@@ -371,6 +371,7 @@ public class HydraController {
 								java.awt.TrayIcon.MessageType.INFO, IconMessageMode.ALWAYS);
 
 						this.doRegisterClient(messageBody);
+						this.hydraRepository.getHydraStatus().setLastAckTime();
 					}
 					break;
 
@@ -392,6 +393,12 @@ public class HydraController {
 							break;
 						}
 					}
+					break;
+
+				case ACKNOWLEDGE:
+					System.out.println(gson.toJson(messageBody));
+					this.hydraRepository.getHydraStatus().setLastAckTime();
+
 					break;
 
 				default:
