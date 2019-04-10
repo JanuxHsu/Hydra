@@ -164,6 +164,7 @@ public class HydraController {
 		this.systemLog("Connection to Zola Server closed!");
 
 		this.hydraRepository.getHydraStatus().setConnectionInfo("Connection to Zola Server closed!");
+		this.hydraRepository.getHydraStatus().setConnectedToServer(false);
 		this.updateHydraStatus();
 
 	}
@@ -179,6 +180,7 @@ public class HydraController {
 				IconMessageMode.ALWAYS);
 
 		this.hydraRepository.getHydraStatus().setConnectedToServer(false);
+		this.clientGui.updateClientInfo(null);
 		this.updateRecv(null);
 		this.updateHydraStatus();
 
@@ -199,7 +201,7 @@ public class HydraController {
 		return true;
 	}
 
-	public void sendHeartBeat() {
+	public void sendRealTimeInfo() {
 		JsonObject res = new JsonObject();
 		Map<String, String> sysInfoMap = this.hydraRepository.getSystemInfoMap();
 
@@ -238,7 +240,7 @@ public class HydraController {
 
 		res.add("os", processObj);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String timeStamp = sdf.format(Calendar.getInstance().getTime());
 
 		NetworkIF[] networkIFs = systemInfo.getHardware().getNetworkIFs();

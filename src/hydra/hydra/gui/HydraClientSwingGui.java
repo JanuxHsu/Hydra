@@ -253,7 +253,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		hostLabel.setOpaque(true);
 		hostLabel.setBackground(Color.RED);
 		hostLabel.setForeground(Color.WHITE);
-		hostLabel.setFont(monoFont);
+		hostLabel.setFont(defaultFont);
 
 		hostLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 

@@ -62,11 +62,13 @@ public class HydraConnector implements Runnable {
 
 	public void shutDown() {
 		this.running = false;
-		try {
-			this.socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (this.socket != null) {
+			try {
+				this.socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

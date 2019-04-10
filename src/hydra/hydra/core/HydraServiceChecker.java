@@ -25,20 +25,18 @@ public class HydraServiceChecker implements Runnable {
 
 				Date lastAckTime = hydraController.hydraRepository.getHydraStatus().getLastAckTime();
 				Date currentTime = Calendar.getInstance().getTime();
-				if (lastAckTime == null || (currentTime.getTime() - lastAckTime.getTime()) > 15000) {
+				if (lastAckTime == null || (currentTime.getTime() - lastAckTime.getTime()) > 10000) {
 					// hydraController.hydraRepository.getHydraStatus().setConnectedToServer(false);
 
 					if (hydraController.hydraRepository.getHydraStatus().isConnectedToServer()) {
 						hydraController.disconnectToTarget();
 					}
 
-				} else {
-					System.out.println("Checking...completed!");
-					hydraController.sendHeartBeat();
-
-					// this.hydraController.hydraRepository.getHydraStatus().setConnectedToServer(false);
-
 				}
+				System.out.println("Checking...completed!");
+				hydraController.sendRealTimeInfo();
+
+				// this.hydraController.hydraRepository.getHydraStatus().setConnectedToServer(false);
 
 			}
 
