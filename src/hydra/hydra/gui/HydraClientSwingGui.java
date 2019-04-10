@@ -72,7 +72,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 	private Long iconShowMessageTimestamp = Calendar.getInstance().getTimeInMillis();
 
-	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public HydraClientSwingGui(HydraController hydraController) {
 		super(hydraController);
@@ -377,6 +377,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		JTextArea logArea = new JTextArea();
 		logArea.setLineWrap(true);
+		logArea.setPreferredSize(new Dimension(0, 50));
 		logArea.setEditable(false);
 		logArea.setFont(defaultFont);
 		this.logArea = logArea;
