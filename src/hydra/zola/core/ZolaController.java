@@ -70,7 +70,7 @@ public class ZolaController {
 				syslog("Clearing Idle Client threads...Failed. Reason: " + e.getMessage());
 			}
 
-		}, 0, 10, TimeUnit.SECONDS);
+		}, 20, 10, TimeUnit.SECONDS);
 
 		this.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		this.threadPoolExecutor.execute(new ZolaHttpService(this));
