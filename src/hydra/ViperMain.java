@@ -26,6 +26,10 @@ public class ViperMain {
 		portParam.setRequired(true);
 		options.addOption(portParam);
 
+		Option webPortParam = new Option("wp", "webport", true, "Status Report Server Web api Port");
+		portParam.setRequired(true);
+		options.addOption(webPortParam);
+
 		CommandLineParser parser = new DefaultParser();
 		HelpFormatter formatter = new HelpFormatter();
 		CommandLine cmd = null;
@@ -41,11 +45,13 @@ public class ViperMain {
 
 		String serverHost = cmd.getOptionValue("s");
 		String serverPort = cmd.getOptionValue("p");
+		String serverWebAPIPort = cmd.getOptionValue("wp");
 
 		ViperConfig viperConfig = new ViperConfig();
-		viperConfig.setGUI_type(ViperConfig.Swing);
+		viperConfig.setGUI_type(ViperConfig.ViperGUIType.Swing);
 		viperConfig.zolaHost = serverHost;
 		viperConfig.zolaPort = serverPort;
+		viperConfig.zolaAPIPort = serverWebAPIPort;
 
 		ViperController viperController = new ViperController(viperConfig);
 		ViperClient viperClient = new ViperClientTcpSocketImpl(viperController);

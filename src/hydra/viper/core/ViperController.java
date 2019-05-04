@@ -112,6 +112,10 @@ public class ViperController {
 
 	public void systemLog(String line) {
 
+		if (line == null) {
+			return;
+		}
+
 		try {
 			JsonObject jsonObject = gson.fromJson(line, JsonObject.class);
 

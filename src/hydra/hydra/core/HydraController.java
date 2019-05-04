@@ -403,6 +403,12 @@ public class HydraController {
 
 					break;
 
+				case TRIGGER_WORKER:
+					System.out.println(gson.toJson(messageBody));
+					//this.hydraRepository.getHydraStatus().setLastAckTime();
+
+					break;
+
 				default:
 					break;
 				}

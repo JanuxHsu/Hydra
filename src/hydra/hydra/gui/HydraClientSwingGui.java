@@ -20,7 +20,6 @@ import java.awt.event.WindowListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;

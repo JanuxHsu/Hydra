@@ -20,6 +20,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
 
 import hydra.viper.core.ViperController;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.web.WebView;
 
 public class ViperClientSwingGui extends ViperClientGui {
 
@@ -30,6 +34,8 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 	JLabel currDir;
 	JTextArea remoteConsoleTextArea;
+
+	WebView webView;
 
 	public ViperClientSwingGui(ViperController viperController) {
 		super(viperController);
@@ -49,7 +55,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 		}
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setPreferredSize(new Dimension(1100, 400));
+		window.setPreferredSize(new Dimension(1000, 600));
 
 		window.add(getSidePanel(), BorderLayout.WEST);
 		window.add(getMainPanel(), BorderLayout.CENTER);
@@ -108,16 +114,25 @@ public class ViperClientSwingGui extends ViperClientGui {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
 		// JPanel logPanel = new JPanel(new GridLayout(1, 1));
-		JTextArea logArea = new JTextArea();
+		JFXPanel webViewPanel = new JFXPanel();
 
-		logArea.setForeground(Color.white);
-		logArea.setOpaque(true);
-		logArea.setBackground(new Color(44, 58, 71));
-		logArea.setCaretColor(Color.white);
-		logArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		DefaultCaret caret = (DefaultCaret) logArea.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		this.remoteConsoleTextArea = logArea;
+		Platform.runLater(() -> {
+			WebView webView = new WebView();
+			webViewPanel.setScene(new Scene(webView));
+			webView.getEngine().load("http://172.20.10.8:8099/api/clients");
+
+		});
+		//webViewPanel.setScene(new Scene(this.webView));
+//		JTextArea logArea = new JTextArea();
+//
+//		logArea.setForeground(Color.white);
+//		logArea.setOpaque(true);
+//		logArea.setBackground(new Color(44, 58, 71));
+//		logArea.setCaretColor(Color.white);
+//		logArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+//		DefaultCaret caret = (DefaultCaret) logArea.getCaret();
+//		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		// this.remoteConsoleTextArea = webView;
 
 		JPanel titlePanel = new JPanel(new GridLayout(1, 3));
 
@@ -153,7 +168,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 		inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		mainPanel.add(titlePanel, BorderLayout.NORTH);
-		mainPanel.add(new JScrollPane(logArea), BorderLayout.CENTER);
+		mainPanel.add(webViewPanel, BorderLayout.CENTER);
 		mainPanel.add(inputPanel, BorderLayout.SOUTH);
 
 		return mainPanel;
@@ -231,8 +246,8 @@ public class ViperClientSwingGui extends ViperClientGui {
 	}
 
 	public void getDefaultPath() {
-		this.remoteConsoleTextArea.setText("");
-		this.remoteConsoleTextArea.append(System.getProperty("user.dir"));
+		//this.remoteConsoleTextArea.setText("");
+		//this.remoteConsoleTextArea.append(System.getProperty("user.dir"));
 	}
 
 	public String getAutoCompleteKeyword() {
