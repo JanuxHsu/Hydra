@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 
 import hydra.hydra.core.HydraController;
 import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
+
 import oshi.SystemInfo;
 
 public abstract class HydraClientGui {

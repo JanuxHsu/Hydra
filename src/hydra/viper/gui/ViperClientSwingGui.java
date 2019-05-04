@@ -227,6 +227,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 
 	}
 
+	@Override
 	public void displayMessage(String message) {
 
 		this.remoteConsoleTextArea.append(String.format("%s%n", message));
@@ -240,6 +241,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 		this.currDir.setText(newPath.getName() + " > ");
 	}
 
+	@Override
 	public void resetInputState() {
 		this.remoteConsoleTextArea.setText("");
 		this.commandInputBox.setText("");
@@ -250,6 +252,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 		//this.remoteConsoleTextArea.append(System.getProperty("user.dir"));
 	}
 
+	@Override
 	public String getAutoCompleteKeyword() {
 		String[] words = this.commandInputBox.getText().split(" ");
 

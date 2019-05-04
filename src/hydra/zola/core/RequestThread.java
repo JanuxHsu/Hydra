@@ -41,8 +41,8 @@ public class RequestThread implements Runnable {
 	@Override
 	public void run() {
 
-		String connectionText = String.format("%s New Client Connected! ClientId: %s", clientSocket.getRemoteSocketAddress(),
-				this.clientId);
+		String connectionText = String.format("%s New Client Connected! ClientId: %s",
+				clientSocket.getRemoteSocketAddress(), this.clientId);
 		this.zolaController.syslog(connectionText);
 
 		try {

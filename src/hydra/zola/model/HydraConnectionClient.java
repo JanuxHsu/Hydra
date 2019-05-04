@@ -11,8 +11,8 @@ import java.util.Date;
 import com.google.gson.JsonObject;
 
 import hydra.model.HydraMessage;
-import hydra.model.TableColumn;
 import hydra.model.HydraMessage.MessageType;
+import hydra.model.TableColumn;
 import hydra.zola.core.RequestThread;
 
 public class HydraConnectionClient {
