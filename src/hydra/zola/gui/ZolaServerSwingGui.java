@@ -193,11 +193,13 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	}
 
+	@Override
 	public void show() {
 		this.mainWindow.setLocationRelativeTo(null);
 		this.mainWindow.setVisible(true);
 	}
 
+	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
 
