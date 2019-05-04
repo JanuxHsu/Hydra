@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -34,6 +35,7 @@ public class HydraUtils {
 		ArrayList<Integer> pids = new ArrayList<Integer>();
 
 		try {
+			Optional<String> java_home = Optional.ofNullable(System.getenv("JAVA_HOME"));
 			String[] command = { "jps", "-l", "-m" };
 			Process process = new ProcessBuilder(command).start();
 			// String stderr = IOUtils.toString(process.getErrorStream(),
