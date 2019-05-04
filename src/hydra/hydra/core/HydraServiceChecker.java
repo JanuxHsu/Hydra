@@ -29,7 +29,12 @@ public class HydraServiceChecker implements Runnable {
 					// hydraController.hydraRepository.getHydraStatus().setConnectedToServer(false);
 
 					if (hydraController.hydraRepository.getHydraStatus().isConnectedToServer()) {
-						hydraController.disconnectToTarget();
+						try {
+							hydraController.disconnectToTarget();
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+
 					}
 
 				}

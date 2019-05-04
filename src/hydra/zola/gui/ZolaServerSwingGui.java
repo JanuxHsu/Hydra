@@ -224,7 +224,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 			logger.append(logText2);
 		});
 
-		System.out.println(logText2);
+		System.out.print(logText2);
 
 	}
 
