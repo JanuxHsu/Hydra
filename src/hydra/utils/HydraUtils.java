@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,6 +15,8 @@ import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+
+import com.sun.jna.platform.mac.SystemB;
 
 import hydra.HydraMain;
 
@@ -30,33 +34,53 @@ public class HydraUtils {
 
 	}
 
-	public static List<Integer> getAllHydraPid() {
+	public static String getCMDOutput(String[] commands) {
+		String[] command = commands;
 
-		ArrayList<Integer> pids = new ArrayList<Integer>();
-
+		String stdout;
 		try {
-			Optional<String> java_home = Optional.ofNullable(System.getenv("JAVA_HOME"));
-			String[] command = { "jps", "-l", "-m" };
 			Process process = new ProcessBuilder(command).start();
 			// String stderr = IOUtils.toString(process.getErrorStream(),
 			// Charset.defaultCharset());
 
-			String stdout = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
-
-			String[] processes = stdout.split("\n");
-
-			for (String raw : processes) {
-				if (raw.toLowerCase().contains("hydraclient.jar")) {
-
-					int pid = Integer.parseInt(raw.split(" ")[0]);
-					pids.add(pid);
-				}
-
-			}
-
+			stdout = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			stdout = e.getMessage();
+		}
+
+		return stdout;
+	}
+
+	public static List<Integer> getAllHydraPid() {
+
+		ArrayList<Integer> pids = new ArrayList<Integer>();
+
+		Optional<String> java_home = Optional.ofNullable(System.getProperty("java.home"));
+		String java_path = java_home.orElseGet(() -> {
+			String[] command = { "where", "java" };
+			String reString = HydraUtils.getCMDOutput(command);
+
+			String[] paths = reString.split("\n");
+			return paths.length > 0 ? paths[0] : "";
+		});
+
+		File javaExecFile = new File(java_path);
+
+		Path jpsPath = Paths.get(javaExecFile.getParent(), "bin", "jps");
+
+		String[] command = { jpsPath.toString(), "-l", "-m" };
+
+		String[] processes = HydraUtils.getCMDOutput(command).split("\n");
+
+		for (String raw : processes) {
+			if (raw.toLowerCase().contains("hydraclient.jar")) {
+
+				int pid = Integer.parseInt(raw.split(" ")[0]);
+				pids.add(pid);
+			}
+
 		}
 
 		return pids;

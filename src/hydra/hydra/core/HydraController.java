@@ -73,7 +73,7 @@ public class HydraController {
 
 		this.setGuiTitle(hydraConfig.app_name);
 
-		scheduledThreadPoolExecutor.scheduleAtFixedRate(new HydraServiceChecker(this), 1,
+		scheduledThreadPoolExecutor.scheduleAtFixedRate(new HydraServiceChecker(this), HydraConfig.heartBeat_interval,
 				HydraConfig.heartBeat_interval, TimeUnit.SECONDS);
 
 		scheduledThreadPoolExecutor.scheduleAtFixedRate(new SystemChecker(this), 5, 1800, TimeUnit.SECONDS);
