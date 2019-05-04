@@ -24,6 +24,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
+import hydra.gui.utils.HydraTableCellRender;
 import hydra.gui.utils.TableColumnAdjuster;
 import hydra.zola.core.ZolaController;
 import hydra.zola.model.HydraConnectionClient;
@@ -110,6 +111,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		// resultTable.getTableHeader().setFont(defaultFont);
 
 		resultTable.setAutoCreateRowSorter(true);
+		HydraTableCellRender colorRenderer = new HydraTableCellRender();
+		resultTable.setDefaultRenderer(Object.class, colorRenderer);
 
 		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
@@ -148,6 +151,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		clientActionPanel.add(threadPanel, BorderLayout.CENTER);
 
 		JButton kickClient = new JButton("Close All");
+		kickClient.setContentAreaFilled(false);
 		kickClient.setFont(defaultFont);
 		kickClient.addActionListener(new buttonListener());
 		kickClient.setPreferredSize(new Dimension(100, 25));
@@ -230,9 +234,12 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
 		JTable table = this.clientListTable;
 
-		SwingUtilities.invokeLater(() -> {
+		// model.setDataVector(objects,
+		// HydraConnectionClient.getTableCsolumn().toArray());
 
-			model.setRowCount(0);
+		SwingUtilities.invokeLater(() -> {
+			model.getDataVector().clear();
+
 			for (Object[] object : objects) {
 				model.addRow(object);
 			}

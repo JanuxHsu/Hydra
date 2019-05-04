@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gson.JsonObject;
@@ -32,7 +33,7 @@ public class HydraConnectionClient {
 
 	private final RequestThread clientThread;
 
-	Date lastUpdateTime;
+	Date lastUpdateTime = Calendar.getInstance().getTime();
 
 	@TableColumn(columName = "Created time")
 	final Date acceptedTime;
@@ -55,6 +56,10 @@ public class HydraConnectionClient {
 
 	}
 
+	public Date getLastUpdateTime() {
+		return this.lastUpdateTime;
+	}
+
 	public void updateClientType(ClientType clientType) {
 		this.clientType = clientType;
 	}
@@ -69,6 +74,7 @@ public class HydraConnectionClient {
 
 	public void updateLastMessage(String msg) {
 		this.message = msg;
+		this.lastUpdateTime = Calendar.getInstance().getTime();
 	}
 
 	public String getMessage() {

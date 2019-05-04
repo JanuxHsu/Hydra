@@ -20,6 +20,7 @@ import java.awt.event.WindowListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -137,9 +138,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-
 				icon.displayMessage("Hydra", "Hydra is still running!", MessageType.INFO);
-
 			}
 
 			@Override
@@ -573,6 +572,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		SwingUtilities.invokeLater(() -> {
 			DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
+
 			JTable table = this.systemInfoTable;
 
 			model.setRowCount(0);

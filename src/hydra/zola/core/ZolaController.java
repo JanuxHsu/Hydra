@@ -61,15 +61,44 @@ public class ZolaController {
 			refreshPanel();
 		}, 0, 1, TimeUnit.SECONDS);
 
-//		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
-//			clearIdleConnection();
-//		}, 0, 30, TimeUnit.SECONDS);
+		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
+			syslog("Clearing Idle Client threads...");
+			try {
+				clearIdleConnection();
+				syslog("Clearing Idle Client threads...Completed.");
+			} catch (Exception e) {
+				syslog("Clearing Idle Client threads...Failed. Reason: " + e.getMessage());
+			}
+
+		}, 0, 10, TimeUnit.SECONDS);
 
 		this.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		this.threadPoolExecutor.execute(new ZolaHttpService(this));
 
 		ZolaHelper zolaHelper = ZolaHelper.getInstance();
 		zolaHelper.setZolaController(this);
+	}
+
+	private void clearIdleConnection() {
+		ConcurrentHashMap<String, HydraConnectionClient> clients = this.zolaServerRepository.getClients();
+
+		for (HydraConnectionClient client : clients.values()) {
+			if (client.getLastUpdateTime() == null) {
+
+				this.removeClient(client.getClientID());
+
+			} else {
+				long lapsed = Calendar.getInstance().getTime().getTime() - client.getLastUpdateTime().getTime();
+
+				if (lapsed > 20000) {
+
+					this.removeClient(client.getClientID());
+
+				}
+			}
+
+		}
+
 	}
 
 	private void setGuiTitle(String app_name) {
@@ -222,7 +251,8 @@ public class ZolaController {
 
 	public void removeClient(String clientId) {
 		HydraConnectionClient client = this.zolaServerRepository.getClients().remove(clientId);
-		this.syslog(String.format("%s終止連線!", client.getClientID()));
+		client.getClientThread().close();
+		this.syslog(String.format("%s Disconnected!", client.getClientID()));
 
 		if (this.threadPoolExecutor.getActiveCount() + 1 < this.threadPoolExecutor.getCorePoolSize()) {
 			this.threadPoolExecutor.setCorePoolSize(this.threadPoolExecutor.getCorePoolSize() - 1);

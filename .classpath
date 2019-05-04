@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/gson-2.8.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/oshi-core-3.13.0.jar"/>
@@ -46,5 +46,8 @@
 	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/jetty-server-9.4.15.v20190215.jar"/>
 	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/jetty-servlet-9.4.15.v20190215.jar"/>
 	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/jetty-util-9.4.15.v20190215.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/jetty-http-9.4.18.v20190429.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/jetty-io-9.4.18.v20190429.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janux/Desktop/java_libs/jetty-security-9.4.18.v20190429.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
