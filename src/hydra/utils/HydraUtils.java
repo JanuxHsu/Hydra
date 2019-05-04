@@ -16,8 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
-import com.sun.jna.platform.mac.SystemB;
-
 import hydra.HydraMain;
 
 public class HydraUtils {
@@ -68,6 +66,8 @@ public class HydraUtils {
 
 		File javaExecFile = new File(java_path);
 
+		System.out.println("Using JDK_path: " + javaExecFile.getAbsolutePath());
+
 		Path jpsPath = Paths.get(javaExecFile.getParent(), "bin", "jps");
 
 		String[] command = { jpsPath.toString(), "-l", "-m" };
@@ -82,6 +82,8 @@ public class HydraUtils {
 			}
 
 		}
+
+		System.out.println("Hydra Client PIDs: " + pids);
 
 		return pids;
 
