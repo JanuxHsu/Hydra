@@ -238,8 +238,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		// HydraConnectionClient.getTableCsolumn().toArray());
 
 		SwingUtilities.invokeLater(() -> {
-			model.getDataVector().clear();
-
+			// model.getDataVector().clear();
+			model.setRowCount(0);
 			for (Object[] object : objects) {
 				model.addRow(object);
 			}
