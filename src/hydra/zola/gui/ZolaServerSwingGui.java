@@ -2,14 +2,24 @@ package hydra.zola.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -48,7 +58,16 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	JLabel httpServiceStatus;
 
+	ConcurrentHashMap<String, String> row_client_map = new ConcurrentHashMap<>();
+
+	final ZolaController zolaController;
+
+	JPanel operaionPanel;
+
+	JLabel operationPanelTitleLabel;
+
 	public ZolaServerSwingGui(ZolaController zolaController) {
+		this.zolaController = zolaController;
 		JFrame window = new JFrame();
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -67,9 +86,10 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		JPanel windowPanel = new JPanel(new BorderLayout());
 
-		windowPanel.add(topPanel(), BorderLayout.NORTH);
-		windowPanel.add(getCenterPanel(), BorderLayout.CENTER);
-		windowPanel.add(getServerLogPanel(), BorderLayout.SOUTH);
+		windowPanel.add(topPanel(windowPanel), BorderLayout.NORTH);
+		windowPanel.add(getOperationPanel(windowPanel), BorderLayout.EAST);
+		windowPanel.add(getCenterPanel(windowPanel), BorderLayout.CENTER);
+		windowPanel.add(getServerLogPanel(windowPanel), BorderLayout.SOUTH);
 		window.add(windowPanel);
 		window.pack();
 		this.mainWindow = window;
@@ -84,7 +104,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	}
 
-	private JPanel topPanel() {
+	private JPanel topPanel(JPanel windowPanel) {
 		JPanel topPanel = new JPanel(new GridLayout(2, 2));
 		JLabel serverServiceInfoInfo = new JLabel("Resolving...");
 		serverServiceInfoInfo.setOpaque(true);
@@ -134,7 +154,104 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		return topPanel;
 	}
 
-	private JPanel getCenterPanel() {
+	private JPanel getOperationPanel(JPanel windowPanel) {
+		JPanel operationContainerPanel = new JPanel(new BorderLayout());
+
+		operationContainerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		operationContainerPanel.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				operationContainerPanel.setPreferredSize(new Dimension(250, windowPanel.getHeight()));
+
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				operationContainerPanel.setPreferredSize(new Dimension(250, windowPanel.getHeight()));
+
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		JPanel operaionPanel = new JPanel(new BorderLayout());
+		operaionPanel.setOpaque(true);
+		operaionPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
+		operaionPanel.setBackground(new Color(210, 218, 226));
+
+		JPanel opTopPanel = new JPanel(new GridBagLayout());
+
+		JLabel titleLabel = new JLabel("-------");
+		this.operationPanelTitleLabel = titleLabel;
+		JButton closeBtn = new JButton("X");
+		closeBtn.setContentAreaFilled(false);
+		closeBtn.setFocusPainted(false);
+		closeBtn.setToolTipText("Close Window");
+		closeBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(() -> {
+					operationContainerPanel.setVisible(false);
+				});
+
+			}
+		});
+
+		closeBtn.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+		closeBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		closeBtn.setForeground(Color.WHITE);
+		titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		titleLabel.setForeground(Color.WHITE);
+
+		GridBagConstraints bag1 = new GridBagConstraints();
+		bag1.gridx = 0;
+		bag1.gridy = 0;
+		bag1.gridwidth = 4;
+		bag1.gridheight = 1;
+		bag1.weightx = 1;
+		bag1.weighty = 0;
+		bag1.fill = GridBagConstraints.BOTH;
+		bag1.anchor = GridBagConstraints.EAST;
+		opTopPanel.add(titleLabel, bag1);
+		GridBagConstraints bag2 = new GridBagConstraints();
+		bag2.gridx = 4;
+		bag2.gridy = 0;
+		bag2.gridwidth = 1;
+		bag2.gridheight = 1;
+		bag2.weightx = 0;
+		bag2.weighty = 0;
+		bag2.fill = GridBagConstraints.NONE;
+		bag2.anchor = GridBagConstraints.EAST;
+		opTopPanel.add(closeBtn, bag2);
+
+		opTopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+		opTopPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.GRAY));
+		opTopPanel.setOpaque(true);
+		opTopPanel.setBackground(new Color(30, 39, 46));
+
+		operaionPanel.add(opTopPanel, BorderLayout.NORTH);
+
+		operationContainerPanel.add(operaionPanel, BorderLayout.CENTER);
+
+		// operationContainerPanel.setVisible(false);
+		this.operaionPanel = operationContainerPanel;
+		return operationContainerPanel;
+	}
+
+	private JPanel getCenterPanel(JPanel windowPanel) {
 		JPanel centerPanel = new JPanel(new BorderLayout());
 
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -151,6 +268,45 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		resultTable.setAutoCreateRowSorter(true);
 		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
+		resultTable.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JTable target = (JTable) e.getSource();
+				int rowIdx = target.getSelectedRow();
+
+				@SuppressWarnings("unchecked")
+				Vector<String> rowdata = (Vector<String>) tableModel.getDataVector().get(rowIdx);
+
+				zolaController.setupClientOperaion(rowdata.get(0));
+
+			}
+		});
+
 		this.clientListTable = resultTable;
 
 		JScrollPane scrollPane = new JScrollPane(resultTable);
@@ -163,7 +319,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	}
 
-	private JPanel getServerLogPanel() {
+	private JPanel getServerLogPanel(JPanel windowPanel) {
 
 		JPanel serverLogPanel = new JPanel(new BorderLayout());
 		JTextArea logArea = new JTextArea();
@@ -179,9 +335,11 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		JScrollPane scrollPane = new JScrollPane(logArea);
 
+		scrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
 		serverLogPanel.add(scrollPane, BorderLayout.CENTER);
 		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		serverLogPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
 		return serverLogPanel;
 
 	}
@@ -234,6 +392,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 			Vector<Vector<String>> dataVector = model.getDataVector();
 
 			dataVector.clear();
+			row_client_map.clear();
 
 			rowList.stream().forEach(row -> {
 				Vector<String> vect = row.stream().map(columnVal -> {
@@ -279,6 +438,19 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		SwingUtilities.invokeLater(() -> {
 			this.httpServiceStatus.setText(status);
 		});
+	}
+
+	@Override
+	public void setupOperationPanel(HydraConnectionClient client) {
+
+		SwingUtilities.invokeLater(() -> {
+			this.operaionPanel.setVisible(true);
+
+			String host = client.getClientAddress() == null ? "---" : client.getClientAddress().getHostName();
+			operationPanelTitleLabel.setText(host);
+			operationPanelTitleLabel.setToolTipText(client.getClientID());
+		});
+
 	}
 
 }

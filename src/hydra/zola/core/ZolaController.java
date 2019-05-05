@@ -50,16 +50,19 @@ public class ZolaController {
 	public ZolaController(ZolaConfig zolaConfig) {
 
 		this.zolaServerRepository = new ZolaServerRepository();
-		this.serverGui = new ZolaServerSwingGui(this);
-
 		this.servicePort = zolaConfig.servicePort;
 		this.httpServicePort = zolaConfig.httpServicePort;
+
+		this.serverGui = new ZolaServerSwingGui(this);
 
 		this.setGuiTitle(zolaConfig.app_name);
 
 		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
-
-			refreshPanel();
+			try {
+				refreshPanel();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 		}, 0, 1, TimeUnit.SECONDS);
 
@@ -124,50 +127,56 @@ public class ZolaController {
 	}
 
 	public void refreshPanel() {
-		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
+		try {
+			ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
 
-		List<List<String>> rowList = new ArrayList<>();
+			ConcurrentHashMap<String, String> tableMap = zolaServerRepository.getTableMap();
 
-		int count = 0;
+			tableMap.clear();
 
-		String[] keys = new ArrayList<>(clients.keySet()).toArray(new String[] {});
+			List<List<String>> rowList = new ArrayList<>();
 
-		Arrays.sort(keys);
+			int count = 0;
 
-		for (String clientId : keys) {
-			count++;
-			HydraConnectionClient client = clients.get(clientId);
+			String[] keys = new ArrayList<>(clients.keySet()).toArray(new String[] {});
 
-			String displayMsg;
-			try {
-				JsonParser parser = new JsonParser();
-				JsonObject messageJson = parser.parse(client.getMessage()).getAsJsonObject();
+			Arrays.sort(keys);
 
-				messageJson = messageJson.get("message").getAsJsonObject();
+			for (String clientId : keys) {
+				count++;
+				HydraConnectionClient client = clients.get(clientId);
 
-				String cpu = messageJson.get("cpu").getAsString();
-				String memory = messageJson.get("memory").getAsString();
+				String displayMsg;
+				try {
+					JsonParser parser = new JsonParser();
+					JsonObject messageJson = parser.parse(client.getMessage()).getAsJsonObject();
 
-				JsonObject networkJson = messageJson.get("network").getAsJsonObject();
-				String bytesRecv = networkJson.get("totalBytesRecvDelta").getAsString();
-				String bytesSent = networkJson.get("totalBytesSentDelta").getAsString();
-				String totalErr = networkJson.get("totalNetworkErr").getAsString();
+					messageJson = messageJson.get("message").getAsJsonObject();
 
-				Integer heartBeatInterval = messageJson.get("interval").getAsInt();
+					String cpu = messageJson.get("cpu").getAsString();
+					String memory = messageJson.get("memory").getAsString();
 
-				displayMsg = String.format("CPU: %s%%, Memory: %s%%, Recv: %s/s, Sent: %s/s, Error: %s", cpu, memory,
-						FormatUtil.formatBytes(Long.parseLong(bytesRecv) / heartBeatInterval),
-						FormatUtil.formatBytes(Long.parseLong(bytesSent) / heartBeatInterval), totalErr);
-			} catch (Exception e) {
+					JsonObject networkJson = messageJson.get("network").getAsJsonObject();
+					String bytesRecv = networkJson.get("totalBytesRecvDelta").getAsString();
+					String bytesSent = networkJson.get("totalBytesSentDelta").getAsString();
+					String totalErr = networkJson.get("totalNetworkErr").getAsString();
 
-				displayMsg = client.getMessage();
-			}
+					Integer heartBeatInterval = messageJson.get("interval").getAsInt();
 
-			try {
+					displayMsg = String.format("CPU: %s%%, Memory: %s%%, Recv: %s/s, Sent: %s/s, Error: %s", cpu,
+							memory, FormatUtil.formatBytes(Long.parseLong(bytesRecv) / heartBeatInterval),
+							FormatUtil.formatBytes(Long.parseLong(bytesSent) / heartBeatInterval), totalErr);
+				} catch (Exception e) {
+
+					displayMsg = client.getMessage();
+				}
 
 				ArrayList<String> tableData = new ArrayList<>();
+				String rowNo = Integer.toString(count);
 
-				tableData.add(Integer.toString(count));
+				tableMap.put(rowNo, clientId);
+
+				tableData.add(rowNo);
 				tableData.add(client.getClientAddress().getHostName());
 				tableData.add(client.getClientVersion());
 				tableData.add(client.getClientAddress().getHostAddress());
@@ -176,21 +185,20 @@ public class ZolaController {
 
 				rowList.add(tableData);
 
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
+			this.serverGui.refreshTable(rowList);
+
+			String threadStatus = String.format("Active/Max Threads : [%s/%s]",
+					this.threadPoolExecutor.getActiveCount(), this.threadPoolExecutor.getCorePoolSize());
+			this.serverGui.updateThreadPoolStatus(threadStatus);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		this.serverGui.refreshTable(rowList);
-
-		String threadStatus = String.format("Active/Max Threads : [%s/%s]", this.threadPoolExecutor.getActiveCount(),
-				this.threadPoolExecutor.getCorePoolSize());
-		this.serverGui.updateThreadPoolStatus(threadStatus);
 
 	}
 
-	public void updateClientMessage(String clientId, String message) {
+	public void OnRecvClientMessage(String clientId, String message) {
 
 		try {
 			JsonElement clientMessage = jsonParser.parse(message);
@@ -312,6 +320,13 @@ public class ZolaController {
 			HydraConnectionClient client = clients.get(clientId);
 			client.disconnect(true);
 		}
+	}
+
+	public void setupClientOperaion(String rowNum) {
+		
+		String client_id = this.zolaServerRepository.getTableMap().get(rowNum);
+		System.out.println(this.zolaServerRepository.getClients().get(client_id).getClientAddress());
+		this.serverGui.setupOperationPanel(this.zolaServerRepository.getClients().get(client_id));
 	}
 
 }

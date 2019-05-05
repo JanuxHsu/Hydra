@@ -2,6 +2,8 @@ package hydra.zola.gui;
 
 import java.util.List;
 
+import hydra.zola.model.HydraConnectionClient;
+
 public interface ZolaServerGui {
 
 	public void show();
@@ -21,4 +23,6 @@ public interface ZolaServerGui {
 	public void updateThreadPoolStatus(String status);
 
 	public void updateHttpServiceStatus(String status);
+
+	public void setupOperationPanel(HydraConnectionClient client);
 }

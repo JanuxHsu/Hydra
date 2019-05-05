@@ -73,7 +73,7 @@ public class RequestThread implements Runnable {
 			String message;
 			while (this.runFlag && (message = input.readUTF()) != null) {
 
-				this.zolaController.updateClientMessage(this.clientId, message);
+				this.zolaController.OnRecvClientMessage(this.clientId, message);
 
 			}
 		} catch (IOException e) {

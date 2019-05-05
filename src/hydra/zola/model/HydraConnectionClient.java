@@ -71,7 +71,7 @@ public class HydraConnectionClient {
 	public String getFormattedAcceptTime() {
 		return sdf.format(this.acceptedTime);
 	}
-	
+
 	public String getFormattedLastUpdateTime() {
 		return sdf.format(this.lastUpdateTime);
 	}
@@ -150,4 +150,5 @@ public class HydraConnectionClient {
 		}
 		this.clientThread.close();
 	}
+
 }
