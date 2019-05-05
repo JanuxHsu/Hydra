@@ -259,7 +259,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		// instantiates Border panels.
 		JPanel clientInfoPanel = new JPanel(new GridLayout(1, 1));
 
-		clientInfoPanel.setBorder(BorderFactory.createTitledBorder("ClientInfo"));
+		clientInfoPanel.setBorder(BorderFactory.createTitledBorder("Client Information"));
 
 		this.clientInfoinputGroupMap.put("ClientID", new JTextField());
 		this.clientInfoinputGroupMap.put("Host", new JTextField());
@@ -267,18 +267,16 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		clientInfoPanel.add(new BasicLabeledInputGroup(this.clientInfoinputGroupMap));
 
-		JPanel pnlB = new JPanel();
-		JPanel pnlC = new JPanel();
+		JPanel cmdControllerPanel = new JPanel();
+		cmdControllerPanel.setBorder(BorderFactory.createTitledBorder("Send Command"));
 
 		// adding all panels to main contentPane.
 		cmdOperationPanel.add(clientInfoPanel);
-		cmdOperationPanel.add(pnlB);
-		cmdOperationPanel.add(pnlC);
+		cmdOperationPanel.add(cmdControllerPanel);
 
 		// set constraints of each panel.
-		GridBagLayoutHelper.makeConstraints(gridBagLayout, clientInfoPanel, 4, 1, 0, 0, 2.0, 1.0);
-		GridBagLayoutHelper.makeConstraints(gridBagLayout, pnlB, 1, 3, 0, 2, 2.0, 8.0);
-		GridBagLayoutHelper.makeConstraints(gridBagLayout, pnlC, 1, 3, 1, 2, 1.0, 8.0);
+		GridBagLayoutHelper.makeConstraints(gridBagLayout, clientInfoPanel, 4, 1, 0, 0, 2.0, 1.0, 5);
+		GridBagLayoutHelper.makeConstraints(gridBagLayout, cmdControllerPanel, 4, 3, 0, 2, 2.0, 8.0, 5);
 
 //		cmdOperationPanel.add(new BasicLabeledInput("Working Dir", true));
 //		cmdOperationPanel.add(new BasicLabeledInput("Command", false));

@@ -17,7 +17,7 @@ public class BasicLabeledInputGroup extends JPanel {
 	JLabel itemLabel;
 	JTextField itemInput;
 	JButton itemActionBtn;
-	
+
 	Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
 	public BasicLabeledInputGroup(Map<String, JTextField> inputs) {
@@ -36,14 +36,18 @@ public class BasicLabeledInputGroup extends JPanel {
 			JLabel label = new JLabel(labelName);
 			label.setHorizontalAlignment(JLabel.TRAILING);
 			label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
-			JTextField textField = inputs.get(labelName);
+
+		
+			JTextField textField = (JTextField) inputs.get(labelName);
 			textField.setFont(defaultFont);
 			this.add(label);
 			this.add(textField);
 
-			GridBagLayoutHelper.makeConstraints(gridBagLayout, label, 1, 1, 0, rowCount, 1.0, 1.0);
-			GridBagLayoutHelper.makeConstraints(gridBagLayout, textField, 5, 1, 2, rowCount, 11.0, 1.0);
+			GridBagLayoutHelper.makeConstraints(gridBagLayout, label, 1, 1, 0, rowCount, 1.0, 1.0, 1);
+			GridBagLayoutHelper.makeConstraints(gridBagLayout, textField, 5, 1, 2, rowCount, 11.0, 1.0, 1);
 			rowCount++;
 		}
 	}
+
+	
 }
