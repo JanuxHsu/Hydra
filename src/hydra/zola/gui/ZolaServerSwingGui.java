@@ -17,7 +17,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -30,12 +32,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
+import hydra.gui.utils.BasicLabeledInputGroup;
+import hydra.gui.utils.GridBagLayoutHelper;
 import hydra.gui.utils.TableColumnAdjuster;
 import hydra.gui.utils.ZolaTableModel;
 import hydra.zola.core.ZolaController;
@@ -66,6 +71,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	JLabel operationPanelTitleLabel;
 
+	Map<String, JTextField> clientInfoinputGroupMap = new LinkedHashMap<>();
+
 	public ZolaServerSwingGui(ZolaController zolaController) {
 		this.zolaController = zolaController;
 		JFrame window = new JFrame();
@@ -90,7 +97,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		windowPanel.add(getOperationPanel(windowPanel), BorderLayout.EAST);
 		windowPanel.add(getCenterPanel(windowPanel), BorderLayout.CENTER);
 		windowPanel.add(getServerLogPanel(windowPanel), BorderLayout.SOUTH);
-		window.add(windowPanel);
+		// window.add(windowPanel);
+		window.setContentPane(windowPanel);
 		window.pack();
 		this.mainWindow = window;
 	}
@@ -163,13 +171,13 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
-				operationContainerPanel.setPreferredSize(new Dimension(250, windowPanel.getHeight()));
+				operationContainerPanel.setPreferredSize(new Dimension(350, windowPanel.getHeight()));
 
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				operationContainerPanel.setPreferredSize(new Dimension(250, windowPanel.getHeight()));
+				operationContainerPanel.setPreferredSize(new Dimension(350, windowPanel.getHeight()));
 
 			}
 
@@ -244,6 +252,39 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		operaionPanel.add(opTopPanel, BorderLayout.NORTH);
 
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		JPanel cmdOperationPanel = new JPanel(gridBagLayout);
+		cmdOperationPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+		// instantiates Border panels.
+		JPanel clientInfoPanel = new JPanel(new GridLayout(1, 1));
+
+		clientInfoPanel.setBorder(BorderFactory.createTitledBorder("ClientInfo"));
+
+		this.clientInfoinputGroupMap.put("ClientID", new JTextField());
+		this.clientInfoinputGroupMap.put("Host", new JTextField());
+		this.clientInfoinputGroupMap.put("IP Address", new JTextField());
+
+		clientInfoPanel.add(new BasicLabeledInputGroup(this.clientInfoinputGroupMap));
+
+		JPanel pnlB = new JPanel();
+		JPanel pnlC = new JPanel();
+
+		// adding all panels to main contentPane.
+		cmdOperationPanel.add(clientInfoPanel);
+		cmdOperationPanel.add(pnlB);
+		cmdOperationPanel.add(pnlC);
+
+		// set constraints of each panel.
+		GridBagLayoutHelper.makeConstraints(gridBagLayout, clientInfoPanel, 4, 1, 0, 0, 2.0, 1.0);
+		GridBagLayoutHelper.makeConstraints(gridBagLayout, pnlB, 1, 3, 0, 2, 2.0, 8.0);
+		GridBagLayoutHelper.makeConstraints(gridBagLayout, pnlC, 1, 3, 1, 2, 1.0, 8.0);
+
+//		cmdOperationPanel.add(new BasicLabeledInput("Working Dir", true));
+//		cmdOperationPanel.add(new BasicLabeledInput("Command", false));
+
+		// ###############################################################
+		operaionPanel.add(cmdOperationPanel, BorderLayout.CENTER);
 		operationContainerPanel.add(operaionPanel, BorderLayout.CENTER);
 
 		// operationContainerPanel.setVisible(false);
@@ -255,6 +296,9 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		JPanel centerPanel = new JPanel(new BorderLayout());
 
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+//		
+//		JPanel TablePanel = new JPanel(new GridLayout(1, 1));
+//		TablePanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 3));
 
 		ZolaTableModel tableModel = new ZolaTableModel();
 		tableModel.addColumn("No.");
@@ -307,9 +351,14 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 			}
 		});
 
-		this.clientListTable = resultTable;
+		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		JScrollPane scrollPane = new JScrollPane(resultTable);
+		JScrollPane scrollPane = new JScrollPane(resultTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
+
+		this.clientListTable = resultTable;
 
 		centerPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -321,24 +370,20 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	private JPanel getServerLogPanel(JPanel windowPanel) {
 
-		JPanel serverLogPanel = new JPanel(new BorderLayout());
-		JTextArea logArea = new JTextArea();
+		JPanel serverLogPanel = new JPanel(new GridLayout(1, 1));
+		JTextArea logArea = new JTextArea(4, 10);
 
 		DefaultCaret caret = (DefaultCaret) logArea.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
 		logArea.setEditable(false);
-
 		logArea.setFont(defaultFont);
 
 		this.loggingBox = logArea;
 
-		JScrollPane scrollPane = new JScrollPane(logArea);
-
-		scrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-
-		serverLogPanel.add(scrollPane, BorderLayout.CENTER);
+		serverLogPanel.add(new JScrollPane(logArea));
 		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		// serverLogPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
 		return serverLogPanel;
 
@@ -447,8 +492,18 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 			this.operaionPanel.setVisible(true);
 
 			String host = client.getClientAddress() == null ? "---" : client.getClientAddress().getHostName();
+			String ip = client.getClientAddress() == null ? "---" : client.getClientAddress().getHostAddress();
 			operationPanelTitleLabel.setText(host);
 			operationPanelTitleLabel.setToolTipText(client.getClientID());
+
+			this.clientInfoinputGroupMap.get("ClientID").setText(client.getClientID());
+			this.clientInfoinputGroupMap.get("Host").setText(host);
+			this.clientInfoinputGroupMap.get("IP Address").setText(ip);
+
+			this.clientInfoinputGroupMap.values().stream().forEach(item -> {
+				item.setEditable(false);
+			});
+
 		});
 
 	}
