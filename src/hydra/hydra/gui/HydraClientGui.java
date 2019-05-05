@@ -47,7 +47,7 @@ public abstract class HydraClientGui {
 
 	public abstract void updateClientInfo(JsonObject clientInfoJson);
 
-	public abstract void refreshTable(List<Object[]> objects);
+	public abstract void refreshTable(List<List<String>> rowList);
 
 	// public abstract void updateZolaStatus(String state, String status);
 }

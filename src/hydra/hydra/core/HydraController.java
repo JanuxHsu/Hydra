@@ -405,7 +405,7 @@ public class HydraController {
 
 				case TRIGGER_WORKER:
 					System.out.println(gson.toJson(messageBody));
-					//this.hydraRepository.getHydraStatus().setLastAckTime();
+					// this.hydraRepository.getHydraStatus().setLastAckTime();
 
 					break;
 
@@ -428,7 +428,7 @@ public class HydraController {
 	}
 
 	public void refreshTable() {
-		List<Object[]> rowList = new ArrayList<>();
+		List<List<String>> rowList = new ArrayList<>();
 
 		Map<String, String> infoMap = this.hydraRepository.getSystemInfoMap();
 
@@ -437,7 +437,7 @@ public class HydraController {
 			row.add(key);
 			row.add(infoMap.get(key));
 
-			rowList.add(row.toArray());
+			rowList.add(row);
 
 		}
 

@@ -238,8 +238,11 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	public void refreshTable(List<List<String>> rowList) {
 
 		try {
+
 			DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
 			JTable table = this.clientListTable;
+			TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(table);
+
 			@SuppressWarnings("unchecked")
 			Vector<Vector<String>> dataVector = model.getDataVector();
 
@@ -255,8 +258,6 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 			});
 
 			SwingUtilities.invokeLater(() -> {
-
-				TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(table);
 
 				tableColumnAdjuster.adjustColumns();
 

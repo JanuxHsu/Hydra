@@ -20,6 +20,8 @@ import java.awt.event.WindowListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -567,22 +569,33 @@ public class HydraClientSwingGui extends HydraClientGui {
 	}
 
 	@Override
-	public void refreshTable(List<Object[]> objects) {
+	public void refreshTable(List<List<String>> rowList) {
 
-		SwingUtilities.invokeLater(() -> {
-			DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
-
+		try {
 			JTable table = this.systemInfoTable;
+			DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
+			TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(table);
 
-			model.setRowCount(0);
-			for (Object[] object : objects) {
-				model.addRow(object);
-			}
+			@SuppressWarnings("unchecked")
+			Vector<Vector<String>> dataVector = model.getDataVector();
+			dataVector.clear();
 
-			TableColumnAdjuster tt = new TableColumnAdjuster(table);
+			rowList.stream().forEach(row -> {
+				Vector<String> vect = row.stream().map(columnVal -> {
 
-			tt.adjustColumns();
-		});
+					return columnVal.trim();
+				}).collect(Collectors.toCollection(Vector::new));
+				dataVector.add(vect);
+
+			});
+
+			SwingUtilities.invokeLater(() -> {
+
+				tableColumnAdjuster.adjustColumns();
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 }
