@@ -26,8 +26,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
-import hydra.gui.utils.HydraTableCellRender;
 import hydra.gui.utils.TableColumnAdjuster;
+import hydra.gui.utils.ZolaTableModel;
 import hydra.zola.core.ZolaController;
 import hydra.zola.model.HydraConnectionClient;
 
@@ -64,14 +64,13 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		window.setPreferredSize(new Dimension(800, 500));
 		window.setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(this.getClass().getClassLoader().getResource("resources/hydra64.png")));
-		JPanel mainPanel = new JPanel(new BorderLayout());
 
-		mainPanel.add(getServerInfoPanel(), BorderLayout.CENTER);
+		JPanel windowPanel = new JPanel(new BorderLayout());
 
-		// mainPanel.add(getServerLogPanel(), BorderLayout.SOUTH);
-
-		window.add(mainPanel, BorderLayout.CENTER);
-		window.add(getServerLogPanel(), BorderLayout.SOUTH);
+		windowPanel.add(topPanel(), BorderLayout.NORTH);
+		windowPanel.add(getCenterPanel(), BorderLayout.CENTER);
+		windowPanel.add(getServerLogPanel(), BorderLayout.SOUTH);
+		window.add(windowPanel);
 		window.pack();
 		this.mainWindow = window;
 	}
@@ -85,12 +84,8 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	}
 
-	private JPanel getServerInfoPanel() {
-
-		JPanel serverInfoPanel = new JPanel(new BorderLayout());
-
-		JPanel testPanel = new JPanel(new GridLayout(1, 2));
-
+	private JPanel topPanel() {
+		JPanel topPanel = new JPanel(new GridLayout(2, 2));
 		JLabel serverServiceInfoInfo = new JLabel("Resolving...");
 		serverServiceInfoInfo.setOpaque(true);
 		serverServiceInfoInfo.setForeground(Color.white);
@@ -99,42 +94,9 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		this.serverInfoLabel = serverServiceInfoInfo;
 
-		testPanel.add(serverServiceInfoInfo);
-
-		JPanel paddedPanel = new JPanel(new BorderLayout());
-
-		DefaultTableModel tableModel = new DefaultTableModel();
-		tableModel.addColumn("No.");
-		for (String colName : HydraConnectionClient.getTableCsolumn()) {
-			tableModel.addColumn(colName);
-
-		}
-
-		JTable resultTable = new JTable(tableModel);
-
-		// resultTable.setFont(defaultFont);
-
-		// resultTable.getTableHeader().setFont(defaultFont);
-
-		resultTable.setAutoCreateRowSorter(true);
-		HydraTableCellRender colorRenderer = new HydraTableCellRender();
-		resultTable.setDefaultRenderer(Object.class, colorRenderer);
-
-		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-
-		this.clientListTable = resultTable;
-		this.clientListTable.setPreferredScrollableViewportSize(new Dimension(0, 300));
-
-		JScrollPane scrollPane = new JScrollPane(resultTable);
-
-		paddedPanel.add(scrollPane, BorderLayout.CENTER);
-
-		paddedPanel.setBorder(BorderFactory.createEmptyBorder(5, 15, 15, 15));
-
 		JPanel clientActionPanel = new JPanel(new BorderLayout());
 
 		JPanel threadPanel = new JPanel(new GridLayout(1, 2, 2, 0));
-
 		threadPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
 
 		JLabel httpServiceLabel = new JLabel("Checking...");
@@ -156,23 +118,48 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 		clientActionPanel.add(threadPanel, BorderLayout.CENTER);
 
-		JButton kickClient = new JButton("Close All");
-		kickClient.setContentAreaFilled(false);
-		kickClient.setFont(defaultFont);
-		kickClient.addActionListener(new buttonListener());
-		kickClient.setPreferredSize(new Dimension(100, 25));
+		JButton kickClientBtn = new JButton("Close All");
+		kickClientBtn.setContentAreaFilled(false);
+		kickClientBtn.setFont(defaultFont);
+		kickClientBtn.addActionListener(new buttonListener());
+		kickClientBtn.setPreferredSize(new Dimension(100, 25));
 
-		clientActionPanel.add(kickClient, BorderLayout.EAST);
+		clientActionPanel.add(kickClientBtn, BorderLayout.EAST);
 
-		clientActionPanel.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
+		clientActionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		paddedPanel.add(clientActionPanel, BorderLayout.SOUTH);
+		topPanel.add(serverServiceInfoInfo);
 
-		serverInfoPanel.add(testPanel, BorderLayout.NORTH);
+		topPanel.add(clientActionPanel);
+		return topPanel;
+	}
 
-		serverInfoPanel.add(paddedPanel, BorderLayout.CENTER);
+	private JPanel getCenterPanel() {
+		JPanel centerPanel = new JPanel(new BorderLayout());
 
-		return serverInfoPanel;
+		centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		ZolaTableModel tableModel = new ZolaTableModel();
+		tableModel.addColumn("No.");
+		for (String colName : HydraConnectionClient.getTableCsolumn()) {
+			tableModel.addColumn(colName);
+
+		}
+
+		JTable resultTable = new JTable(tableModel);
+
+		resultTable.setAutoCreateRowSorter(true);
+		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+
+		this.clientListTable = resultTable;
+
+		JScrollPane scrollPane = new JScrollPane(resultTable);
+
+		centerPanel.add(scrollPane, BorderLayout.CENTER);
+
+		// centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 15, 15, 15));
+
+		return centerPanel;
 
 	}
 
@@ -191,10 +178,10 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		this.loggingBox = logArea;
 
 		JScrollPane scrollPane = new JScrollPane(logArea);
-		scrollPane.setMaximumSize(new Dimension(0, 30));
+
 		serverLogPanel.add(scrollPane, BorderLayout.CENTER);
-		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
-		serverLogPanel.setMaximumSize(new Dimension(0, 30));
+		serverLogPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		serverLogPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 		return serverLogPanel;
 
 	}

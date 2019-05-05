@@ -376,6 +376,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 		centerPanel.add(new JScrollPane(resultTable), BorderLayout.CENTER);
 
 		JTextArea logArea = new JTextArea();
+
+		logArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 		logArea.setLineWrap(true);
 		logArea.setPreferredSize(new Dimension(0, 50));
 		logArea.setEditable(false);

@@ -171,7 +171,7 @@ public class ZolaController {
 				tableData.add(client.getClientAddress().getHostName());
 				tableData.add(client.getClientVersion());
 				tableData.add(client.getClientAddress().getHostAddress());
-				tableData.add(client.getFormattedAcceptTime());
+				tableData.add(client.getFormattedLastUpdateTime());
 				tableData.add(displayMsg);
 
 				rowList.add(tableData);
@@ -184,7 +184,7 @@ public class ZolaController {
 
 		this.serverGui.refreshTable(rowList);
 
-		String threadStatus = String.format("Active/PoolSize : [%s/%s]", this.threadPoolExecutor.getActiveCount(),
+		String threadStatus = String.format("Active/Max Threads : [%s/%s]", this.threadPoolExecutor.getActiveCount(),
 				this.threadPoolExecutor.getCorePoolSize());
 		this.serverGui.updateThreadPoolStatus(threadStatus);
 

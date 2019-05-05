@@ -33,9 +33,9 @@ public class HydraConnectionClient {
 
 	private final RequestThread clientThread;
 
+	@TableColumn(columName = "Last RecvTime")
 	Date lastUpdateTime = Calendar.getInstance().getTime();
 
-	@TableColumn(columName = "Created time")
 	final Date acceptedTime;
 
 	@TableColumn(columName = "Last Message")
@@ -43,7 +43,7 @@ public class HydraConnectionClient {
 
 	String systemInfoMessage = "";
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public HydraConnectionClient(String clientId, String clientVersion, RequestThread clientThread, Date acceptedTime,
 			InetAddress inetAddress) {
@@ -70,6 +70,10 @@ public class HydraConnectionClient {
 
 	public String getFormattedAcceptTime() {
 		return sdf.format(this.acceptedTime);
+	}
+	
+	public String getFormattedLastUpdateTime() {
+		return sdf.format(this.lastUpdateTime);
 	}
 
 	public void updateLastMessage(String msg) {
