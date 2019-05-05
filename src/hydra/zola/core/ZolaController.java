@@ -58,7 +58,9 @@ public class ZolaController {
 		this.setGuiTitle(zolaConfig.app_name);
 
 		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
+
 			refreshPanel();
+
 		}, 0, 1, TimeUnit.SECONDS);
 
 		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
@@ -123,7 +125,9 @@ public class ZolaController {
 
 	public void refreshPanel() {
 		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaServerRepository.getClients();
-		List<Object[]> rowList = new ArrayList<>();
+
+		List<List<String>> rowList = new ArrayList<>();
+
 		int count = 0;
 
 		String[] keys = new ArrayList<>(clients.keySet()).toArray(new String[] {});
@@ -159,16 +163,23 @@ public class ZolaController {
 				displayMsg = client.getMessage();
 			}
 
-			ArrayList<String> tableData = new ArrayList<>();
+			try {
 
-			tableData.add(Integer.toString(count));
-			tableData.add(client.getClientAddress().getHostName());
-			tableData.add(client.getClientVersion());
-			tableData.add(client.getClientAddress().getHostAddress());
-			tableData.add(client.getFormattedAcceptTime());
-			tableData.add(displayMsg);
+				ArrayList<String> tableData = new ArrayList<>();
 
-			rowList.add(tableData.toArray());
+				tableData.add(Integer.toString(count));
+				tableData.add(client.getClientAddress().getHostName());
+				tableData.add(client.getClientVersion());
+				tableData.add(client.getClientAddress().getHostAddress());
+				tableData.add(client.getFormattedAcceptTime());
+				tableData.add(displayMsg);
+
+				rowList.add(tableData);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		this.serverGui.refreshTable(rowList);

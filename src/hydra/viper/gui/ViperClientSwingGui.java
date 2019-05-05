@@ -17,7 +17,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.text.DefaultCaret;
 
 import hydra.viper.core.ViperController;
 import javafx.application.Platform;
@@ -113,16 +112,16 @@ public class ViperClientSwingGui extends ViperClientGui {
 	private JPanel getMainPanel() {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
-		// JPanel logPanel = new JPanel(new GridLayout(1, 1));
+		// JPanel logPanel  = new JPanel(new GridLayout(1, 1));
 		JFXPanel webViewPanel = new JFXPanel();
 
 		Platform.runLater(() -> {
 			WebView webView = new WebView();
 			webViewPanel.setScene(new Scene(webView));
-			webView.getEngine().load("http://172.20.10.8:8099/api/clients");
+			webView.getEngine().load("http://172.20.10.8:8180/api/clients");
 
 		});
-		//webViewPanel.setScene(new Scene(this.webView));
+		// webViewPanel.setScene(new Scene(this.webView));
 //		JTextArea logArea = new JTextArea();
 //
 //		logArea.setForeground(Color.white);
@@ -246,8 +245,8 @@ public class ViperClientSwingGui extends ViperClientGui {
 	}
 
 	public void getDefaultPath() {
-		//this.remoteConsoleTextArea.setText("");
-		//this.remoteConsoleTextArea.append(System.getProperty("user.dir"));
+		// this.remoteConsoleTextArea.setText("");
+		// this.remoteConsoleTextArea.append(System.getProperty("user.dir"));
 	}
 
 	public String getAutoCompleteKeyword() {

@@ -9,6 +9,8 @@ import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -76,7 +78,11 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 	@Override
 	public void setTitle(String name) {
-		this.mainWindow.setTitle(name);
+
+		SwingUtilities.invokeLater(() -> {
+			this.mainWindow.setTitle(name);
+		});
+
 	}
 
 	private JPanel getServerInfoPanel() {
@@ -229,26 +235,35 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 	}
 
 	@Override
-	public void refreshTable(List<Object[]> objects) {
+	public void refreshTable(List<List<String>> rowList) {
 
-		DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
-		JTable table = this.clientListTable;
+		try {
+			DefaultTableModel model = (DefaultTableModel) this.clientListTable.getModel();
+			JTable table = this.clientListTable;
+			@SuppressWarnings("unchecked")
+			Vector<Vector<String>> dataVector = model.getDataVector();
 
-		// model.setDataVector(objects,
-		// HydraConnectionClient.getTableCsolumn().toArray());
+			dataVector.clear();
 
-		SwingUtilities.invokeLater(() -> {
-			// model.getDataVector().clear();
-			model.setRowCount(0);
-			for (Object[] object : objects) {
-				model.addRow(object);
-			}
+			rowList.stream().forEach(row -> {
+				Vector<String> vect = row.stream().map(columnVal -> {
 
-			TableColumnAdjuster tt = new TableColumnAdjuster(table);
+					return columnVal.trim();
+				}).collect(Collectors.toCollection(Vector::new));
+				dataVector.add(vect);
 
-			tt.adjustColumns();
+			});
 
-		});
+			SwingUtilities.invokeLater(() -> {
+
+				TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(table);
+
+				tableColumnAdjuster.adjustColumns();
+
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
