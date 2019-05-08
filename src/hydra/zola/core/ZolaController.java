@@ -67,6 +67,7 @@ public class ZolaController {
 		}, 0, 1, TimeUnit.SECONDS);
 
 		this.scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
+
 			syslog("Clearing Idle Client threads...");
 			try {
 				clearIdleConnection();
@@ -270,11 +271,13 @@ public class ZolaController {
 
 	public void removeClient(String clientId) {
 		HydraConnectionClient client = this.zolaServerRepository.getClients().remove(clientId);
-		client.getClientThread().close();
-		this.syslog(String.format("%s Disconnected!", client.getClientID()));
+		if (client != null) {
+			client.getClientThread().close();
+			this.syslog(String.format("%s Disconnected!", client.getClientID()));
 
-		if (this.threadPoolExecutor.getActiveCount() + 1 < this.threadPoolExecutor.getCorePoolSize()) {
-			this.threadPoolExecutor.setCorePoolSize(this.threadPoolExecutor.getCorePoolSize() - 1);
+			if (this.threadPoolExecutor.getActiveCount() + 1 < this.threadPoolExecutor.getCorePoolSize()) {
+				this.threadPoolExecutor.setCorePoolSize(this.threadPoolExecutor.getCorePoolSize() - 1);
+			}
 		}
 
 		// refreshPanel();
@@ -323,9 +326,9 @@ public class ZolaController {
 	}
 
 	public void setupClientOperaion(String rowNum) {
-		
+
 		String client_id = this.zolaServerRepository.getTableMap().get(rowNum);
-		System.out.println(this.zolaServerRepository.getClients().get(client_id).getClientAddress());
+		// System.out.println(this.zolaServerRepository.getClients().get(client_id).getClientAddress());
 		this.serverGui.setupOperationPanel(this.zolaServerRepository.getClients().get(client_id));
 	}
 
