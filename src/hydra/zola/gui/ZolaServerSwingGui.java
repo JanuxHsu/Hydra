@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -28,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -39,7 +39,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
-import hydra.gui.utils.BasicLabeledInputGroup;
+import hydra.gui.gallery.BasicLabeledTextAreaInputGroup;
+import hydra.gui.gallery.BasicLabeledTextFieldInputGroup;
 import hydra.gui.utils.GridBagLayoutHelper;
 import hydra.gui.utils.TableColumnAdjuster;
 import hydra.gui.utils.ZolaTableModel;
@@ -199,8 +200,6 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		operaionPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
 		operaionPanel.setBackground(new Color(210, 218, 226));
 
-		JPanel opTopPanel = new JPanel(new GridBagLayout());
-
 		JLabel titleLabel = new JLabel("-------");
 		this.operationPanelTitleLabel = titleLabel;
 		JButton closeBtn = new JButton("X");
@@ -224,26 +223,13 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 		titleLabel.setForeground(Color.WHITE);
 
-		GridBagConstraints bag1 = new GridBagConstraints();
-		bag1.gridx = 0;
-		bag1.gridy = 0;
-		bag1.gridwidth = 4;
-		bag1.gridheight = 1;
-		bag1.weightx = 1;
-		bag1.weighty = 0;
-		bag1.fill = GridBagConstraints.BOTH;
-		bag1.anchor = GridBagConstraints.EAST;
-		opTopPanel.add(titleLabel, bag1);
-		GridBagConstraints bag2 = new GridBagConstraints();
-		bag2.gridx = 4;
-		bag2.gridy = 0;
-		bag2.gridwidth = 1;
-		bag2.gridheight = 1;
-		bag2.weightx = 0;
-		bag2.weighty = 0;
-		bag2.fill = GridBagConstraints.NONE;
-		bag2.anchor = GridBagConstraints.EAST;
-		opTopPanel.add(closeBtn, bag2);
+		GridBagLayout topBar_gridBagLayout = new GridBagLayout();
+		JPanel opTopPanel = new JPanel(topBar_gridBagLayout);
+
+		opTopPanel.add(titleLabel);
+		opTopPanel.add(closeBtn);
+		GridBagLayoutHelper.makeConstraints(topBar_gridBagLayout, titleLabel, 1, 1, 0, 0, 1.0, 0.0, 0);
+		GridBagLayoutHelper.makeConstraints(topBar_gridBagLayout, closeBtn, 1, 1, 1, 0, 0.0, 0.0, 0);
 
 		opTopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 		opTopPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.GRAY));
@@ -265,11 +251,49 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		this.clientInfoinputGroupMap.put("Host", new JTextField());
 		this.clientInfoinputGroupMap.put("IP Address", new JTextField());
 
-		clientInfoPanel.add(new BasicLabeledInputGroup(this.clientInfoinputGroupMap));
+		clientInfoPanel.add(new BasicLabeledTextFieldInputGroup(this.clientInfoinputGroupMap));
 
-		JPanel cmdControllerPanel = new JPanel();
+		JPanel cmdControllerPanel = new JPanel(new GridLayout(2, 1));
 		cmdControllerPanel.setBorder(BorderFactory.createTitledBorder("Send Command"));
 
+		Map<String, JTextArea> map = new LinkedHashMap<>();
+		map.put("Working Directory", new JTextArea(2, 5));
+		map.put("Command", new JTextArea(2, 5));
+
+		cmdControllerPanel.add(new BasicLabeledTextAreaInputGroup(map));
+
+		JPanel subCmdControllerPanel = new JPanel(new GridLayout(2, 3));
+
+		Map<String, JTextField> map2 = new LinkedHashMap<>();
+		map2.put("Timeout", new JTextField("300"));
+		subCmdControllerPanel.add(new JLabel());
+		subCmdControllerPanel.add(new JLabel());
+		subCmdControllerPanel.add(new BasicLabeledTextFieldInputGroup(map2));
+		subCmdControllerPanel.add(new JLabel());
+		subCmdControllerPanel.add(new JLabel());
+
+		JPanel subCmdBtnPanel = new JPanel(new BorderLayout());
+		subCmdBtnPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		JButton sendCmdBtn = new JButton("Send");
+		sendCmdBtn.setContentAreaFilled(false);
+		sendCmdBtn.setFocusable(false);
+		sendCmdBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		sendCmdBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = JOptionPane.showInputDialog(windowPanel, "What is your name?", null);
+
+			}
+		});
+
+		subCmdBtnPanel.add(sendCmdBtn, BorderLayout.CENTER);
+
+		subCmdControllerPanel.add(subCmdBtnPanel);
+
+		cmdControllerPanel.add(subCmdControllerPanel);
 		// adding all panels to main contentPane.
 		cmdOperationPanel.add(clientInfoPanel);
 		cmdOperationPanel.add(cmdControllerPanel);
@@ -277,9 +301,6 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 		// set constraints of each panel.
 		GridBagLayoutHelper.makeConstraints(gridBagLayout, clientInfoPanel, 4, 1, 0, 0, 2.0, 1.0, 5);
 		GridBagLayoutHelper.makeConstraints(gridBagLayout, cmdControllerPanel, 4, 3, 0, 2, 2.0, 8.0, 5);
-
-//		cmdOperationPanel.add(new BasicLabeledInput("Working Dir", true));
-//		cmdOperationPanel.add(new BasicLabeledInput("Command", false));
 
 		// ###############################################################
 		operaionPanel.add(cmdOperationPanel, BorderLayout.CENTER);

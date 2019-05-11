@@ -1,4 +1,4 @@
-package hydra.gui.utils;
+package hydra.gui.gallery;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -8,9 +8,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class BasicLabeledInputGroup extends JPanel {
+import hydra.gui.utils.GridBagLayoutHelper;
+
+public class BasicLabeledTextAreaInputGroup extends JPanel {
 
 	private static final long serialVersionUID = 9148707768191951356L;
 
@@ -20,7 +24,7 @@ public class BasicLabeledInputGroup extends JPanel {
 
 	Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
-	public BasicLabeledInputGroup(Map<String, JTextField> inputs) {
+	public BasicLabeledTextAreaInputGroup(Map<String, JTextArea> inputs) {
 
 		super();
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -37,17 +41,19 @@ public class BasicLabeledInputGroup extends JPanel {
 			label.setHorizontalAlignment(JLabel.TRAILING);
 			label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
-		
-			JTextField textField = (JTextField) inputs.get(labelName);
-			textField.setFont(defaultFont);
+			JTextArea textArea = (JTextArea) inputs.get(labelName);
+			textArea.setFont(defaultFont);
+			textArea.setLineWrap(true);
+
+			JScrollPane scrollPane = new JScrollPane(textArea);
+
 			this.add(label);
-			this.add(textField);
+			this.add(scrollPane);
 
 			GridBagLayoutHelper.makeConstraints(gridBagLayout, label, 1, 1, 0, rowCount, 1.0, 1.0, 1);
-			GridBagLayoutHelper.makeConstraints(gridBagLayout, textField, 5, 1, 2, rowCount, 11.0, 1.0, 1);
+			GridBagLayoutHelper.makeConstraints(gridBagLayout, scrollPane, 5, 1, 2, rowCount, 11.0, 1.0, 1);
 			rowCount++;
 		}
 	}
 
-	
 }
