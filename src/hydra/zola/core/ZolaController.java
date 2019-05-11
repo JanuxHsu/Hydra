@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -330,6 +331,36 @@ public class ZolaController {
 		String client_id = this.zolaServerRepository.getTableMap().get(rowNum);
 		// System.out.println(this.zolaServerRepository.getClients().get(client_id).getClientAddress());
 		this.serverGui.setupOperationPanel(this.zolaServerRepository.getClients().get(client_id));
+	}
+
+	public void sendCommandToClient(String clientID, String workingDir, String command, Integer timeout) {
+
+		JsonObject jobObj = new JsonObject();
+
+		jobObj.addProperty("working_directory", workingDir);
+		jobObj.addProperty("command", command);
+		jobObj.addProperty("timeout", timeout);
+
+		HydraMessage hydraMessage = new HydraMessage(jobObj, clientID, MessageType.TRIGGER_WORKER);
+
+		Optional<HydraConnectionClient> client = Optional
+				.ofNullable(this.zolaServerRepository.getClients().get(clientID));
+
+		if (client.isPresent()) {
+
+			try {
+
+				client.get().getClientThread().sendMessage(hydraMessage.toString());
+				System.out.println(hydraMessage.toString());
+			} catch (IOException e) {
+
+				e.printStackTrace();
+				this.syslog(e.getMessage());
+			}
+		} else {
+			this.syslog("Incorrect Client ID!");
+		}
+
 	}
 
 }

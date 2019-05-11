@@ -27,7 +27,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -284,8 +283,37 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = JOptionPane.showInputDialog(windowPanel, "What is your name?", null);
 
+				String clientID = clientInfoinputGroupMap.get("ClientID").getText();
+				String workingDir = map.get("Working Directory").getText();
+				String command = map.get("Command").getText();
+				Integer timeout = Integer.parseInt(map2.get("Timeout").getText());
+
+				zolaController.sendCommandToClient(clientID, workingDir, command, timeout);
+
+				SwingUtilities.invokeLater(() -> {
+					sendCmdBtn.setEnabled(false);
+				});
+				Runnable resumeJob = new Runnable() {
+
+					@Override
+					public void run() {
+
+						try {
+							Thread.sleep(3000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						SwingUtilities.invokeLater(() -> {
+							sendCmdBtn.setEnabled(true);
+						});
+
+					}
+				};
+
+				new Thread(resumeJob).start();
 			}
 		});
 
