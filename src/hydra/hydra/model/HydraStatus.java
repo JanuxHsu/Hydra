@@ -2,8 +2,8 @@ package hydra.hydra.model;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 public class HydraStatus {
@@ -13,8 +13,10 @@ public class HydraStatus {
 	Date lastAckTime = Calendar.getInstance().getTime();
 	String serverResponse;
 	String connectionInfo = null;
+	
+	
 
-	Map<String, Future<String>> workerJobs = new LinkedHashMap<>();
+	Map<String, Future<String>> workerJobs = new ConcurrentHashMap<>();
 
 	public HydraStatus() {
 		// this.maxMemory = Runtime.getRuntime().totalMemory();

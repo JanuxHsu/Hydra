@@ -1,4 +1,4 @@
-package hydra.hydra.core;
+package hydra.hydra.model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 
 import com.google.gson.JsonObject;
 
+import hydra.hydra.core.WorkerTimeoutMonitor;
 import hydra.hydra.listeners.WorkerListener;
 import hydra.hydra.listeners.WorkerListener.WorkerStatus;
 
@@ -59,7 +60,7 @@ public class WorkerCallable implements Callable<String> {
 			monitor.interrupt();
 		}
 
-		return null;
+		return this.job_id;
 	}
 
 }

@@ -580,21 +580,19 @@ public class HydraClientSwingGui extends HydraClientGui {
 			DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
 			TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(table);
 
-			@SuppressWarnings("unchecked")
-			Vector<Vector<String>> dataVector = model.getDataVector();
-			dataVector.clear();
-
-			rowList.stream().forEach(row -> {
-				Vector<String> vect = row.stream().map(columnVal -> {
-
-					return columnVal.trim();
-				}).collect(Collectors.toCollection(Vector::new));
-				dataVector.add(vect);
-
-			});
-
 			SwingUtilities.invokeLater(() -> {
+				@SuppressWarnings("unchecked")
+				Vector<Vector<String>> dataVector = model.getDataVector();
+				dataVector.clear();
 
+				rowList.stream().forEach(row -> {
+					Vector<String> vect = row.stream().map(columnVal -> {
+
+						return columnVal.trim();
+					}).collect(Collectors.toCollection(Vector::new));
+					dataVector.add(vect);
+
+				});
 				tableColumnAdjuster.adjustColumns();
 			});
 		} catch (Exception e) {

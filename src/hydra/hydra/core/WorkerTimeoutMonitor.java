@@ -36,9 +36,6 @@ public class WorkerTimeoutMonitor implements Runnable {
 				break;
 			}
 		}
-
-		System.out.println("break!!!");
-
 		this.workerListener.doUpdateStatus(this.job_id, WorkerStatus.Timeout, "Process max runtime reached.");
 
 	}

@@ -31,6 +31,7 @@ import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
 import hydra.hydra.listeners.WorkerListener;
+import hydra.hydra.model.WorkerCallable;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
@@ -60,7 +61,7 @@ public class HydraController {
 	ExecutorService executorService = Executors.newCachedThreadPool();
 
 	ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.HOURS,
-			new LinkedBlockingQueue<>(10));
+			new LinkedBlockingQueue<>());
 
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
@@ -100,14 +101,30 @@ public class HydraController {
 
 	protected void cleanUpWorker() {
 
-		int activeJobCount = this.threadPoolExecutor.getActiveCount();
-		int queuedJobCOunt = this.threadPoolExecutor.getQueue().size();
-		int totalWaitingJobsFuture = this.hydraRepository.getHydraStatus().getWorkerFutureMap().size();
+		try {
 
-		if (activeJobCount == 0 && queuedJobCOunt == 0 && totalWaitingJobsFuture > 0) {
-			this.hydraRepository.getHydraStatus().getWorkerFutureMap().clear();
+			Map<String, Future<String>> futureMap = this.hydraRepository.getHydraStatus().getWorkerFutureMap();
+			boolean showMessage = false;
+			for (String job_id : futureMap.keySet()) {
+				Future<String> job = futureMap.get(job_id);
+				if (job.isCancelled() || job.isDone()) {
+					showMessage = true;
+					System.out.println(job_id + " removed!");
 
-			this.systemLog("Completed Worker Jobs cleared.");
+					synchronized (futureMap) {
+						futureMap.remove(job_id);
+					}
+
+				}
+
+			}
+
+			if (showMessage) {
+				this.systemLog("Completed Worker Jobs cleared.");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -455,9 +472,15 @@ public class HydraController {
 
 						}
 					});
-					Future<String> future = this.threadPoolExecutor.submit(workerCallable);
 
-					this.hydraRepository.getHydraStatus().addWorkerCurrentFuture(workerCallable.getJobId(), future);
+					if (this.threadPoolExecutor.getQueue().size() < 10) {
+						Future<String> future = this.threadPoolExecutor.submit(workerCallable);
+						this.hydraRepository.getHydraStatus().addWorkerCurrentFuture(workerCallable.getJobId(), future);
+
+					} else {
+						this.systemLog("Job queue full, try later.");
+					}
+
 					updateHydraStatus();
 					System.out.println("#######################################");
 					// this.hydraRepository.getHydraStatus().setLastAckTime();
