@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -62,6 +63,36 @@ public class clients {
 
 		return gsonPretty.toJson(res);
 
+	}
+
+	@GET
+	@Path("/{param}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String hello(@PathParam("param") String client_id) {
+
+		ConcurrentHashMap<String, HydraConnectionClient> clients = zolaController.getRepository().getClients();
+		JsonElement json = null;
+		HydraConnectionClient clientItem = clients.get(client_id);
+		if (clientItem != null) {
+
+			try {
+				JsonObject jsonObj = new JsonObject();
+
+				jsonObj.addProperty("client_id", clientItem.getClientID());
+				jsonObj.addProperty("client_name", clientItem.getClientAddress().getHostName());
+				jsonObj.addProperty("client_address", clientItem.getClientAddress().getHostAddress());
+				jsonObj.addProperty("client_version", clientItem.getClientVersion());
+				jsonObj.addProperty("client_connected_DT", clientItem.getFormattedAcceptTime());
+
+				json = gsonPretty.fromJson(jsonObj, JsonElement.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			}
+
+		}
+
+		return gsonPretty.toJson(json);
 	}
 
 	@GET

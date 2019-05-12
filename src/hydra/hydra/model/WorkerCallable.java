@@ -47,12 +47,9 @@ public class WorkerCallable implements Callable<String> {
 	public String call() throws Exception {
 		this.workerListener.doUpdateStatus(this.job_id, WorkerStatus.Start, "start");
 
-		System.out.println(Thread.currentThread().getName() + " go");
-
 		System.out.println(this.executeCommand());
 
-		this.workerListener.doUpdateStatus(this.job_id, WorkerStatus.End, "OK");
-		System.out.println(Thread.currentThread().getName() + "stop");
+		this.workerListener.doUpdateStatus(this.job_id, WorkerStatus.End, "");
 
 		return this.job_id;
 	}
@@ -65,6 +62,7 @@ public class WorkerCallable implements Callable<String> {
 			ProcessBuilder processBuilder = new ProcessBuilder(this.commands);
 
 			processBuilder.redirectErrorStream(true);
+
 			if (this.workingDirectory != null) {
 				processBuilder.directory(this.workingDirectory);
 			}

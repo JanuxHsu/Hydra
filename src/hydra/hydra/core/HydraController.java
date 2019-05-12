@@ -120,7 +120,7 @@ public class HydraController {
 			}
 
 			if (showMessage) {
-				this.systemLog("Completed Worker Jobs cleared.");
+				this.systemLog("Worker Jobs cleared.");
 			}
 
 		} catch (Exception e) {

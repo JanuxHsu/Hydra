@@ -101,6 +101,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		mainPanel.add(setupTopPanel(), BorderLayout.NORTH);
 		mainPanel.add(setupCenterPanel(), BorderLayout.CENTER);
+		mainPanel.add(setupBottomPanel(), BorderLayout.SOUTH);
 
 		window.add(mainPanel);
 
@@ -375,17 +376,28 @@ public class HydraClientSwingGui extends HydraClientGui {
 		this.systemInfoTable = resultTable;
 		centerPanel.add(new JScrollPane(resultTable), BorderLayout.CENTER);
 
+		return centerPanel;
+	}
+
+	private JPanel setupBottomPanel() {
+		JPanel logPanel = new JPanel(new GridLayout(1, 1));
+
+		logPanel.setOpaque(true);
+		logPanel.setBackground(new Color(44, 62, 80));
+		logPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+		logPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
 		JTextArea logArea = new JTextArea();
 
-		logArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 		logArea.setLineWrap(true);
 
 		logArea.setEditable(false);
 		logArea.setFont(defaultFont);
 		this.logArea = logArea;
-		centerPanel.add(new JScrollPane(logArea), BorderLayout.SOUTH);
+		logPanel.add(new JScrollPane(logArea), BorderLayout.SOUTH);
 
-		return centerPanel;
+		return logPanel;
+
 	}
 
 	@Override
