@@ -379,7 +379,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		logArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 		logArea.setLineWrap(true);
-		logArea.setPreferredSize(new Dimension(0, 50));
+
 		logArea.setEditable(false);
 		logArea.setFont(defaultFont);
 		this.logArea = logArea;

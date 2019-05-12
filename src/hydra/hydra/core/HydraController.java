@@ -463,7 +463,7 @@ public class HydraController {
 
 							if (workerStatus.equals(WorkerStatus.Timeout)) {
 
-								System.out.println("killed!");
+								System.out.println(statusText);
 								hydraRepository.getHydraStatus().getWorkerCurrentFuture(job_id).cancel(true);
 
 							}
