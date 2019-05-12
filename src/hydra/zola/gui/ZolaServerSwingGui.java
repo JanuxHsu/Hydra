@@ -494,7 +494,7 @@ public class ZolaServerSwingGui implements ZolaServerGui {
 				dataVector.add(vect);
 
 			});
-
+			model.fireTableDataChanged();
 			SwingUtilities.invokeLater(() -> {
 
 				tableColumnAdjuster.adjustColumns();
