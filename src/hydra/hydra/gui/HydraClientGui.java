@@ -34,7 +34,7 @@ public abstract class HydraClientGui {
 
 	public abstract void updateConnectionStatus(String status);
 
-	public abstract void updateIsWorkerActive(boolean isWorking);
+	public abstract void updateWorkerStatus(boolean isWorking, int queuedJobs);
 
 	public abstract void updateIsServerConnected(boolean isConnected);
 

@@ -490,11 +490,13 @@ public class HydraClientSwingGui extends HydraClientGui {
 	}
 
 	@Override
-	public void updateIsWorkerActive(boolean isWorking) {
+	public void updateWorkerStatus(boolean isWorking, int queuedJobs) {
 
 		SwingUtilities.invokeLater(() -> {
 			if (isWorking) {
-				this.workerIndicator.setText("Worker Status : Running");
+				String text = queuedJobs > 0 ? String.format("Worker Status : Jobs (%s)", queuedJobs)
+						: "Worker Status : Running";
+				this.workerIndicator.setText(text);
 				this.workerIndicator.setBackground(new Color(39, 174, 96));
 
 			} else {

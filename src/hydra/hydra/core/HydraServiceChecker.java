@@ -38,7 +38,7 @@ public class HydraServiceChecker implements Runnable {
 					}
 
 				}
-				System.out.println("Checking...completed!");
+				//System.out.println("Checking...completed!");
 				hydraController.sendRealTimeInfo();
 
 				// this.hydraController.hydraRepository.getHydraStatus().setConnectedToServer(false);

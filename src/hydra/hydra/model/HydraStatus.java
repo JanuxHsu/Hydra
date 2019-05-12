@@ -2,6 +2,9 @@ package hydra.hydra.model;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 public class HydraStatus {
 
@@ -10,7 +13,8 @@ public class HydraStatus {
 	Date lastAckTime = Calendar.getInstance().getTime();
 	String serverResponse;
 	String connectionInfo = null;
-	boolean isWorkerActive = false;
+
+	Map<String, Future<String>> workerJobs = new LinkedHashMap<>();
 
 	public HydraStatus() {
 		// this.maxMemory = Runtime.getRuntime().totalMemory();
@@ -40,14 +44,6 @@ public class HydraStatus {
 		this.connectionInfo = connectionInfo;
 	}
 
-	public boolean isWorkerActive() {
-		return isWorkerActive;
-	}
-
-	public void setWorkerActive(boolean isWorkerActive) {
-		this.isWorkerActive = isWorkerActive;
-	}
-
 	public void setLastAckTime() {
 		this.lastAckTime = Calendar.getInstance().getTime();
 
@@ -56,6 +52,18 @@ public class HydraStatus {
 	public Date getLastAckTime() {
 		return this.lastAckTime;
 
+	}
+
+	public void addWorkerCurrentFuture(String job_id, Future<String> job) {
+		this.workerJobs.put(job_id, job);
+	}
+
+	public Map<String, Future<String>> getWorkerFutureMap() {
+		return this.workerJobs;
+	}
+
+	public Future<String> getWorkerCurrentFuture(String job_id) {
+		return this.workerJobs.get(job_id);
 	}
 
 }

@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -27,6 +30,7 @@ import hydra.hydra.core.HydraConfig.HydraType;
 import hydra.hydra.gui.HydraClientGui;
 import hydra.hydra.gui.HydraClientSwingGui;
 import hydra.hydra.gui.HydraClientSwingGui.IconMessageMode;
+import hydra.hydra.listeners.WorkerListener;
 import hydra.model.HydraMessage;
 import hydra.model.HydraMessage.MessageType;
 import hydra.repository.HydraRepository;
@@ -55,6 +59,9 @@ public class HydraController {
 
 	ExecutorService executorService = Executors.newCachedThreadPool();
 
+	ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.HOURS,
+			new LinkedBlockingQueue<>(10));
+
 	protected HydraClient clientCore;
 	protected HydraClientGui clientGui;
 	// public volatile boolean isConnectedToServer = false;
@@ -77,7 +84,32 @@ public class HydraController {
 				HydraConfig.heartBeat_interval, TimeUnit.SECONDS);
 
 		scheduledThreadPoolExecutor.scheduleAtFixedRate(new SystemChecker(this), 5, 1800, TimeUnit.SECONDS);
+
+		scheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+
+				cleanUpWorker();
+
+			}
+		}, 10, 10, TimeUnit.SECONDS);
+
 		this.initTable();
+	}
+
+	protected void cleanUpWorker() {
+
+		int activeJobCount = this.threadPoolExecutor.getActiveCount();
+		int queuedJobCOunt = this.threadPoolExecutor.getQueue().size();
+		int totalWaitingJobsFuture = this.hydraRepository.getHydraStatus().getWorkerFutureMap().size();
+
+		if (activeJobCount == 0 && queuedJobCOunt == 0 && totalWaitingJobsFuture > 0) {
+			this.hydraRepository.getHydraStatus().getWorkerFutureMap().clear();
+
+			this.systemLog("Completed Worker Jobs cleared.");
+		}
+
 	}
 
 	public ExecutorService getExecutorPool() {
@@ -335,14 +367,12 @@ public class HydraController {
 	}
 
 	public void updateHydraStatus() {
-
-//		System.out.println(this.scheduledThreadPoolExecutor.getActiveCount() + "/"
-//				+ this.scheduledThreadPoolExecutor.getCorePoolSize());
 		this.clientGui.updateSystemInfo(systemInfo);
 		// this.clientGui.updateMemoryUsages(availableMem, totalMem);
 		this.clientGui.updateConnectionStatus(this.hydraRepository.getHydraStatus().getConnectionInfo());
 		this.clientGui.updateIsServerConnected(this.hydraRepository.getHydraStatus().isConnectedToServer());
-		this.clientGui.updateIsWorkerActive(this.hydraRepository.getHydraStatus().isWorkerActive());
+		this.clientGui.updateWorkerStatus(this.threadPoolExecutor.getActiveCount() > 0,
+				this.threadPoolExecutor.getQueue().size());
 
 		this.refreshTable();
 	}
@@ -398,13 +428,38 @@ public class HydraController {
 					break;
 
 				case ACKNOWLEDGE:
-					System.out.println(gson.toJson(messageBody));
+					// System.out.println(gson.toJson(messageBody));
 					this.hydraRepository.getHydraStatus().setLastAckTime();
 
 					break;
 
 				case TRIGGER_WORKER:
+
+					System.out.println("#######################################");
 					System.out.println(gson.toJson(messageBody));
+
+					WorkerCallable workerCallable = new WorkerCallable(messageBody);
+					workerCallable.setWorkerListener(new WorkerListener() {
+
+						@Override
+						public void doUpdateStatus(String job_id, WorkerStatus workerStatus, String statusText) {
+
+							if (workerStatus.equals(WorkerStatus.Timeout)) {
+
+								System.out.println("killed!");
+								hydraRepository.getHydraStatus().getWorkerCurrentFuture(job_id).cancel(true);
+
+							}
+
+							updateHydraStatus();
+
+						}
+					});
+					Future<String> future = this.threadPoolExecutor.submit(workerCallable);
+
+					this.hydraRepository.getHydraStatus().addWorkerCurrentFuture(workerCallable.getJobId(), future);
+					updateHydraStatus();
+					System.out.println("#######################################");
 					// this.hydraRepository.getHydraStatus().setLastAckTime();
 
 					break;
@@ -463,10 +518,8 @@ public class HydraController {
 
 		systemInfoMap.put("Traffic(Recv)", "...");
 		systemInfoMap.put("Traffic(Sent)", "...");
-
-//		systemInfoMap.put("Core", "Physical/Logical : " + Integer.toString(processor.getPhysicalProcessorCount()) + "/"
-//				+ Integer.toString(processor.getLogicalProcessorCount()));
 		systemInfoMap.put("Processes", "...");
+
 		OSFileStore[] fileStores = systemInfo.getOperatingSystem().getFileSystem().getFileStores();
 
 		for (OSFileStore fs : fileStores) {

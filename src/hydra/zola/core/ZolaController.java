@@ -336,7 +336,7 @@ public class ZolaController {
 	public void sendCommandToClient(String clientID, String workingDir, String command, Integer timeout) {
 
 		JsonObject jobObj = new JsonObject();
-
+		jobObj.addProperty("job_id", UUID.randomUUID().toString());
 		jobObj.addProperty("working_directory", workingDir);
 		jobObj.addProperty("command", command);
 		jobObj.addProperty("timeout", timeout);
