@@ -1,10 +1,10 @@
-package hydra.zola.gui;
+package hydra_framework.zola.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import hydra.zola.core.ZolaController;
-import hydra.zola.core.ZolaHelper;
+import hydra_framework.zola.core.ZolaController;
+import hydra_framework.zola.core.ZolaHelper;
 
 public class buttonListener implements ActionListener {
 
