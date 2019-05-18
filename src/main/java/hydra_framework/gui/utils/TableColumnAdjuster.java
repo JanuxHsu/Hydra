@@ -36,6 +36,7 @@ import javax.swing.table.TableModel;
 public class TableColumnAdjuster implements PropertyChangeListener, TableModelListener {
 	private JTable table;
 	private int spacing;
+
 	private boolean isColumnHeaderIncluded;
 	private boolean isColumnDataIncluded;
 	private boolean isOnlyAdjustLarger;
@@ -229,6 +230,10 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 		}
 
 		this.isDynamicAdjustment = isDynamicAdjustment;
+	}
+
+	public void setColumnWidth(int column, int width) {
+		this.updateTableColumn(column, width);
 	}
 
 //

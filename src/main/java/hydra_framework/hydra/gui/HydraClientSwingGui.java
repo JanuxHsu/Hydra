@@ -72,6 +72,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 	JProgressBar cpuBar;
 	JProgressBar memoryBar;
 
+	TableColumnAdjuster tableColumnAdjuster;
+
 	private Long iconShowMessageTimestamp = Calendar.getInstance().getTimeInMillis();
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -302,15 +304,6 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 		dashboardPanel.add(leftDashPanel);
 
-//		JLabel hydraIcon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
-//				.getImage(this.getClass().getClassLoader().getResource("resources/newHydra32.png"))));
-//
-//		hydraIcon.setPreferredSize(new Dimension(60, 60));
-//		hydraIcon.setHorizontalAlignment(JLabel.CENTER);
-//		// hydraIcon.setPreferredSize(new Dimension(60, 60));
-//
-//		dashboardPanel.add(hydraIcon);
-
 		JPanel rightDashPanel = new JPanel(new BorderLayout());
 		JProgressBar cpuBar = new JProgressBar();
 
@@ -365,6 +358,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		tableModel.addColumn("Value");
 
 		JTable resultTable = new JTable(tableModel);
+		this.tableColumnAdjuster = new TableColumnAdjuster(resultTable);
 
 		resultTable.setFont(defaultFont);
 		resultTable.getTableHeader().setFont(defaultFont);
@@ -385,16 +379,21 @@ public class HydraClientSwingGui extends HydraClientGui {
 		logPanel.setOpaque(true);
 		logPanel.setBackground(new Color(44, 62, 80));
 		logPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+
 		logPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
 		JTextArea logArea = new JTextArea();
 
 		logArea.setLineWrap(true);
-
 		logArea.setEditable(false);
 		logArea.setFont(defaultFont);
 		this.logArea = logArea;
-		logPanel.add(new JScrollPane(logArea), BorderLayout.SOUTH);
+
+		JScrollPane scrollPane = new JScrollPane(logArea);
+
+		scrollPane.setMaximumSize(new Dimension(2000, 50));
+		scrollPane.setPreferredSize(new Dimension(0, 50));
+		logPanel.add(scrollPane);
 
 		return logPanel;
 
@@ -575,9 +574,11 @@ public class HydraClientSwingGui extends HydraClientGui {
 				this.hostLabel.setBackground(Color.RED);
 
 			} else {
-				this.hostLabel.setText(clientInfoJson.get("host").getAsString() + ", Client ID: "
-						+ clientInfoJson.get("client_id").getAsString());
-
+				String host = clientInfoJson.get("host").getAsString();
+				String clientID = clientInfoJson.get("client_id").getAsString();
+				String hostLabelTxt = String.format("%s, Client ID: %s", host, clientID);
+				this.hostLabel.setText(hostLabelTxt);
+				this.hostLabel.setToolTipText(clientID);
 				this.hostLabel.setBackground(new Color(39, 174, 96));
 			}
 		});
@@ -588,9 +589,8 @@ public class HydraClientSwingGui extends HydraClientGui {
 	public void refreshTable(List<List<String>> rowList) {
 
 		try {
-			JTable table = this.systemInfoTable;
+
 			DefaultTableModel model = (DefaultTableModel) this.systemInfoTable.getModel();
-			TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(table);
 
 			SwingUtilities.invokeLater(() -> {
 				@SuppressWarnings("unchecked")
@@ -605,7 +605,17 @@ public class HydraClientSwingGui extends HydraClientGui {
 					dataVector.add(vect);
 
 				});
-				tableColumnAdjuster.adjustColumns();
+				this.tableColumnAdjuster.adjustColumns();
+
+				int keyWidth = this.systemInfoTable.getColumnModel().getColumn(0).getWidth();
+				int valueWidth = this.systemInfoTable.getColumnModel().getColumn(1).getWidth();
+				System.out.println(String.format("%s | %s", keyWidth, valueWidth));
+				if (keyWidth + 50 > valueWidth) {
+
+					this.tableColumnAdjuster.setColumnWidth(0, 100);
+
+				}
+
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
