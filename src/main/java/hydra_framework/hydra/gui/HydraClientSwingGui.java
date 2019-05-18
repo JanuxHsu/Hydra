@@ -609,7 +609,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 
 				int keyWidth = this.systemInfoTable.getColumnModel().getColumn(0).getWidth();
 				int valueWidth = this.systemInfoTable.getColumnModel().getColumn(1).getWidth();
-				System.out.println(String.format("%s | %s", keyWidth, valueWidth));
+
 				if (keyWidth + 50 > valueWidth) {
 
 					this.tableColumnAdjuster.setColumnWidth(0, 100);
