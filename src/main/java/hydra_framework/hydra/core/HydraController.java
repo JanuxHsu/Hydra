@@ -188,7 +188,10 @@ public class HydraController {
 		this.systemLog("Trying to connect to Zola Server using :" + this.ZolaServerHost + ":" + this.ZolaServerPort);
 		boolean isConnected = false;
 		try {
-			isConnected = this.clientCore.open();
+			if (this.clientCore != null) {
+				isConnected = this.clientCore.open();
+			}
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
