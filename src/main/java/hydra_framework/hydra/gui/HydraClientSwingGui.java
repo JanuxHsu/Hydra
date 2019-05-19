@@ -222,7 +222,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		});
 		trayPopupMenu.add(action);
 
-		// 2nd menuitem of popupmenu
+		// 2nd menu item of pop-up menu
 		MenuItem close = new MenuItem("Close");
 		close.addActionListener(new ActionListener() {
 			@Override
