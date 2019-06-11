@@ -11,7 +11,7 @@ public class HydraConfig {
 	}
 
 	public static int heartBeat_interval = 5;
-	public static String version = "v1.20";
+	public static String version = "v1.21";
 	public static HydraType mode = HydraType.DEV;
 
 	public String app_name;

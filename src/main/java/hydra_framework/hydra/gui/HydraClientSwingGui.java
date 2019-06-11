@@ -491,7 +491,7 @@ public class HydraClientSwingGui extends HydraClientGui {
 		String lineText = String.format("[%s] %s%n", this.simpleDateFormat.format(Calendar.getInstance().getTime()),
 				line);
 		SwingUtilities.invokeLater(() -> {
-			if (this.logArea.getLineCount() > 6) {
+			if (this.logArea.getLineCount() > 3) {
 				logArea.setText("");
 			}
 

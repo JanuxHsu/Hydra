@@ -112,7 +112,7 @@ public class ViperClientSwingGui extends ViperClientGui {
 	private JPanel getMainPanel() {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
-		// JPanel logPanel  = new JPanel(new GridLayout(1, 1));
+		// JPanel logPanel = new JPanel(new GridLayout(1, 1));
 		JFXPanel webViewPanel = new JFXPanel();
 
 		Platform.runLater(() -> {

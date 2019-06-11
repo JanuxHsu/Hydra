@@ -62,6 +62,6 @@ dependencies {
 	compile fileTree(dir: '/Users/janux/Desktop/HydraGradleLibs', include: '*.jar')
 	
 	//local libs for windows
-	compile fileTree(dir: 'C:\\Users\\janux\\Desktop\\hydraLibs', include: '*.jar')
+	//compile fileTree(dir: 'C:/\/\Users/\/\janux\\Desktop\\hydraLibs', include: '*.jar')
 }
 
